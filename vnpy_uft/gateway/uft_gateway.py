@@ -1,10 +1,8 @@
-"""
-"""
-
 import sys
 import pytz
 from datetime import datetime
 from typing import Dict, List
+from pathlib import Path
 
 from vnpy.api.uft import (
     FUTURES_LICENSE,
@@ -64,6 +62,7 @@ from vnpy.trader.event import EVENT_TIMER
 from vnpy.event import EventEngine
 
 
+# 委托状态映射
 STATUS_UFT2VT: Dict[str, Status] = {
     HS_OS_Reported: Status.NOTTRADED,
     HS_OS_Abandoned: Status.REJECTED,
@@ -73,20 +72,21 @@ STATUS_UFT2VT: Dict[str, Status] = {
     HS_OS_CanceledWithPartsTraded: Status.CANCELLED
 }
 
+# 多空方向映射
 DIRECTION_VT2UFT: Dict[Direction, str] = {
     Direction.LONG: HS_D_Buy,
     Direction.SHORT: HS_D_Sell
 }
 DIRECTION_UFT2VT: Dict[str, Direction] = {v: k for k, v in DIRECTION_VT2UFT.items()}
-# DIRECTION_UFT2VT[HS_PT_Right] = Direction.LONG
-# DIRECTION_UFT2VT[HS_PT_Voluntary] = Direction.SHORT
 
+# 委托类型映射
 ORDERTYPE_VT2UFT: Dict[OrderType, str] = {
     OrderType.LIMIT: HS_CT_Limit,
     OrderType.MARKET: HS_CT_Market
 }
 ORDERTYPE_UFT2VT: Dict[str, OrderType] = {v: k for k, v in ORDERTYPE_VT2UFT.items()}
 
+# 开平方向映射
 OFFSET_VT2UFT: Dict[Offset, str] = {
     Offset.OPEN: HS_OF_Open,
     Offset.CLOSE: HS_OF_Close,
@@ -95,6 +95,7 @@ OFFSET_VT2UFT: Dict[Offset, str] = {
 OFFSET_UFT2VT: Dict[str, Offset] = {v: k for k, v in OFFSET_VT2UFT.items()}
 OFFSET_VT2UFT[Offset.CLOSEYESTERDAY] = HS_OF_Close
 
+# 交易所映射
 EXCHANGE_UFT2VT: Dict[str, Exchange] = {
     HS_EI_CFFEX: Exchange.CFFEX,
     HS_EI_SHFE: Exchange.SHFE,
@@ -106,6 +107,7 @@ EXCHANGE_UFT2VT: Dict[str, Exchange] = {
 }
 EXCHANGE_VT2UFT: Dict[Exchange, str] = {v: k for k, v in EXCHANGE_UFT2VT.items()}
 
+# 产品类型映射
 PRODUCT_UFT2VT: Dict[str, Product] = {
     HS_PTYPE_Futures: Product.FUTURES,
     HS_PTYPE_OptFutu: Product.OPTION,
@@ -113,13 +115,15 @@ PRODUCT_UFT2VT: Dict[str, Product] = {
     HS_PTYPE_Combination: Product.SPREAD
 }
 
+# 期权类型映射
 OPTIONTYPE_UFT2VT: Dict[str, OptionType] = {
     HS_OT_CallOptions: OptionType.CALL,
     HS_OT_PutOptions: OptionType.PUT
 }
 
-MAX_FLOAT = sys.float_info.max
-CHINA_TZ = pytz.timezone("Asia/Shanghai")
+# 其他常量
+MAX_FLOAT = sys.float_info.max                  # 浮点数极限值
+CHINA_TZ = pytz.timezone("Asia/Shanghai")       # 中国时区
 
 # 合约数据全局缓存字典
 symbol_contract_map: Dict[str, ContractData] = {}
@@ -127,7 +131,7 @@ symbol_contract_map: Dict[str, ContractData] = {}
 
 class UftGateway(BaseGateway):
     """
-    VN Trader Gateway for UFT .
+    vn.py基于恒生极速API开发的交易接口。
     """
 
     default_setting: Dict[str, str] = {
@@ -143,23 +147,23 @@ class UftGateway(BaseGateway):
 
     exchanges: List[Exchange] = list(EXCHANGE_UFT2VT.values())
 
-    def __init__(self, event_engine: EventEngine):
-        """Constructor"""
-        super().__init__(event_engine, "UFT")
+    def __init__(self, event_engine: EventEngine, gateway_name: str = "UFT") -> None:
+        """构造函数"""
+        super().__init__(event_engine, gateway_name)
 
-        self.td_api = UftTdApi(self)
-        self.md_api = UftMdApi(self)
+        self.td_api: "UftTdApi" = UftTdApi(self)
+        self.md_api: "UftMdApi" = UftMdApi(self)
 
     def connect(self, setting: dict) -> None:
-        """"""
-        userid = setting["用户名"]
-        password = setting["密码"]
-        md_address = setting["行情服务器"]
-        td_address = setting["交易服务器"]
-        server = setting["服务器类型"]
-        appid = setting["产品名称"]
-        auth_code = setting["授权编码"]
-        application_type = setting["委托类型"]
+        """连接交易接口"""
+        userid: str = setting["用户名"]
+        password: str = setting["密码"]
+        md_address: str = setting["行情服务器"]
+        td_address: str = setting["交易服务器"]
+        server: str = setting["服务器类型"]
+        appid: str = setting["产品名称"]
+        auth_code: str = setting["授权编码"]
+        application_type: str = setting["委托类型"]
 
         if not md_address.startswith("tcp://"):
             md_address = "tcp://" + md_address
@@ -167,7 +171,6 @@ class UftGateway(BaseGateway):
         if not td_address.startswith("tcp://"):
             td_address = "tcp://" + td_address
 
-        # Check license file path
         license_path = TRADER_DIR.joinpath("license.dat")
 
         if license_path.exists():
@@ -195,39 +198,39 @@ class UftGateway(BaseGateway):
         self.init_query()
 
     def subscribe(self, req: SubscribeRequest) -> None:
-        """"""
+        """订阅行情"""
         self.md_api.subscribe(req)
 
     def send_order(self, req: OrderRequest) -> str:
-        """"""
+        """委托下单"""
         return self.td_api.send_order(req)
 
     def cancel_order(self, req: CancelRequest) -> None:
-        """"""
+        """委托撤单"""
         self.td_api.cancel_order(req)
 
     def query_account(self) -> None:
-        """"""
+        """查询资金"""
         self.td_api.query_account()
 
     def query_position(self) -> None:
-        """"""
+        """查询持仓"""
         self.td_api.query_position()
 
     def close(self) -> None:
-        """"""
+        """关闭接口"""
         self.td_api.close()
         self.md_api.close()
 
     def write_error(self, msg: str, error: dict) -> None:
-        """"""
-        error_id = error["ErrorID"]
-        error_msg = error["ErrorMsg"]
+        """输出错误信息日志"""
+        error_id: int = error["ErrorID"]
+        error_msg: str = error["ErrorMsg"]
         msg = f"{msg}，代码：{error_id}，信息：{error_msg}"
         self.write_log(msg)
 
     def process_timer_event(self, event) -> None:
-        """"""
+        """定时事件处理"""
         self.count += 1
         if self.count < 2:
             return
@@ -238,18 +241,18 @@ class UftGateway(BaseGateway):
         self.query_functions.append(func)
 
     def init_query(self) -> None:
-        """"""
-        self.count = 0
-        self.query_functions = [self.query_account, self.query_position]
+        """初始化查询任务"""
+        self.count: int = 0
+        self.query_functions: list = [self.query_account, self.query_position]
         self.event_engine.register(EVENT_TIMER, self.process_timer_event)
 
 
 class UftMdApi(MdApi):
     """"""
 
-    def __init__(self, gateway: UftGateway):
-        """Constructor"""
-        super(UftMdApi, self).__init__()
+    def __init__(self, gateway: UftGateway) -> None:
+        """构造函数"""
+        super().__init__()
 
         self.gateway: UftGateway = gateway
         self.gateway_name: str = gateway.gateway_name
@@ -262,16 +265,13 @@ class UftMdApi(MdApi):
         self.password: str = ""
 
     def onFrontConnected(self) -> None:
-        """
-        Callback when front server is connected.
-        """
+        """服务器连接成功回报"""
         self.gateway.write_log("行情服务器连接成功")
 
     def onFrontDisconnected(self, reason: int) -> None:
-        """
-        Callback when front server is disconnected.
-        """
-        msg = self.getApiErrorMsg(reason)
+        """服务器连接断开回报"""
+
+        msg: str = self.getApiErrorMsg(reason)
         self.gateway.write_log(f"行情服务器连接断开，原因：{reason}，{msg}")
 
     def onRspDepthMarketDataSubscribe(
@@ -280,26 +280,24 @@ class UftMdApi(MdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """订阅行情回报"""
         if not error or not error["ErrorID"]:
             return
 
         self.gateway.write_error("行情订阅失败", error)
 
     def onRtnDepthMarketData(self, data: dict) -> None:
-        """
-        Callback of tick data update.
-        """
-        symbol = data["InstrumentID"]
+        """行情数据推送"""
+        symbol: str = data["InstrumentID"]
         contract: ContractData = symbol_contract_map.get(symbol, None)
         if not contract:
             return
 
-        timestamp = f"{data['TradingDay']} {data['UpdateTime']}000"
-        dt = datetime.strptime(timestamp, "%Y%m%d %H%M%S%f")
-        dt = CHINA_TZ.localize(dt)
+        timestamp: str = f"{data['TradingDay']} {data['UpdateTime']}000"
+        dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H%M%S%f")
+        dt: datetime = CHINA_TZ.localize(dt)
 
-        tick = TickData(
+        tick: TickData = TickData(
             symbol=symbol,
             exchange=contract.exchange,
             datetime=dt,
@@ -344,9 +342,7 @@ class UftMdApi(MdApi):
         self.gateway.on_tick(tick)
 
     def connect(self, address: str, server_license: str) -> None:
-        """
-        Start connection to server.
-        """
+        """连接服务器"""
         if not self.connect_status:
             path = get_folder_path(self.gateway_name.lower())
             self.newMdApi(str(path) + "\\Md")
@@ -364,9 +360,7 @@ class UftMdApi(MdApi):
             self.connect_status = True
 
     def subscribe(self, req: SubscribeRequest) -> None:
-        """
-        Subscribe to tick data update.
-        """
+        """订阅行情"""
         if self.connect_status:
             uft_req = {
                 "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
@@ -377,9 +371,7 @@ class UftMdApi(MdApi):
             self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
 
     def close(self) -> None:
-        """
-        Close the connection.
-        """
+        """关闭连接"""
         if self.connect_status:
             self.exit()
 
@@ -387,9 +379,9 @@ class UftMdApi(MdApi):
 class UftTdApi(TdApi):
     """"""
 
-    def __init__(self, gateway: UftGateway):
-        """Constructor"""
-        super(UftTdApi, self).__init__()
+    def __init__(self, gateway: UftGateway) -> None:
+        """构造函数"""
+        super().__init__()
 
         self.gateway: UftGateway = gateway
         self.gateway_name: str = gateway.gateway_name
@@ -415,7 +407,7 @@ class UftTdApi(TdApi):
         self.orders: Dict[str, OrderData] = {}
 
     def onFrontConnected(self) -> None:
-        """"""
+        """服务器连接成功回报"""
         self.gateway.write_log("交易服务器连接成功")
 
         if self.auth_code:
@@ -424,10 +416,10 @@ class UftTdApi(TdApi):
             self.login()
 
     def onFrontDisconnected(self, reason: int) -> None:
-        """"""
+        """服务器连接断开回报"""
         self.login_status = False
 
-        msg = self.getApiErrorMsg(reason)
+        msg: str = self.getApiErrorMsg(reason)
         self.gateway.write_log(f"交易服务器连接断开，原因：{reason}，{msg}")
 
     def onRspAuthenticate(
@@ -437,7 +429,7 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """用户授权验证回报"""
         if not error["ErrorID"]:
             self.auth_staus = True
             self.gateway.write_log("交易服务器授权验证成功")
@@ -452,7 +444,7 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """用户登录请求回报"""
         if not error["ErrorID"]:
             self.sessionid = data["SessionID"]
             self.login_status = True
@@ -469,7 +461,7 @@ class UftTdApi(TdApi):
             self.gateway.write_error("交易服务器登录失败", error)
 
     def query_order(self) -> None:
-        """"""
+        """查询委托"""
         self.reqid += 1
         self.reqQryOrder({}, self.reqid)
 
@@ -480,7 +472,7 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """委托查询回报"""
         if not data and last:
             self.gateway.write_log("委托信息查询成功")
             return
@@ -494,7 +486,7 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """成交委托查询回报"""
         if not data and last:
             self.gateway.write_log("成交信息查询成功")
             return
@@ -502,7 +494,7 @@ class UftTdApi(TdApi):
         self.update_trade(data)
 
     def query_trade(self) -> None:
-        """"""
+        """查询成交委托"""
         self.reqid += 1
         self.reqQryTrade({}, self.reqid)
 
@@ -513,16 +505,16 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """失败委托查询回报"""
         self.gateway.write_error("委托下单失败", error)
 
-        order_ref = data["OrderRef"]
-        orderid = f"{self.sessionid}_{order_ref}"
+        order_ref: str = data["OrderRef"]
+        orderid: str = f"{self.sessionid}_{order_ref}"
 
-        symbol = data["InstrumentID"]
-        exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
+        symbol: str = data["InstrumentID"]
+        exchange: Exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
 
-        order = OrderData(
+        order: OrderData = OrderData(
             symbol=symbol,
             exchange=exchange,
             orderid=orderid,
@@ -538,12 +530,12 @@ class UftTdApi(TdApi):
         self.gateway.write_error("交易委托失败", error)
 
     def onRspOrderAction(self, data: dict, error: dict, reqid: int, last: bool) -> None:
-        """"""
+        """撤单委托查询回报"""
         if error["ErrorID"]:
             self.gateway.write_error("交易撤单失败", error)
 
     def onRspQueryMaxOrderVolume(self, data: dict, error: dict, reqid: int, last: bool) -> None:
-        """"""
+        """最大报单数量查询回报"""
         pass
 
     def onRspQryPosition(
@@ -553,7 +545,7 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """持仓查询回报"""
         if not data and last:
             for position in self.positions.values():
                 self.gateway.on_position(position)
@@ -561,14 +553,16 @@ class UftTdApi(TdApi):
             self.positions.clear()
             return
 
+        # 必须已经收到了合约信息后才能处理
         symbol: str = data["InstrumentID"]
         contract: ContractData = symbol_contract_map.get(symbol, None)
 
         if contract:
-            key = f"{data['InstrumentID'], data['Direction']}"
-            position = self.positions.get(key, None)
+            # 获取之前缓存的持仓数据缓存
+            key: str = f"{data['InstrumentID'], data['Direction']}"
+            position: PositionData = self.positions.get(key, None)
             if not position:
-                position = PositionData(
+                position: PositionData = PositionData(
                     symbol=data["InstrumentID"],
                     exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
                     direction=DIRECTION_UFT2VT[data["Direction"]],
@@ -576,23 +570,25 @@ class UftTdApi(TdApi):
                 )
                 self.positions[key] = position
     
+            # 计算昨仓
             position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
     
-            # Get contract size (spread contract has no size value)
-            size = contract.size
+            # 获取合约的乘数信息
+            size: float = contract.size
+
+            # 计算之前已有仓位的持仓总成本
+            cost: float = position.price * position.volume * size
     
-            # Calculate previous position cost
-            cost = position.price * position.volume * size
-    
-            # Update new position volume
+            # 累加更新持仓数量和盈亏
             position.volume += data["PositionVolume"]
             position.pnl += data["PositionProfit"]
     
-            # Calculate average position price
+            # 计算更新后的持仓总成本和均价
             if position.volume and size:
                 cost += data["PositionCost"]
                 position.price = cost / (position.volume * size)
     
+            # 更新仓位冻结数量
             position.frozen += data["CloseFrozenVolume"]
 
     def onRspQryTradingAccount(
@@ -602,11 +598,11 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """"""
+        """资金查询回报"""
         if not data:
             return
 
-        account = AccountData(
+        account: AccountData = AccountData(
             accountid=data["AccountID"],
             balance=data["FrozenBalance"] + data["AvailableBalance"],
             frozen=data["FrozenBalance"],
@@ -622,16 +618,14 @@ class UftTdApi(TdApi):
         reqid: int,
         last: bool
     ) -> None:
-        """
-        Callback of instrument query.
-        """
+        """合约查询回报"""
         if not data and last:
             self.gateway.write_log("合约信息查询成功")
             return
 
-        product = PRODUCT_UFT2VT.get(data["ProductType"], None)
+        product: Product = PRODUCT_UFT2VT.get(data["ProductType"], None)
         if product:
-            contract = ContractData(
+            contract: ContractData = ContractData(
                 symbol=data["InstrumentID"],
                 exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
                 name=data["InstrumentName"],
@@ -641,9 +635,9 @@ class UftTdApi(TdApi):
                 gateway_name=self.gateway_name
             )
 
-            # For option only
+            # 期权相关
             if contract.product == Product.OPTION:
-                # Remove C/P suffix of CZCE option product name
+                # 移除郑商所期权产品名称带有的C/P后缀
                 if contract.exchange == Exchange.CZCE:
                     contract.option_portfolio = data["ProductID"][:-1]
                 else:
@@ -660,31 +654,29 @@ class UftTdApi(TdApi):
             symbol_contract_map[contract.symbol] = contract
 
     def onRtnOrder(self, data: dict) -> None:
-        """
-        Callback of order status update.
-        """
+        """委托更新推送"""
         self.update_order(data)
 
     def update_order(self, data: dict) -> None:
-        """"""
-        sessionid = data["SessionID"]
-        order_ref = data["OrderRef"]
-        orderid = f"{sessionid}_{order_ref}"
+        """委托更新"""
+        sessionid: str = data["SessionID"]
+        order_ref: str = data["OrderRef"]
+        orderid: str = f"{sessionid}_{order_ref}"
 
-        order = self.orders.get(orderid, None)
-        insert_time = generate_time(data["InsertTime"])
-        timestamp = f"{data['InsertDate']} {insert_time}"
+        order: OrderData = self.orders.get(orderid, None)
+        insert_time: str = generate_time(data["InsertTime"])
+        timestamp: str = f"{data['InsertDate']} {insert_time}"
 
         if "." in timestamp:
-            fmt = "%Y%m%d %H:%M:%S.%f"
+            fmt: str = "%Y%m%d %H:%M:%S.%f"
         else:
-            fmt = "%Y%m%d %H:%M:%S"
+            fmt: str = "%Y%m%d %H:%M:%S"
 
-        dt = datetime.strptime(timestamp, fmt)
-        dt = CHINA_TZ.localize(dt)
+        dt: datetime = datetime.strptime(timestamp, fmt)
+        dt: datetime = CHINA_TZ.localize(dt)
 
         if not order:
-            order = OrderData(
+            order: OrderData = OrderData(
                 symbol=data["InstrumentID"],
                 exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
                 orderid=orderid,
@@ -706,20 +698,18 @@ class UftTdApi(TdApi):
         self.gateway.on_order(order)
 
     def onRtnTrade(self, data: dict) -> None:
-        """
-        Callback of trade status update.
-        """
+        """成交数据推送"""
         self.update_trade(data)
 
     def update_trade(self, data: dict) -> None:
-        """"""
-        symbol = data["InstrumentID"]
-        exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
-        sessionid = data["SessionID"]
-        order_ref = data["OrderRef"]
-        orderid = f"{sessionid}_{order_ref}"
+        """成交委托更新"""
+        symbol: str = data["InstrumentID"]
+        exchange: Exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
+        sessionid: str = data["SessionID"]
+        order_ref: str = data["OrderRef"]
+        orderid: str = f"{sessionid}_{order_ref}"
 
-        order = self.orders.get(orderid, None)
+        order: OrderData = self.orders.get(orderid, None)
         if order:
             order.traded += data["TradeVolume"]
 
@@ -730,12 +720,12 @@ class UftTdApi(TdApi):
 
             self.gateway.on_order(order)
 
-        trade_time = generate_time(data["TradeTime"])
-        timestamp = f"{data['TradingDay']} {trade_time}"
-        dt = datetime.strptime(timestamp, "%Y%m%d %H:%M:%S")
-        dt = CHINA_TZ.localize(dt)
+        trade_time: str = generate_time(data["TradeTime"])
+        timestamp: str = f"{data['TradingDay']} {trade_time}"
+        dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H:%M:%S")
+        dt: datetime = CHINA_TZ.localize(dt)
 
-        trade = TradeData(
+        trade: TradeData = TradeData(
             symbol=symbol,
             exchange=exchange,
             orderid=orderid,
@@ -759,9 +749,7 @@ class UftTdApi(TdApi):
         appid: str,
         application_type: str
     ) -> None:
-        """
-        Start connection to server.
-        """
+        """连接服务器"""
         self.userid = userid
         self.password = password
         self.auth_code = auth_code
@@ -769,7 +757,7 @@ class UftTdApi(TdApi):
         self.application_type = application_type
 
         if not self.connect_status:
-            path = get_folder_path(self.gateway_name.lower())
+            path: Path = get_folder_path(self.gateway_name.lower())
             self.newTradeApi(str(path) + "\\Td")
 
             self.rgisterSubModel("1")  # ??
@@ -788,10 +776,8 @@ class UftTdApi(TdApi):
             self.authenticate()
 
     def authenticate(self):
-        """
-        Authenticate with auth_code and appid.
-        """
-        req = {
+        """发起授权验证"""
+        req: dict = {
             "AccountID": self.userid,
             "Password": self.password,
             "AuthCode": self.auth_code,
@@ -802,13 +788,11 @@ class UftTdApi(TdApi):
         self.reqAuthenticate(req, self.reqid)
 
     def login(self) -> None:
-        """
-        Login onto server.
-        """
+        """用户登录"""
         if self.login_failed:
             return
 
-        req = {
+        req: dict = {
             "AccountID": self.userid,
             "Password": self.password,
             "UserApplicationType": self.application_type,
@@ -822,9 +806,7 @@ class UftTdApi(TdApi):
         self.reqUserLogin(req, self.reqid)
 
     def send_order(self, req: OrderRequest) -> str:
-        """
-        Send new order.
-        """
+        """委托下单"""
         if req.offset not in OFFSET_VT2UFT:
             self.gateway.write_log("请选择开平方向")
             return ""
@@ -847,19 +829,17 @@ class UftTdApi(TdApi):
         self.reqid += 1
         self.reqOrderInsert(uft_req, self.reqid)
 
-        orderid = f"{self.sessionid}_{self.order_ref}"
-        order = req.create_order_data(orderid, self.gateway_name)
+        orderid: str = f"{self.sessionid}_{self.order_ref}"
+        order: OrderData = req.create_order_data(orderid, self.gateway_name)
         self.gateway.on_order(order)
 
         return order.vt_orderid
 
     def cancel_order(self, req: CancelRequest) -> None:
-        """
-        Cancel existing order.
-        """
+        """委托撤单"""
         sessionid, order_ref = req.orderid.split("_")
 
-        uft_req = {
+        uft_req: dict = {
             # "InstrumentID": req.symbol,
             # "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
             "SessionID": int(sessionid),
@@ -870,36 +850,32 @@ class UftTdApi(TdApi):
         self.reqOrderAction(uft_req, self.reqid)
 
     def query_account(self) -> None:
-        """
-        Query account balance data.
-        """
+        """查询资金"""
         self.reqid += 1
         self.reqQryTradingAccount({}, self.reqid)
 
     def query_position(self) -> None:
-        """
-        Query position holding data.
-        """
+        """查询持仓"""
         self.reqid += 1
         self.reqQryPosition({}, self.reqid)
 
-    def close(self):
-        """"""
+    def close(self) -> None:
+        """关闭连接"""
         if self.connect_status:
             self.exit()
 
 
 def adjust_price(price: float) -> float:
-    """"""
+    """将异常的浮点数最大值（MAX_FLOAT）数据调整为0"""
     if price == MAX_FLOAT:
         price = 0
     return price
 
 
 def generate_time(data: int) -> str:
-    """"""
-    buf = str(data)
-    buf_size = len(buf)
+    """生成时间"""
+    buf: str = str(data)
+    buf_size: int = len(buf)
 
     # 不到6位数字的时间戳，精确到秒
     if buf_size < 6:
