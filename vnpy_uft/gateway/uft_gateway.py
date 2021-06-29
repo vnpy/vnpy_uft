@@ -563,38 +563,37 @@ class UftTdApi(TdApi):
 
         symbol: str = data["InstrumentID"]
         contract: ContractData = symbol_contract_map.get(symbol, None)
-        if not contract:
-            return
+
+        if contract:
+            key = f"{data['InstrumentID'], data['Direction']}"
+            position = self.positions.get(key, None)
+            if not position:
+                position = PositionData(
+                    symbol=data["InstrumentID"],
+                    exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
+                    direction=DIRECTION_UFT2VT[data["Direction"]],
+                    gateway_name=self.gateway_name
+                )
+                self.positions[key] = position
     
-        key = f"{data['InstrumentID'], data['Direction']}"
-        position = self.positions.get(key, None)
-        if not position:
-            position = PositionData(
-                symbol=data["InstrumentID"],
-                exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
-                direction=DIRECTION_UFT2VT[data["Direction"]],
-                gateway_name=self.gateway_name
-            )
-            self.positions[key] = position
-
-        position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
-
-        # Get contract size (spread contract has no size value)
-        size = contract.size
-
-        # Calculate previous position cost
-        cost = position.price * position.volume * size
-
-        # Update new position volume
-        position.volume += data["PositionVolume"]
-        position.pnl += data["PositionProfit"]
-
-        # Calculate average position price
-        if position.volume and size:
-            cost += data["PositionCost"]
-            position.price = cost / (position.volume * size)
-
-        position.frozen += data["CloseFrozenVolume"]
+            position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
+    
+            # Get contract size (spread contract has no size value)
+            size = contract.size
+    
+            # Calculate previous position cost
+            cost = position.price * position.volume * size
+    
+            # Update new position volume
+            position.volume += data["PositionVolume"]
+            position.pnl += data["PositionProfit"]
+    
+            # Calculate average position price
+            if position.volume and size:
+                cost += data["PositionCost"]
+                position.price = cost / (position.volume * size)
+    
+            position.frozen += data["CloseFrozenVolume"]
 
     def onRspQryTradingAccount(
         self,
