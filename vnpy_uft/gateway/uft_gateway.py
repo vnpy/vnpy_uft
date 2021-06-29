@@ -121,8 +121,8 @@ OPTIONTYPE_UFT2VT: Dict[str, OptionType] = {
 MAX_FLOAT = sys.float_info.max
 CHINA_TZ = pytz.timezone("Asia/Shanghai")
 
-symbol_name_map = {}
-symbol_size_map = {}
+# 合约数据全局缓存字典
+symbol_contract_map: Dict[str, ContractData] = {}
 
 
 class UftGateway(BaseGateway):
@@ -291,8 +291,8 @@ class UftMdApi(MdApi):
         Callback of tick data update.
         """
         symbol = data["InstrumentID"]
-        exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
-        if not exchange:
+        contract: ContractData = symbol_contract_map.get(symbol, None)
+        if not contract:
             return
 
         timestamp = f"{data['TradingDay']} {data['UpdateTime']}000"
@@ -301,9 +301,9 @@ class UftMdApi(MdApi):
 
         tick = TickData(
             symbol=symbol,
-            exchange=exchange,
+            exchange=contract.exchange,
             datetime=dt,
-            name=symbol_name_map[symbol],
+            name=contract.name,
             volume=data["TradeVolume"],
             open_interest=data["OpenInterest"],
             last_price=data["LastPrice"],
@@ -561,38 +561,40 @@ class UftTdApi(TdApi):
             self.positions.clear()
             return
 
-        # Check if contract data received
-        if data["InstrumentID"] in symbol_name_map:
-            # Get buffered position object
-            key = f"{data['InstrumentID'], data['Direction']}"
-            position = self.positions.get(key, None)
-            if not position:
-                position = PositionData(
-                    symbol=data["InstrumentID"],
-                    exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
-                    direction=DIRECTION_UFT2VT[data["Direction"]],
-                    gateway_name=self.gateway_name
-                )
-                self.positions[key] = position
+        symbol: str = data["InstrumentID"]
+        contract: ContractData = symbol_contract_map.get(symbol, None)
+        if not contract:
+            return
+    
+        key = f"{data['InstrumentID'], data['Direction']}"
+        position = self.positions.get(key, None)
+        if not position:
+            position = PositionData(
+                symbol=data["InstrumentID"],
+                exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
+                direction=DIRECTION_UFT2VT[data["Direction"]],
+                gateway_name=self.gateway_name
+            )
+            self.positions[key] = position
 
-            position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
+        position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
 
-            # Get contract size (spread contract has no size value)
-            size = symbol_size_map.get(position.symbol, 0)
+        # Get contract size (spread contract has no size value)
+        size = contract.size
 
-            # Calculate previous position cost
-            cost = position.price * position.volume * size
+        # Calculate previous position cost
+        cost = position.price * position.volume * size
 
-            # Update new position volume
-            position.volume += data["PositionVolume"]
-            position.pnl += data["PositionProfit"]
+        # Update new position volume
+        position.volume += data["PositionVolume"]
+        position.pnl += data["PositionProfit"]
 
-            # Calculate average position price
-            if position.volume and size:
-                cost += data["PositionCost"]
-                position.price = cost / (position.volume * size)
+        # Calculate average position price
+        if position.volume and size:
+            cost += data["PositionCost"]
+            position.price = cost / (position.volume * size)
 
-            position.frozen += data["CloseFrozenVolume"]
+        position.frozen += data["CloseFrozenVolume"]
 
     def onRspQryTradingAccount(
         self,
@@ -656,8 +658,7 @@ class UftTdApi(TdApi):
 
             self.gateway.on_contract(contract)
 
-            symbol_name_map[contract.symbol] = contract.name
-            symbol_size_map[contract.symbol] = contract.size
+            symbol_contract_map[contract.symbol] = contract
 
     def onRtnOrder(self, data: dict) -> None:
         """
