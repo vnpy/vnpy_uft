@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Dict, List
 from pathlib import Path
 
-from vnpy.api.uft import (
+from ..api import (
     FUTURES_LICENSE,
     OPTION_LICENSE,
     MdApi,
