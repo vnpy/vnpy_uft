@@ -260,6 +260,7 @@ class UftMdApi(MdApi):
         self.reqid: int = 0
 
         self.connect_status: bool = False
+        self.subscribed: List[str] = set()
 
         self.userid: str = ""
         self.password: str = ""
@@ -270,7 +271,6 @@ class UftMdApi(MdApi):
 
     def onFrontDisconnected(self, reason: int) -> None:
         """服务器连接断开回报"""
-
         msg: str = self.getApiErrorMsg(reason)
         self.gateway.write_log(f"行情服务器连接断开，原因：{reason}，{msg}")
 
@@ -361,14 +361,22 @@ class UftMdApi(MdApi):
 
     def subscribe(self, req: SubscribeRequest) -> None:
         """订阅行情"""
+        symbol: str = req.symbol
+
+        # 过滤重复的订阅
+        if symbol in self.subscribed:
+            return
+
         if self.connect_status:
             uft_req = {
                 "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
-                "InstrumentID": req.symbol
+                "InstrumentID": symbol
             }
 
             self.reqid += 1
             self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
+
+            self.subscribed.add(symbol)
 
     def close(self) -> None:
         """关闭连接"""
