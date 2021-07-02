@@ -349,7 +349,7 @@ class UftMdApi(MdApi):
         """连接服务器"""
         if not self.connect_status:
             path = get_folder_path(self.gateway_name.lower())
-            self.newMdApi(str(path) + "\\Md")
+            self.newMdApi((str(path) + "\\Md").encode("GBK"))
 
             self.registerFront(address)
 
@@ -770,7 +770,7 @@ class UftTdApi(TdApi):
 
         if not self.connect_status:
             path: Path = get_folder_path(self.gateway_name.lower())
-            self.newTradeApi(str(path) + "\\Td")
+            self.newTradeApi((str(path) + "\\Td").encode("GBK"))
 
             self.rgisterSubModel("1")  # ??
 
