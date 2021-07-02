@@ -1,7 +1,7 @@
 import sys
 import pytz
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Set
 from pathlib import Path
 
 from ..api import (
@@ -260,7 +260,7 @@ class UftMdApi(MdApi):
         self.reqid: int = 0
 
         self.connect_status: bool = False
-        self.subscribed: List[str] = set()
+        self.subscribed: Set = set()
 
         self.userid: str = ""
         self.password: str = ""
