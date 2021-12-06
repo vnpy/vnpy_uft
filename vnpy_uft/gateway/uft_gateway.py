@@ -1,7 +1,7 @@
 import sys
 import pytz
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Set
 from pathlib import Path
 
 from ..api import (
@@ -260,6 +260,7 @@ class UftMdApi(MdApi):
         self.reqid: int = 0
 
         self.connect_status: bool = False
+        self.subscribed: Set = set()
 
         self.userid: str = ""
         self.password: str = ""
@@ -270,7 +271,6 @@ class UftMdApi(MdApi):
 
     def onFrontDisconnected(self, reason: int) -> None:
         """服务器连接断开回报"""
-
         msg: str = self.getApiErrorMsg(reason)
         self.gateway.write_log(f"行情服务器连接断开，原因：{reason}，{msg}")
 
@@ -288,6 +288,10 @@ class UftMdApi(MdApi):
 
     def onRtnDepthMarketData(self, data: dict) -> None:
         """行情数据推送"""
+        # 过滤没有时间戳的异常行情数据
+        if not data["UpdateTime"]:
+            return
+
         symbol: str = data["InstrumentID"]
         contract: ContractData = symbol_contract_map.get(symbol, None)
         if not contract:
@@ -345,7 +349,7 @@ class UftMdApi(MdApi):
         """连接服务器"""
         if not self.connect_status:
             path = get_folder_path(self.gateway_name.lower())
-            self.newMdApi(str(path) + "\\Md")
+            self.newMdApi((str(path) + "\\Md").encode("GBK"))
 
             self.registerFront(address)
 
@@ -361,14 +365,22 @@ class UftMdApi(MdApi):
 
     def subscribe(self, req: SubscribeRequest) -> None:
         """订阅行情"""
+        symbol: str = req.symbol
+
+        # 过滤重复的订阅
+        if symbol in self.subscribed:
+            return
+
         if self.connect_status:
             uft_req = {
                 "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
-                "InstrumentID": req.symbol
+                "InstrumentID": symbol
             }
 
             self.reqid += 1
             self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
+
+            self.subscribed.add(symbol)
 
     def close(self) -> None:
         """关闭连接"""
@@ -637,17 +649,29 @@ class UftTdApi(TdApi):
 
             # 期权相关
             if contract.product == Product.OPTION:
-                # 移除郑商所期权产品名称带有的C/P后缀
-                if contract.exchange == Exchange.CZCE:
-                    contract.option_portfolio = data["ProductID"][:-1]
-                else:
-                    contract.option_portfolio = data["ProductID"]
-
-                contract.option_underlying = data["UnderlyingInstrID"]
                 contract.option_type = OPTIONTYPE_UFT2VT.get(data["OptionsType"], None)
                 contract.option_strike = data["ExercisePrice"]
-                contract.option_index = str(data["ExercisePrice"])
                 contract.option_expiry = datetime.strptime(str(data["ExpireDate"]), "%Y%m%d")
+
+                # ETF期权
+                if contract.exchange in {Exchange.SSE, Exchange.SZSE}:
+                    contract.option_underlying = "-".join([data["UnderlyingInstrID"], str(data["EndExerciseDate"])[:-2]])
+                    contract.option_portfolio = data["UnderlyingInstrID"] + "_O"
+
+                    # 需要考虑标的分红导致的行权价调整后的索引
+                    contract.option_index = get_option_index(contract.option_strike, data["InstrumentEngName"])
+                # 期货期权
+                else:
+                    contract.option_underlying = data["UnderlyingInstrID"]
+
+                    # 移除郑商所期权产品名称带有的C/P后缀
+                    if contract.exchange == Exchange.CZCE:
+                        contract.option_portfolio = data["ProductID"][:-1]
+                    else:
+                        contract.option_portfolio = data["ProductID"]
+
+                    # 直接使用行权价作为索引
+                    contract.option_index = str(contract.option_strike)
 
             self.gateway.on_contract(contract)
 
@@ -758,7 +782,7 @@ class UftTdApi(TdApi):
 
         if not self.connect_status:
             path: Path = get_folder_path(self.gateway_name.lower())
-            self.newTradeApi(str(path) + "\\Td")
+            self.newTradeApi((str(path) + "\\Td").encode("GBK"))
 
             self.rgisterSubModel("1")  # ??
 
@@ -890,3 +914,22 @@ def generate_time(data: int) -> str:
     minute = buf[2:4]
     second = buf[4:6]
     return f"{hour}:{minute}:{second}"
+
+
+def get_option_index(strike_price: float, exchange_instrument_id: str) -> str:
+    """获取期权指数"""
+    exchange_instrument_id = exchange_instrument_id.replace(" ", "")
+
+    if "M" in exchange_instrument_id:
+        n = exchange_instrument_id.index("M")
+    elif "A" in exchange_instrument_id:
+        n = exchange_instrument_id.index("A")
+    elif "B" in exchange_instrument_id:
+        n = exchange_instrument_id.index("B")
+    else:
+        return str(strike_price)
+
+    index = exchange_instrument_id[n:]
+    option_index = f"{strike_price:.3f}-{index}"
+
+    return option_index
