@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    <img src ="https://img.shields.io/badge/version-3.7.2.4.1-blueviolet.svg"/>
+    <img src ="https://img.shields.io/badge/version-3.7.1.16-blueviolet.svg"/>
     <img src ="https://img.shields.io/badge/platform-windows|linux-yellow.svg"/>
     <img src ="https://img.shields.io/badge/python-3.7-blue.svg" />
     <img src ="https://img.shields.io/github/license/vnpy/vnpy.svg?color=orange"/>
@@ -13,7 +13,7 @@
 
 ## 说明
 
-基于恒生极速API的3.7.2.4版本开发。
+基于恒生极速API的3.7.1.16版本开发。
 
 ## 安装
 
