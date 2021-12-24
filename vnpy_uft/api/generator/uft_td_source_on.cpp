@@ -34,6 +34,18 @@ void onRspAuthenticate(const dict &data, const dict &error, int reqid, bool last
 	}
 };
 
+void onRspSubmitUserSystemInfo(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspSubmitUserSystemInfo, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
 void onRspUserLogin(const dict &data, const dict &error, int reqid, bool last) override
 {
 	try
@@ -154,11 +166,11 @@ void onRspQueryMaxOrderVolume(const dict &data, const dict &error, int reqid, bo
 	}
 };
 
-void onRspQueryLockVolume(const dict &data, const dict &error, int reqid, bool last) override
+void onRspQryLockVolume(const dict &data, const dict &error, int reqid, bool last) override
 {
 	try
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQueryLockVolume, data, error, reqid, last);
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryLockVolume, data, error, reqid, last);
 	}
 	catch (const error_already_set &e)
 	{
@@ -171,6 +183,18 @@ void onRspQueryExerciseVolume(const dict &data, const dict &error, int reqid, bo
 	try
 	{
 		PYBIND11_OVERLOAD(void, TdApi, onRspQueryExerciseVolume, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryCombVolume(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryCombVolume, data, error, reqid, last);
 	}
 	catch (const error_already_set &e)
 	{
@@ -358,6 +382,18 @@ void onRspQueryBankAccount(const dict &data, const dict &error, int reqid, bool 
 	}
 };
 
+void onRspMultiCentreFundTrans(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspMultiCentreFundTrans, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
 void onRspQueryBillContent(const dict &data, const dict &error, int reqid, bool last) override
 {
 	try
@@ -454,6 +490,90 @@ void onRspQryDepthMarketData(const dict &data, const dict &error, int reqid, boo
 	}
 };
 
+void onRspFundTrans(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspFundTrans, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryFundTrans(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryFundTrans, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryClientNotice(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryClientNotice, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryOptUnderly(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptUnderly, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQrySecuDepthMarket(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQrySecuDepthMarket, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryHistOrder(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryHistOrder, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryHistTrade, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
 void onRtnTrade(const dict &data) override
 {
 	try
@@ -507,6 +627,30 @@ void onRtnLock(const dict &data) override
 	try
 	{
 		PYBIND11_OVERLOAD(void, TdApi, onRtnLock, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onErrRtnOrderAction(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onErrRtnOrderAction, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnClientNotice(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnClientNotice, data);
 	}
 	catch (const error_already_set &e)
 	{

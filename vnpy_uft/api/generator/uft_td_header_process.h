@@ -4,6 +4,8 @@ void processFrontDisconnected(Task *task);
 
 void processRspAuthenticate(Task *task);
 
+void processRspSubmitUserSystemInfo(Task *task);
+
 void processRspUserLogin(Task *task);
 
 void processRspUserPasswordUpdate(Task *task);
@@ -24,9 +26,11 @@ void processRspErrorCombActionInsert(Task *task);
 
 void processRspQueryMaxOrderVolume(Task *task);
 
-void processRspQueryLockVolume(Task *task);
+void processRspQryLockVolume(Task *task);
 
 void processRspQueryExerciseVolume(Task *task);
+
+void processRspQryCombVolume(Task *task);
 
 void processRspQryPosition(Task *task);
 
@@ -58,6 +62,8 @@ void processRspQueryBankBalance(Task *task);
 
 void processRspQueryBankAccount(Task *task);
 
+void processRspMultiCentreFundTrans(Task *task);
+
 void processRspQueryBillContent(Task *task);
 
 void processRspBillConfirm(Task *task);
@@ -74,6 +80,20 @@ void processRspQrySysConfig(Task *task);
 
 void processRspQryDepthMarketData(Task *task);
 
+void processRspFundTrans(Task *task);
+
+void processRspQryFundTrans(Task *task);
+
+void processRspQryClientNotice(Task *task);
+
+void processRspQryOptUnderly(Task *task);
+
+void processRspQrySecuDepthMarket(Task *task);
+
+void processRspQryHistOrder(Task *task);
+
+void processRspQryHistTrade(Task *task);
+
 void processRtnTrade(Task *task);
 
 void processRtnOrder(Task *task);
@@ -83,4 +103,8 @@ void processRtnExercise(Task *task);
 void processRtnCombAction(Task *task);
 
 void processRtnLock(Task *task);
+
+void processErrRtnOrderAction(Task *task);
+
+void processRtnClientNotice(Task *task);
 

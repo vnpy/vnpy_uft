@@ -1,5 +1,7 @@
 int reqAuthenticate(const dict &req, int reqid);
 
+int reqSubmitUserSystemInfo(const dict &req, int reqid);
+
 int reqUserLogin(const dict &req, int reqid);
 
 int reqUserPasswordUpdate(const dict &req, int reqid);
@@ -20,9 +22,11 @@ int reqCombActionInsert(const dict &req, int reqid);
 
 int reqQueryMaxOrderVolume(const dict &req, int reqid);
 
-int reqQueryLockVolume(const dict &req, int reqid);
+int reqQryLockVolume(const dict &req, int reqid);
 
 int reqQueryExerciseVolume(const dict &req, int reqid);
+
+int reqQryCombVolume(const dict &req, int reqid);
 
 int reqQryPosition(const dict &req, int reqid);
 
@@ -54,6 +58,8 @@ int reqQueryBankBalance(const dict &req, int reqid);
 
 int reqQueryBankAccount(const dict &req, int reqid);
 
+int reqMultiCentreFundTrans(const dict &req, int reqid);
+
 int reqQueryBillContent(const dict &req, int reqid);
 
 int reqBillConfirm(const dict &req, int reqid);
@@ -69,4 +75,18 @@ int reqQryPositionDetail(const dict &req, int reqid);
 int reqQrySysConfig(const dict &req, int reqid);
 
 int reqQryDepthMarketData(const dict &req, int reqid);
+
+int reqFundTrans(const dict &req, int reqid);
+
+int reqQryFundTrans(const dict &req, int reqid);
+
+int reqQryClientNotice(const dict &req, int reqid);
+
+int reqQryOptUnderly(const dict &req, int reqid);
+
+int reqQrySecuDepthMarket(const dict &req, int reqid);
+
+int reqQryHistOrder(const dict &req, int reqid);
+
+int reqQryHistTrade(const dict &req, int reqid);
 

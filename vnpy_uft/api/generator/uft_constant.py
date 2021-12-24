@@ -291,6 +291,3 @@ HS_OCR_CancelInserted = '5'
 HS_OCR_CancelReported = '6'
 HS_OCR_CancelConfirmed = '7'
 HS_OCR_CancelFailed = '8'	
-HS_TERT_RESTART = 0
-HS_TERT_RESUME = 1
-HS_TERT_QUICK = 2
