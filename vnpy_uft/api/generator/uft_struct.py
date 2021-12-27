@@ -1007,4 +1007,3 @@ CHSRspQrySecuDepthMarketField = {
     "AskPrice5": "double",
     "AskVolume5": "double",
 }
-

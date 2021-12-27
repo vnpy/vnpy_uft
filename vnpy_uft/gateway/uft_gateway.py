@@ -585,26 +585,26 @@ class UftTdApi(TdApi):
                     gateway_name=self.gateway_name
                 )
                 self.positions[key] = position
-    
+
             # 计算昨仓
             if self.gateway.server == "期货":
                 position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
-    
+
             # 获取合约的乘数信息
             size: float = contract.size
 
             # 计算之前已有仓位的持仓总成本
             cost: float = position.price * position.volume * size
-    
+
             # 累加更新持仓数量和盈亏
             position.volume += data["PositionVolume"]
             position.pnl += data["PositionProfit"]
-    
+
             # 计算更新后的持仓总成本和均价
             if position.volume and size:
                 cost += data["PositionCost"]
                 position.price = cost / (position.volume * size)
-    
+
             # 更新仓位冻结数量
             position.frozen += data["CloseFrozenVolume"]
 
