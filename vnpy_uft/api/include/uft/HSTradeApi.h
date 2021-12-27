@@ -31,8 +31,11 @@ public:
     /// Others     :通过GetApiErrorMsg(nResult)获取详细错误信息。
     virtual void OnFrontDisconnected(int nResult){};
 
-	/// Description:客户认证
-	virtual void OnRspAuthenticate(CHSRspAuthenticateField *pRspAuthenticate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+    /// Description:客户认证
+    virtual void OnRspAuthenticate(CHSRspAuthenticateField *pRspAuthenticate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:终端信息上报接口(中继模式)
+    virtual void OnRspSubmitUserSystemInfo(CHSRspUserSystemInfoField *pRspUserSystemInfo, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:客户登录
     virtual void OnRspUserLogin(CHSRspUserLoginField *pRspUserLogin, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
@@ -68,10 +71,13 @@ public:
     virtual void OnRspQueryMaxOrderVolume(CHSRspQueryMaxOrderVolumeField *pRspQueryMaxOrderVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:可锁定数量获取
-    virtual void OnRspQueryLockVolume(CHSRspQueryLockVolumeField *pRspQueryLockVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+    virtual void OnRspQryLockVolume(CHSRspQryLockVolumeField *pRspQryLockVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:可行权数量获取
     virtual void OnRspQueryExerciseVolume(CHSRspQueryExerciseVolumeField *pRspQueryExerciseVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:申请组合最大数量获取
+    virtual void OnRspQryCombVolume(CHSRspQryCombVolumeField *pRspQryCombVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:持仓查询
     virtual void OnRspQryPosition(CHSRspQryPositionField *pRspQryPosition, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
@@ -118,6 +124,9 @@ public:
     /// Description:银行账户查询
     virtual void OnRspQueryBankAccount(CHSRspQueryBankAccountField *pRspQueryBankAccount, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
+    /// Description:多中心资金调拨
+    virtual void OnRspMultiCentreFundTrans(CHSRspMultiCentreFundTransField *pRspMultiCentreFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
     /// Description:客户账单查询
     virtual void OnRspQueryBillContent(CHSRspQueryBillContentField *pRspQueryBillContent, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
@@ -133,7 +142,7 @@ public:
     /// Description:持仓明细查询
     virtual void OnRspQryPositionDetail(CHSRspQryPositionDetailField *pRspQryPositionDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
-    // Description:汇率查询
+    /// Description:汇率查询
     virtual void OnRspQryExchangeRate(CHSRspQryExchangeRateField *pRspQryExchangeRate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:经纪公司配置参数查询
@@ -141,6 +150,27 @@ public:
 
     /// Description:行情查询
     virtual void OnRspQryDepthMarketData(CHSDepthMarketDataField *pRspQryDepthMarketData, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:资金调拨
+    virtual void OnRspFundTrans(CHSRspFundTransField *pRspFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:资金调拨流水查询
+    virtual void OnRspQryFundTrans(CHSRspQryFundTransField *pRspQryFundTrans, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:查询客户通知
+    virtual void OnRspQryClientNotice(CHSClientNoticeField *pRspQryClientNotice, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:期权标的信息查询
+    virtual void OnRspQryOptUnderly(CHSRspQryOptUnderlyField *pRspQryOptUnderly, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:证券行情查询
+    virtual void OnRspQrySecuDepthMarket(CHSRspQrySecuDepthMarketField *pRspQrySecuDepthMarket, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:历史报单查询
+    virtual void OnRspQryHistOrder(CHSOrderField *pRspQryHistOrder, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
+    /// Description:历史成交查询
+    virtual void OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description: 主推-成交回报
     virtual void OnRtnTrade(CHSTradeField *pRtnTrade) {};
@@ -156,6 +186,12 @@ public:
 
     /// Description: 主推-锁定
     virtual void OnRtnLock(CHSLockField *pRtnLock) {};
+
+    /// Description: 主推-撤单错误回报
+    virtual void OnErrRtnOrderAction(CHSOrderActionField *pRtnOrder) {};
+
+    /// Description: 主推-客户通知
+    virtual void OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice) {};
 };
 
 ///交易
@@ -179,10 +215,10 @@ public:
 
     /// Description: 注册订阅模式（暂未支持）
     /// Input      : 订阅方式
-    ///                 HS_TERT_RESTART://从本交易日开始重传
-    ///                 HS_TERT_RESUME: //从上次收到的续传
-    ///                 HS_TERT_QUICK:  //从登录后最新的开始传
-    virtual int RegisterSubModel(const char *pszSubModel) = 0;
+    ///               HS_TERT_RESTART://从本交易日开始重传
+    ///               HS_TERT_RESUME: //从上次收到的续传
+    ///               HS_TERT_QUICK:  //从登录后最新的开始传
+    virtual int RegisterSubModel(SUB_TERT_TYPE eSubType) = 0;
 
     /// Description: 注册前置机网络地址
     /// Input      : pszFrontAddress           前置机网络地址 如：”tcp://127.0.0.1:17001”
@@ -207,6 +243,9 @@ public:
 
     /// Description: 接入认证 
     virtual int ReqAuthenticate(CHSReqAuthenticateField *pReqAuthenticate,int nRequestID) = 0;
+
+    /// Description: 终端信息上报接口(中继模式)
+    virtual int ReqSubmitUserSystemInfo(CHSReqUserSystemInfoField *pReqUserSystemInfo,int nRequestID) = 0;
 
     /// Description:客户登录
     virtual int  ReqUserLogin(CHSReqUserLoginField *pReqUserLogin, int nRequestID) = 0;
@@ -239,10 +278,13 @@ public:
     virtual int  ReqQueryMaxOrderVolume(CHSReqQueryMaxOrderVolumeField *pReqQueryMaxOrderVolume, int nRequestID) = 0;
 
     /// Description:可锁定数量获取
-    virtual int  ReqQueryLockVolume(CHSReqQueryLockVolumeField *pReqQueryLockVolume, int nRequestID) = 0;
+    virtual int  ReqQryLockVolume(CHSReqQryLockVolumeField *pReqQryLockVolume, int nRequestID) = 0;
 
     /// Description:可行权数量获取
     virtual int  ReqQueryExerciseVolume(CHSReqQueryExerciseVolumeField *pReqQueryExerciseVolume, int nRequestID) = 0;
+
+    /// Description:申请组合最大数量获取
+    virtual int  ReqQryCombVolume(CHSReqQryCombVolumeField *pReqQryCombVolume, int nRequestID) = 0;
 
     /// Description:持仓汇总查询
     virtual int  ReqQryPosition(CHSReqQryPositionField *pReqQryPosition, int nRequestID) = 0;
@@ -289,6 +331,9 @@ public:
     /// Description:银行账户查询
     virtual int  ReqQueryBankAccount(CHSReqQueryBankAccountField *pReqQueryBankAccount, int nRequestID) = 0;
 
+    /// Description:多中心资金调拨
+    virtual int  ReqMultiCentreFundTrans(CHSReqMultiCentreFundTransField *pReqMultiCentreFundTransfer, int nRequestID) = 0;
+
     /// Description:客户账单查询
     virtual int  ReqQueryBillContent(CHSReqQueryBillContentField *pReqQueryBillContent, int nRequestID) = 0;
 
@@ -301,8 +346,8 @@ public:
     /// Description:手续费查询
     virtual int  ReqQryCommission(CHSReqQryCommissionField *pReqQryCommission, int nRequestID) = 0;
 
-	/// Description:汇率查询
-	virtual int  ReqQryExchangeRate(CHSReqQryExchangeRateField *pReqQryExchangeRate, int nRequestID) = 0;
+    /// Description:汇率查询
+    virtual int  ReqQryExchangeRate(CHSReqQryExchangeRateField *pReqQryExchangeRate, int nRequestID) = 0;
 
     /// Description:持仓明细查询
     virtual int  ReqQryPositionDetail(CHSReqQryPositionDetailField *pReqQryPositionDetail, int nRequestID) = 0;
@@ -312,6 +357,27 @@ public:
 
     /// Description:行情查询
     virtual int  ReqQryDepthMarketData(CHSReqQryDepthMarketDataField *pReqQryDepthMarketData, int nRequestID) = 0;
+
+    /// Description:资金调拨
+    virtual int  ReqFundTrans(CHSReqFundTransField *pReqFundTransfer, int nRequestID) = 0;
+
+    /// Description:资金调拨流水查询
+    virtual int  ReqQryFundTrans(CHSReqQryFundTransField *pReqQryFundTrans, int nRequestID) = 0;
+
+    /// Description:客户通知查询
+    virtual int  ReqQryClientNotice(CHSReqQryClientNoticeField *pReqQryClientNotice, int nRequestID) = 0;
+
+    /// Description:期权标的信息查询
+    virtual int  ReqQryOptUnderly(CHSReqQryOptUnderlyField *pReqQryOptUnderly, int nRequestID) = 0;
+
+    /// Description:证券行情查询
+    virtual int  ReqQrySecuDepthMarket(CHSReqQrySecuDepthMarketField *pReqQrySecuDepthMarket, int nRequestID) = 0;
+
+    /// Description:历史报单查询
+    virtual int  ReqQryHistOrder(CHSReqQryHistOrderField *pReqQryHistOrder, int nRequestID) = 0;
+
+    /// Description:历史成交查询
+    virtual int  ReqQryHistTrade(CHSReqQryHistTradeField *pReqQryHistTrade, int nRequestID) = 0;
 protected:
     ~CHSTradeApi(){};
 };

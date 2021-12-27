@@ -16,6 +16,12 @@ case ONRSPAUTHENTICATE:
 	break;
 }
 
+case ONRSPSUBMITUSERSYSTEMINFO:
+{
+	this->processRspSubmitUserSystemInfo(&task);
+	break;
+}
+
 case ONRSPUSERLOGIN:
 {
 	this->processRspUserLogin(&task);
@@ -76,15 +82,21 @@ case ONRSPQUERYMAXORDERVOLUME:
 	break;
 }
 
-case ONRSPQUERYLOCKVOLUME:
+case ONRSPQRYLOCKVOLUME:
 {
-	this->processRspQueryLockVolume(&task);
+	this->processRspQryLockVolume(&task);
 	break;
 }
 
 case ONRSPQUERYEXERCISEVOLUME:
 {
 	this->processRspQueryExerciseVolume(&task);
+	break;
+}
+
+case ONRSPQRYCOMBVOLUME:
+{
+	this->processRspQryCombVolume(&task);
 	break;
 }
 
@@ -178,6 +190,12 @@ case ONRSPQUERYBANKACCOUNT:
 	break;
 }
 
+case ONRSPMULTICENTREFUNDTRANS:
+{
+	this->processRspMultiCentreFundTrans(&task);
+	break;
+}
+
 case ONRSPQUERYBILLCONTENT:
 {
 	this->processRspQueryBillContent(&task);
@@ -226,6 +244,48 @@ case ONRSPQRYDEPTHMARKETDATA:
 	break;
 }
 
+case ONRSPFUNDTRANS:
+{
+	this->processRspFundTrans(&task);
+	break;
+}
+
+case ONRSPQRYFUNDTRANS:
+{
+	this->processRspQryFundTrans(&task);
+	break;
+}
+
+case ONRSPQRYCLIENTNOTICE:
+{
+	this->processRspQryClientNotice(&task);
+	break;
+}
+
+case ONRSPQRYOPTUNDERLY:
+{
+	this->processRspQryOptUnderly(&task);
+	break;
+}
+
+case ONRSPQRYSECUDEPTHMARKET:
+{
+	this->processRspQrySecuDepthMarket(&task);
+	break;
+}
+
+case ONRSPQRYHISTORDER:
+{
+	this->processRspQryHistOrder(&task);
+	break;
+}
+
+case ONRSPQRYHISTTRADE:
+{
+	this->processRspQryHistTrade(&task);
+	break;
+}
+
 case ONRTNTRADE:
 {
 	this->processRtnTrade(&task);
@@ -253,6 +313,18 @@ case ONRTNCOMBACTION:
 case ONRTNLOCK:
 {
 	this->processRtnLock(&task);
+	break;
+}
+
+case ONERRRTNORDERACTION:
+{
+	this->processErrRtnOrderAction(&task);
+	break;
+}
+
+case ONRTNCLIENTNOTICE:
+{
+	this->processRtnClientNotice(&task);
 	break;
 }
 

@@ -67,9 +67,6 @@ void MdApi::OnRtnDepthMarketData(CHSDepthMarketDataField *pDepthMarketData)
 };
 
 
-
-
-
 ///-------------------------------------------------------------------------------------
 ///工作线程从队列中取出数据，转化为python对象后，进行推送
 ///-------------------------------------------------------------------------------------
@@ -113,7 +110,6 @@ void MdApi::processTask()
 				this->processRtnDepthMarketData(&task);
 				break;
 			}
-
             };
         }
     }
@@ -218,7 +214,6 @@ void MdApi::processRtnDepthMarketData(Task *task)
 };
 
 
-
 ///-------------------------------------------------------------------------------------
 ///主动函数
 ///-------------------------------------------------------------------------------------
@@ -234,7 +229,7 @@ int MdApi::init(string pszLicFile, string pszSafeLevel, string pszPwd, string ps
 	this->active = true;
 	this->task_thread = thread(&MdApi::processTask, this);
 
-	int i = this->api->Init((char*)pszLicFile.c_str(), (char*)pszSafeLevel.c_str(), (char*)pszPwd.c_str(), (char*)pszSslFile.c_str(), (char*)pszSslPwd.c_str());
+	int i = this->api->Init(pszLicFile.c_str(),pszSafeLevel.c_str(), pszPwd.c_str(), pszSslFile.c_str(), pszSslPwd.c_str());
 	return i;
 };
 
@@ -258,13 +253,13 @@ int MdApi::exit()
 
 int MdApi::registerFront(string pszFrontAddress)
 {
-	int i = this->api->RegisterFront((char*)pszFrontAddress.c_str());
+	int i = this->api->RegisterFront(pszFrontAddress.c_str());
 	return i;
 };
 
 int MdApi::registerFensServer(string pszFensAddress, string pszAccountID)
 {
-	int i = this->api->RegisterFensServer((char*)pszFensAddress.c_str(), (char*)pszAccountID.c_str());
+	int i = this->api->RegisterFensServer(pszFensAddress.c_str(), pszAccountID.c_str());
 	return i;
 };
 
@@ -282,7 +277,7 @@ int MdApi::reqDepthMarketDataSubscribe(const dict &req, int reqid)
 	getString(req, "InstrumentID", myreq.InstrumentID);
 
 	CHSReqDepthMarketDataField myreqs[1] = { myreq };
-	int i = this->api->ReqDepthMarketDataSubscribe(myreqs, 1 ,reqid);
+	int i = this->api->ReqDepthMarketDataSubscribe(myreqs, 1, reqid);
 	return i;
 };
 
@@ -367,8 +362,6 @@ public:
 			cout << e.what() << endl;
 		}
 	};
-
-
 };
 
 

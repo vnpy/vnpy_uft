@@ -32,7 +32,7 @@ extern "C"
 EXPORT int HSAPI hundsun_encrypt(char* in, int inLen, char* out, int* outLen, char* key);
 
 /*采集系统信息
-*@param pszSysInfo:  加密后的采集信息, 缓冲区长度至少492字节
+*@param pszSysInfo:  加密后的采集信息, 缓冲区长度至少482字节
 *@param iSysInfoLen:  加密后的采集信息的长度
 *@param pszSysInfoIntegrity:   采集信息完整度，缓冲区长度至少300字节
 *@param iSysInfoIntegrityLen:   采集信息完整度的长度

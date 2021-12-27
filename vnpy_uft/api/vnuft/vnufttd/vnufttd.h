@@ -12,50 +12,60 @@ using namespace pybind11;
 
 //常量
 #define ONFRONTCONNECTED 0
-#define ONFRONTCONNECTED 0
 #define ONFRONTDISCONNECTED 1
 #define ONRSPAUTHENTICATE 2
-#define ONRSPUSERLOGIN 3
-#define ONRSPUSERPASSWORDUPDATE 4
-#define ONRSPERRORORDERINSERT 5
-#define ONRSPORDERACTION 6
-#define ONRSPERROREXERCISEORDERINSERT 7
-#define ONRSPEXERCISEORDERACTION 8
-#define ONRSPERRORLOCKINSERT 9
-#define ONRSPFORQUOTEINSERT 10
-#define ONRSPERRORCOMBACTIONINSERT 11
-#define ONRSPQUERYMAXORDERVOLUME 12
-#define ONRSPQUERYLOCKVOLUME 13
-#define ONRSPQUERYEXERCISEVOLUME 14
-#define ONRSPQRYPOSITION 15
-#define ONRSPQRYTRADINGACCOUNT 16
-#define ONRSPQRYORDER 17
-#define ONRSPQRYTRADE 18
-#define ONRSPQRYEXERCISE 19
-#define ONRSPQRYLOCK 20
-#define ONRSPQRYCOMBACTION 21
-#define ONRSPQRYPOSITIONCOMBINEDETAIL 22
-#define ONRSPQRYINSTRUMENT 23
-#define ONRSPQRYCOVEREDSHORT 24
-#define ONRSPQRYEXERCISEASSIGN 25
-#define ONRSPTRANSFER 26
-#define ONRSPQRYTRANSFER 27
-#define ONRSPQUERYBANKBALANCE 28
-#define ONRSPQUERYBANKACCOUNT 29
-#define ONRSPQUERYBILLCONTENT 30
-#define ONRSPBILLCONFIRM 31
-#define ONRSPQRYMARGIN 32
-#define ONRSPQRYCOMMISSION 33
-#define ONRSPQRYPOSITIONDETAIL 34
-#define ONRSPQRYEXCHANGERATE 35
-#define ONRSPQRYSYSCONFIG 36
-#define ONRSPQRYDEPTHMARKETDATA 37
-#define ONRTNTRADE 38
-#define ONRTNORDER 39
-#define ONRTNEXERCISE 40
-#define ONRTNCOMBACTION 41
-#define ONRTNLOCK 42
-
+#define ONRSPSUBMITUSERSYSTEMINFO 3
+#define ONRSPUSERLOGIN 4
+#define ONRSPUSERPASSWORDUPDATE 5
+#define ONRSPERRORORDERINSERT 6
+#define ONRSPORDERACTION 7
+#define ONRSPERROREXERCISEORDERINSERT 8
+#define ONRSPEXERCISEORDERACTION 9
+#define ONRSPERRORLOCKINSERT 10
+#define ONRSPFORQUOTEINSERT 11
+#define ONRSPERRORCOMBACTIONINSERT 12
+#define ONRSPQUERYMAXORDERVOLUME 13
+#define ONRSPQRYLOCKVOLUME 14
+#define ONRSPQUERYEXERCISEVOLUME 15
+#define ONRSPQRYCOMBVOLUME 16
+#define ONRSPQRYPOSITION 17
+#define ONRSPQRYTRADINGACCOUNT 18
+#define ONRSPQRYORDER 19
+#define ONRSPQRYTRADE 20
+#define ONRSPQRYEXERCISE 21
+#define ONRSPQRYLOCK 22
+#define ONRSPQRYCOMBACTION 23
+#define ONRSPQRYPOSITIONCOMBINEDETAIL 24
+#define ONRSPQRYINSTRUMENT 25
+#define ONRSPQRYCOVEREDSHORT 26
+#define ONRSPQRYEXERCISEASSIGN 27
+#define ONRSPTRANSFER 28
+#define ONRSPQRYTRANSFER 29
+#define ONRSPQUERYBANKBALANCE 30
+#define ONRSPQUERYBANKACCOUNT 31
+#define ONRSPMULTICENTREFUNDTRANS 32
+#define ONRSPQUERYBILLCONTENT 33
+#define ONRSPBILLCONFIRM 34
+#define ONRSPQRYMARGIN 35
+#define ONRSPQRYCOMMISSION 36
+#define ONRSPQRYPOSITIONDETAIL 37
+#define ONRSPQRYEXCHANGERATE 38
+#define ONRSPQRYSYSCONFIG 39
+#define ONRSPQRYDEPTHMARKETDATA 40
+#define ONRSPFUNDTRANS 41
+#define ONRSPQRYFUNDTRANS 42
+#define ONRSPQRYCLIENTNOTICE 43
+#define ONRSPQRYOPTUNDERLY 44
+#define ONRSPQRYSECUDEPTHMARKET 45
+#define ONRSPQRYHISTORDER 46
+#define ONRSPQRYHISTTRADE 47
+#define ONRTNTRADE 48
+#define ONRTNORDER 49
+#define ONRTNEXERCISE 50
+#define ONRTNCOMBACTION 51
+#define ONRTNLOCK 52
+#define ONERRRTNORDERACTION 53
+#define ONRTNCLIENTNOTICE 54
 
 
 ///-------------------------------------------------------------------------------------
@@ -98,6 +108,9 @@ public:
 	/// Description:客户认证
 	virtual void OnRspAuthenticate(CHSRspAuthenticateField *pRspAuthenticate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
+	/// Description:终端信息上报接口(中继模式)
+	virtual void OnRspSubmitUserSystemInfo(CHSRspUserSystemInfoField *pRspUserSystemInfo, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
 	/// Description:客户登录
 	virtual void OnRspUserLogin(CHSRspUserLoginField *pRspUserLogin, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
@@ -132,10 +145,13 @@ public:
 	virtual void OnRspQueryMaxOrderVolume(CHSRspQueryMaxOrderVolumeField *pRspQueryMaxOrderVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:可锁定数量获取
-	virtual void OnRspQueryLockVolume(CHSRspQueryLockVolumeField *pRspQueryLockVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	virtual void OnRspQryLockVolume(CHSRspQryLockVolumeField *pRspQryLockVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:可行权数量获取
 	virtual void OnRspQueryExerciseVolume(CHSRspQueryExerciseVolumeField *pRspQueryExerciseVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:申请组合最大数量获取
+	virtual void OnRspQryCombVolume(CHSRspQryCombVolumeField *pRspQryCombVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:持仓查询
 	virtual void OnRspQryPosition(CHSRspQryPositionField *pRspQryPosition, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
@@ -164,7 +180,7 @@ public:
 	/// Description:合约信息查询
 	virtual void OnRspQryInstrument(CHSRspQryInstrumentField *pRspQryInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	/// Description:备兑缺口查询7
+	/// Description:备兑缺口查询
 	virtual void OnRspQryCoveredShort(CHSRspQryCoveredShortField *pRspQryCoveredShort, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:行权指派查询
@@ -181,6 +197,9 @@ public:
 
 	/// Description:银行账户查询
 	virtual void OnRspQueryBankAccount(CHSRspQueryBankAccountField *pRspQueryBankAccount, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:多中心资金调拨
+	virtual void OnRspMultiCentreFundTrans(CHSRspMultiCentreFundTransField *pRspMultiCentreFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:客户账单查询
 	virtual void OnRspQueryBillContent(CHSRspQueryBillContentField *pRspQueryBillContent, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
@@ -206,6 +225,27 @@ public:
 	/// Description:行情查询
 	virtual void OnRspQryDepthMarketData(CHSDepthMarketDataField *pRspQryDepthMarketData, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
+	/// Description:资金调拨
+	virtual void OnRspFundTrans(CHSRspFundTransField *pRspFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:资金调拨流水查询
+	virtual void OnRspQryFundTrans(CHSRspQryFundTransField *pRspQryFundTrans, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:查询客户通知
+	virtual void OnRspQryClientNotice(CHSClientNoticeField *pRspQryClientNotice, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:期权标的信息查询
+	virtual void OnRspQryOptUnderly(CHSRspQryOptUnderlyField *pRspQryOptUnderly, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:证券行情查询
+	virtual void OnRspQrySecuDepthMarket(CHSRspQrySecuDepthMarketField *pRspQrySecuDepthMarket, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:历史报单查询
+	virtual void OnRspQryHistOrder(CHSOrderField *pRspQryHistOrder, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:历史成交查询
+	virtual void OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
 	/// Description: 主推-成交回报
 	virtual void OnRtnTrade(CHSTradeField *pRtnTrade);
 
@@ -221,6 +261,12 @@ public:
 	/// Description: 主推-锁定
 	virtual void OnRtnLock(CHSLockField *pRtnLock);
 
+	/// Description: 主推-撤单错误回报
+	virtual void OnErrRtnOrderAction(CHSOrderActionField *pRtnOrder);
+
+	/// Description: 主推-客户通知
+	virtual void OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice);
+
     //-------------------------------------------------------------------------------------
     //task：任务
     //-------------------------------------------------------------------------------------
@@ -231,6 +277,8 @@ public:
 	void processFrontDisconnected(Task *task);
 
 	void processRspAuthenticate(Task *task);
+
+	void processRspSubmitUserSystemInfo(Task *task);
 
 	void processRspUserLogin(Task *task);
 
@@ -252,9 +300,11 @@ public:
 
 	void processRspQueryMaxOrderVolume(Task *task);
 
-	void processRspQueryLockVolume(Task *task);
+	void processRspQryLockVolume(Task *task);
 
 	void processRspQueryExerciseVolume(Task *task);
+
+	void processRspQryCombVolume(Task *task);
 
 	void processRspQryPosition(Task *task);
 
@@ -286,6 +336,8 @@ public:
 
 	void processRspQueryBankAccount(Task *task);
 
+	void processRspMultiCentreFundTrans(Task *task);
+
 	void processRspQueryBillContent(Task *task);
 
 	void processRspBillConfirm(Task *task);
@@ -302,6 +354,20 @@ public:
 
 	void processRspQryDepthMarketData(Task *task);
 
+	void processRspFundTrans(Task *task);
+
+	void processRspQryFundTrans(Task *task);
+
+	void processRspQryClientNotice(Task *task);
+
+	void processRspQryOptUnderly(Task *task);
+
+	void processRspQrySecuDepthMarket(Task *task);
+
+	void processRspQryHistOrder(Task *task);
+
+	void processRspQryHistTrade(Task *task);
+
 	void processRtnTrade(Task *task);
 
 	void processRtnOrder(Task *task);
@@ -311,6 +377,10 @@ public:
 	void processRtnCombAction(Task *task);
 
 	void processRtnLock(Task *task);
+
+	void processErrRtnOrderAction(Task *task);
+
+	void processRtnClientNotice(Task *task);
 
     //-------------------------------------------------------------------------------------
     //data：回调函数的数据字典
@@ -325,6 +395,8 @@ public:
 	virtual void onFrontDisconnected(int reqid) {};
 
 	virtual void onRspAuthenticate(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspSubmitUserSystemInfo(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspUserLogin(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -346,9 +418,11 @@ public:
 
 	virtual void onRspQueryMaxOrderVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
-	virtual void onRspQueryLockVolume(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryLockVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQueryExerciseVolume(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryCombVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQryPosition(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -380,6 +454,8 @@ public:
 
 	virtual void onRspQueryBankAccount(const dict &data, const dict &error, int reqid, bool last) {};
 
+	virtual void onRspMultiCentreFundTrans(const dict &data, const dict &error, int reqid, bool last) {};
+
 	virtual void onRspQueryBillContent(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspBillConfirm(const dict &data, const dict &error, int reqid, bool last) {};
@@ -396,6 +472,20 @@ public:
 
 	virtual void onRspQryDepthMarketData(const dict &data, const dict &error, int reqid, bool last) {};
 
+	virtual void onRspFundTrans(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryFundTrans(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryClientNotice(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryOptUnderly(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQrySecuDepthMarket(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryHistOrder(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) {};
+
 	virtual void onRtnTrade(const dict &data) {};
 
 	virtual void onRtnOrder(const dict &data) {};
@@ -405,6 +495,10 @@ public:
 	virtual void onRtnCombAction(const dict &data) {};
 
 	virtual void onRtnLock(const dict &data) {};
+
+	virtual void onErrRtnOrderAction(const dict &data) {};
+
+	virtual void onRtnClientNotice(const dict &data) {};
 
     //-------------------------------------------------------------------------------------
     //req:主动函数的请求字典
@@ -418,7 +512,7 @@ public:
 
 	int exit();
 
-	int rgisterSubModel(string pszSubModel);
+	int rgisterSubModel(int eSubType);
 
 	int registerFront(string pszFrontAddress);
 
@@ -429,6 +523,8 @@ public:
 	int getTradingDate();
 
 	int reqAuthenticate(const dict &req, int reqid);
+
+	int reqSubmitUserSystemInfo(const dict &req, int reqid);
 
 	int reqUserLogin(const dict &req, int reqid);
 
@@ -450,9 +546,11 @@ public:
 
 	int reqQueryMaxOrderVolume(const dict &req, int reqid);
 
-	int reqQueryLockVolume(const dict &req, int reqid);
+	int reqQryLockVolume(const dict &req, int reqid);
 
 	int reqQueryExerciseVolume(const dict &req, int reqid);
+
+	int reqQryCombVolume(const dict &req, int reqid);
 
 	int reqQryPosition(const dict &req, int reqid);
 
@@ -484,6 +582,8 @@ public:
 
 	int reqQueryBankAccount(const dict &req, int reqid);
 
+	int reqMultiCentreFundTrans(const dict &req, int reqid);
+
 	int reqQueryBillContent(const dict &req, int reqid);
 
 	int reqBillConfirm(const dict &req, int reqid);
@@ -499,4 +599,18 @@ public:
 	int reqQrySysConfig(const dict &req, int reqid);
 
 	int reqQryDepthMarketData(const dict &req, int reqid);
+
+	int reqFundTrans(const dict &req, int reqid);
+
+	int reqQryFundTrans(const dict &req, int reqid);
+
+	int reqQryClientNotice(const dict &req, int reqid);
+
+	int reqQryOptUnderly(const dict &req, int reqid);
+
+	int reqQrySecuDepthMarket(const dict &req, int reqid);
+
+	int reqQryHistOrder(const dict &req, int reqid);
+
+	int reqQryHistTrade(const dict &req, int reqid);
 };

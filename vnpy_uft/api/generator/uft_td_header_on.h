@@ -4,6 +4,8 @@ virtual void onFrontDisconnected(int reqid) {};
 
 virtual void onRspAuthenticate(const dict &data, const dict &error, int reqid, bool last) {};
 
+virtual void onRspSubmitUserSystemInfo(const dict &data, const dict &error, int reqid, bool last) {};
+
 virtual void onRspUserLogin(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspUserPasswordUpdate(const dict &data, const dict &error, int reqid, bool last) {};
@@ -24,9 +26,11 @@ virtual void onRspErrorCombActionInsert(const dict &data, const dict &error, int
 
 virtual void onRspQueryMaxOrderVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
-virtual void onRspQueryLockVolume(const dict &data, const dict &error, int reqid, bool last) {};
+virtual void onRspQryLockVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspQueryExerciseVolume(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryCombVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspQryPosition(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -58,6 +62,8 @@ virtual void onRspQueryBankBalance(const dict &data, const dict &error, int reqi
 
 virtual void onRspQueryBankAccount(const dict &data, const dict &error, int reqid, bool last) {};
 
+virtual void onRspMultiCentreFundTrans(const dict &data, const dict &error, int reqid, bool last) {};
+
 virtual void onRspQueryBillContent(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspBillConfirm(const dict &data, const dict &error, int reqid, bool last) {};
@@ -74,6 +80,20 @@ virtual void onRspQrySysConfig(const dict &data, const dict &error, int reqid, b
 
 virtual void onRspQryDepthMarketData(const dict &data, const dict &error, int reqid, bool last) {};
 
+virtual void onRspFundTrans(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryFundTrans(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryClientNotice(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryOptUnderly(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQrySecuDepthMarket(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryHistOrder(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) {};
+
 virtual void onRtnTrade(const dict &data) {};
 
 virtual void onRtnOrder(const dict &data) {};
@@ -83,4 +103,8 @@ virtual void onRtnExercise(const dict &data) {};
 virtual void onRtnCombAction(const dict &data) {};
 
 virtual void onRtnLock(const dict &data) {};
+
+virtual void onErrRtnOrderAction(const dict &data) {};
+
+virtual void onRtnClientNotice(const dict &data) {};
 
