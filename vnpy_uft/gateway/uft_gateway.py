@@ -22,8 +22,8 @@ from ..api import (
     HS_OS_Traded,
     HS_OS_Canceled,
     HS_OS_CanceledWithPartsTraded,
-    HS_D_Buy,
-    HS_D_Sell,
+    HS_DC_Buy,
+    HS_DC_Sell,
     HS_CT_Limit,
     HS_CT_Market,
     HS_OF_Open,
@@ -35,6 +35,7 @@ from ..api import (
     HS_PTYPE_Combination,
     HS_OT_CallOptions,
     HS_OT_PutOptions,
+    HS_TERT_RESUME
 )
 from vnpy.trader.constant import (
     Direction,
@@ -74,8 +75,8 @@ STATUS_UFT2VT: Dict[str, Status] = {
 
 # 多空方向映射
 DIRECTION_VT2UFT: Dict[Direction, str] = {
-    Direction.LONG: HS_D_Buy,
-    Direction.SHORT: HS_D_Sell
+    Direction.LONG: HS_DC_Buy,
+    Direction.SHORT: HS_DC_Sell
 }
 DIRECTION_UFT2VT: Dict[str, Direction] = {v: k for k, v in DIRECTION_VT2UFT.items()}
 
@@ -153,6 +154,7 @@ class UftGateway(BaseGateway):
 
         self.td_api: "UftTdApi" = UftTdApi(self)
         self.md_api: "UftMdApi" = UftMdApi(self)
+        self.server: str = ""
 
     def connect(self, setting: dict) -> None:
         """连接交易接口"""
@@ -160,7 +162,7 @@ class UftGateway(BaseGateway):
         password: str = setting["密码"]
         md_address: str = setting["行情服务器"]
         td_address: str = setting["交易服务器"]
-        server: str = setting["服务器类型"]
+        self.server: str = setting["服务器类型"]
         appid: str = setting["产品名称"]
         auth_code: str = setting["授权编码"]
         application_type: str = setting["委托类型"]
@@ -176,7 +178,7 @@ class UftGateway(BaseGateway):
         if license_path.exists():
             server_license = str(license_path)
         else:
-            if server == "期货":
+            if self.server == "期货":
                 server_license = FUTURES_LICENSE
             else:
                 server_license = OPTION_LICENSE
@@ -464,6 +466,8 @@ class UftTdApi(TdApi):
 
             self.reqid += 1
             self.reqQryInstrument({}, self.reqid)
+            self.reqid += 1
+            self.reqBillConfirm({}, self.reqid)
 
             self.query_order()
             self.query_trade()
@@ -546,9 +550,9 @@ class UftTdApi(TdApi):
         if error["ErrorID"]:
             self.gateway.write_error("交易撤单失败", error)
 
-    def onRspQueryMaxOrderVolume(self, data: dict, error: dict, reqid: int, last: bool) -> None:
-        """最大报单数量查询回报"""
-        pass
+    def onRspBillConfirm(self, data: dict, error: dict, reqid: int, last: bool) -> None:
+        """客户账单确认"""
+        self.gateway.write_log("结算信息确认成功")
 
     def onRspQryPosition(
         self,
@@ -583,7 +587,8 @@ class UftTdApi(TdApi):
                 self.positions[key] = position
     
             # 计算昨仓
-            position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
+            if self.gateway.server == "期货":
+                position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
     
             # 获取合约的乘数信息
             size: float = contract.size
@@ -727,6 +732,8 @@ class UftTdApi(TdApi):
 
     def update_trade(self, data: dict) -> None:
         """成交委托更新"""
+        if not data["TradeID"]:
+            return
         symbol: str = data["InstrumentID"]
         exchange: Exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
         sessionid: str = data["SessionID"]
@@ -784,7 +791,7 @@ class UftTdApi(TdApi):
             path: Path = get_folder_path(self.gateway_name.lower())
             self.newTradeApi((str(path) + "\\Td").encode("GBK"))
 
-            self.rgisterSubModel("1")  # ??
+            self.rgisterSubModel(HS_TERT_RESUME)
 
             self.registerFront(address)
             self.init(
@@ -823,7 +830,6 @@ class UftTdApi(TdApi):
             "UserApplicationInfo": "",
             "MacAddress": "",
             "IPAddress": "",
-
         }
 
         self.reqid += 1
@@ -864,8 +870,6 @@ class UftTdApi(TdApi):
         sessionid, order_ref = req.orderid.split("_")
 
         uft_req: dict = {
-            # "InstrumentID": req.symbol,
-            # "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
             "SessionID": int(sessionid),
             "OrderRef": order_ref
         }

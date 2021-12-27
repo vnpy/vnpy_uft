@@ -17,7 +17,7 @@
 
 ## 安装
 
-安装需要基于2.2.0版本以上的[VN Studio](https://www.vnpy.com)。
+安装需要基于2.9.0版本以上的[VN Studio](https://www.vnpy.com)。
 
 直接使用pip命令：
 
@@ -62,8 +62,6 @@ if __name__ == "__main__":
 ```
 
 ## 连接
-
-连接前请先下载一个包含认证文件lisence.dat，放置在VN Trader运行目录（.vntrader同级文件夹）下。
 
 期货：
 
