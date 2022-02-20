@@ -135,6 +135,8 @@ class UftGateway(BaseGateway):
     vn.py基于恒生极速API开发的交易接口。
     """
 
+    default_name: str = "UFT"
+
     default_setting: Dict[str, str] = {
         "用户名": "",
         "密码": "",
@@ -148,7 +150,7 @@ class UftGateway(BaseGateway):
 
     exchanges: List[Exchange] = list(EXCHANGE_UFT2VT.values())
 
-    def __init__(self, event_engine: EventEngine, gateway_name: str = "UFT") -> None:
+    def __init__(self, event_engine: EventEngine, gateway_name: str) -> None:
         """构造函数"""
         super().__init__(event_engine, gateway_name)
 
