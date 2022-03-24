@@ -4,6 +4,31 @@ from datetime import datetime
 from typing import Dict, List
 from pathlib import Path
 
+from vnpy.event import EventEngine
+from vnpy.trader.constant import (
+    Direction,
+    Offset,
+    Exchange,
+    OrderType,
+    Product,
+    Status,
+    OptionType
+)
+from vnpy.trader.gateway import BaseGateway
+from vnpy.trader.object import (
+    TickData,
+    OrderData,
+    TradeData,
+    PositionData,
+    AccountData,
+    ContractData,
+    OrderRequest,
+    CancelRequest,
+    SubscribeRequest,
+)
+from vnpy.trader.utility import get_folder_path, TRADER_DIR
+from vnpy.trader.event import EVENT_TIMER
+
 from ..api import (
     FUTURES_LICENSE,
     OPTION_LICENSE,
@@ -37,30 +62,6 @@ from ..api import (
     HS_OT_PutOptions,
     HS_TERT_RESUME
 )
-from vnpy.trader.constant import (
-    Direction,
-    Offset,
-    Exchange,
-    OrderType,
-    Product,
-    Status,
-    OptionType
-)
-from vnpy.trader.gateway import BaseGateway
-from vnpy.trader.object import (
-    TickData,
-    OrderData,
-    TradeData,
-    PositionData,
-    AccountData,
-    ContractData,
-    OrderRequest,
-    CancelRequest,
-    SubscribeRequest,
-)
-from vnpy.trader.utility import get_folder_path, TRADER_DIR
-from vnpy.trader.event import EVENT_TIMER
-from vnpy.event import EventEngine
 
 
 # 委托状态映射
