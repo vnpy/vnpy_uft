@@ -1,8 +1,32 @@
 import sys
-import pytz
 from datetime import datetime
-from typing import Dict, List, Set
+from typing import Dict, List
 from pathlib import Path
+
+from vnpy.event import EventEngine
+from vnpy.trader.constant import (
+    Direction,
+    Offset,
+    Exchange,
+    OrderType,
+    Product,
+    Status,
+    OptionType
+)
+from vnpy.trader.gateway import BaseGateway
+from vnpy.trader.object import (
+    TickData,
+    OrderData,
+    TradeData,
+    PositionData,
+    AccountData,
+    ContractData,
+    OrderRequest,
+    CancelRequest,
+    SubscribeRequest,
+)
+from vnpy.trader.utility import get_folder_path, TRADER_DIR, ZoneInfo
+from vnpy.trader.event import EVENT_TIMER
 
 from ..api import (
     FUTURES_LICENSE,
@@ -37,30 +61,6 @@ from ..api import (
     HS_OT_PutOptions,
     HS_TERT_RESUME
 )
-from vnpy.trader.constant import (
-    Direction,
-    Offset,
-    Exchange,
-    OrderType,
-    Product,
-    Status,
-    OptionType
-)
-from vnpy.trader.gateway import BaseGateway
-from vnpy.trader.object import (
-    TickData,
-    OrderData,
-    TradeData,
-    PositionData,
-    AccountData,
-    ContractData,
-    OrderRequest,
-    CancelRequest,
-    SubscribeRequest,
-)
-from vnpy.trader.utility import get_folder_path, TRADER_DIR
-from vnpy.trader.event import EVENT_TIMER
-from vnpy.event import EventEngine
 
 
 # 委托状态映射
@@ -124,7 +124,7 @@ OPTIONTYPE_UFT2VT: Dict[str, OptionType] = {
 
 # 其他常量
 MAX_FLOAT = sys.float_info.max                  # 浮点数极限值
-CHINA_TZ = pytz.timezone("Asia/Shanghai")       # 中国时区
+CHINA_TZ = ZoneInfo("Asia/Shanghai")       # 中国时区
 
 # 合约数据全局缓存字典
 symbol_contract_map: Dict[str, ContractData] = {}
@@ -132,7 +132,7 @@ symbol_contract_map: Dict[str, ContractData] = {}
 
 class UftGateway(BaseGateway):
     """
-    vn.py基于恒生极速API开发的交易接口。
+    VeighNa基于恒生极速API开发的交易接口。
     """
 
     default_name: str = "UFT"
@@ -175,15 +175,15 @@ class UftGateway(BaseGateway):
         if not td_address.startswith("tcp://"):
             td_address = "tcp://" + td_address
 
-        license_path = TRADER_DIR.joinpath("license.dat")
+        license_path: Path = TRADER_DIR.joinpath("license.dat")
 
         if license_path.exists():
-            server_license = str(license_path)
+            server_license: str = str(license_path)
         else:
             if self.server == "期货":
-                server_license = FUTURES_LICENSE
+                server_license: str = FUTURES_LICENSE
             else:
-                server_license = OPTION_LICENSE
+                server_license: str = OPTION_LICENSE
 
         self.td_api.connect(
             td_address,
@@ -230,7 +230,7 @@ class UftGateway(BaseGateway):
         """输出错误信息日志"""
         error_id: int = error["ErrorID"]
         error_msg: str = error["ErrorMsg"]
-        msg = f"{msg}，代码：{error_id}，信息：{error_msg}"
+        msg: str = f"{msg}，代码：{error_id}，信息：{error_msg}"
         self.write_log(msg)
 
     def process_timer_event(self, event) -> None:
@@ -264,7 +264,7 @@ class UftMdApi(MdApi):
         self.reqid: int = 0
 
         self.connect_status: bool = False
-        self.subscribed: Set = set()
+        self.subscribed: set = set()
 
         self.userid: str = ""
         self.password: str = ""
@@ -303,7 +303,7 @@ class UftMdApi(MdApi):
 
         timestamp: str = f"{data['TradingDay']} {data['UpdateTime']}000"
         dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H%M%S%f")
-        dt: datetime = CHINA_TZ.localize(dt)
+        dt: datetime = dt.replace(tzinfo=CHINA_TZ)
 
         tick: TickData = TickData(
             symbol=symbol,
@@ -376,7 +376,7 @@ class UftMdApi(MdApi):
             return
 
         if self.connect_status:
-            uft_req = {
+            uft_req: dict = {
                 "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
                 "InstrumentID": symbol
             }
@@ -704,7 +704,7 @@ class UftTdApi(TdApi):
             fmt: str = "%Y%m%d %H:%M:%S"
 
         dt: datetime = datetime.strptime(timestamp, fmt)
-        dt: datetime = CHINA_TZ.localize(dt)
+        dt: datetime = dt.replace(tzinfo=CHINA_TZ)
 
         if not order:
             order: OrderData = OrderData(
@@ -736,6 +736,7 @@ class UftTdApi(TdApi):
         """成交委托更新"""
         if not data["TradeID"]:
             return
+
         symbol: str = data["InstrumentID"]
         exchange: Exchange = EXCHANGE_UFT2VT[data["ExchangeID"]]
         sessionid: str = data["SessionID"]
@@ -756,7 +757,7 @@ class UftTdApi(TdApi):
         trade_time: str = generate_time(data["TradeTime"])
         timestamp: str = f"{data['TradingDay']} {trade_time}"
         dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H:%M:%S")
-        dt: datetime = CHINA_TZ.localize(dt)
+        dt: datetime = dt.replace(tzinfo=CHINA_TZ)
 
         trade: TradeData = TradeData(
             symbol=symbol,
@@ -845,7 +846,7 @@ class UftTdApi(TdApi):
 
         self.order_ref += 1
 
-        uft_req = {
+        uft_req: dict = {
             "OrderRef": str(self.order_ref),
             "ExchangeID": EXCHANGE_VT2UFT[req.exchange],
             "InstrumentID": req.symbol,
@@ -916,26 +917,26 @@ def generate_time(data: int) -> str:
         if buf_size < 9:
             buf = "0" + buf     # 补齐小时前面的0
 
-    hour = buf[0:2]
-    minute = buf[2:4]
-    second = buf[4:6]
+    hour: str = buf[0:2]
+    minute: str = buf[2:4]
+    second: str = buf[4:6]
     return f"{hour}:{minute}:{second}"
 
 
 def get_option_index(strike_price: float, exchange_instrument_id: str) -> str:
     """获取期权指数"""
-    exchange_instrument_id = exchange_instrument_id.replace(" ", "")
+    exchange_instrument_id: str = exchange_instrument_id.replace(" ", "")
 
     if "M" in exchange_instrument_id:
-        n = exchange_instrument_id.index("M")
+        n: int = exchange_instrument_id.index("M")
     elif "A" in exchange_instrument_id:
-        n = exchange_instrument_id.index("A")
+        n: int = exchange_instrument_id.index("A")
     elif "B" in exchange_instrument_id:
-        n = exchange_instrument_id.index("B")
+        n: int = exchange_instrument_id.index("B")
     else:
         return str(strike_price)
 
-    index = exchange_instrument_id[n:]
-    option_index = f"{strike_price:.3f}-{index}"
+    index: str = exchange_instrument_id[n:]
+    option_index: str = f"{strike_price:.3f}-{index}"
 
     return option_index
