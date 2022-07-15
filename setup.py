@@ -1,5 +1,6 @@
 import platform
 
+
 from setuptools import Extension, setup
 
 
@@ -20,11 +21,15 @@ def get_ext_modules() -> list:
         libraries = ["HsFutuSystemInfo", "HSMdApi", "HSTradeApi", "t2sdk", "tcpsdk"]
         extra_link_args = ["-lstdc++"]
         runtime_library_dirs = ["$ORIGIN"]
-    else:
+
+    elif platform.system() == "Windows":
         libraries = ["HsFutuSystemInfo", "HSMdApi", "HSTradeApi", "t2sdk"]
         extra_compile_flags = ["-O2", "-MT"]
         extra_link_args = []
         runtime_library_dirs = []
+
+    else:
+        return []
 
     vnuftmd = Extension(
         "vnpy_uft.api.vnuftmd",
