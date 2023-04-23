@@ -38,6 +38,7 @@ from ..api import (
     HS_EI_DCE,
     HS_EI_CZCE,
     HS_EI_INE,
+    HS_EI_GFEX,
     HS_EI_SZSE,
     HS_EI_SSE,
     HS_OS_Reported,
@@ -103,6 +104,7 @@ EXCHANGE_UFT2VT: Dict[str, Exchange] = {
     HS_EI_CZCE: Exchange.CZCE,
     HS_EI_DCE: Exchange.DCE,
     HS_EI_INE: Exchange.INE,
+    HS_EI_GFEX: Exchange.GFEX,
     HS_EI_SSE: Exchange.SSE,
     HS_EI_SZSE: Exchange.SZSE,
 }
@@ -302,7 +304,13 @@ class UftMdApi(MdApi):
             return
 
         timestamp: str = f"{data['TradingDay']} {data['UpdateTime']}000"
-        dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H%M%S%f")
+
+        # 过滤时间戳异常的行情数据
+        try:
+            dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H%M%S%f")
+        except ValueError:
+            return
+
         dt: datetime = dt.replace(tzinfo=CHINA_TZ)
 
         tick: TickData = TickData(

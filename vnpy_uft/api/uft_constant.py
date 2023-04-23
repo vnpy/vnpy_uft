@@ -9,6 +9,7 @@ HS_EI_DCE = "F2"
 HS_EI_SHFE = "F3"
 HS_EI_CFFEX = "F4"
 HS_EI_INE = "F5"
+HS_EI_GFEX = "F6"
 HS_ET_Abandon = '0'
 HS_ET_Exec = '1'
 HS_CSI_CNSJC = "CNSJC"
