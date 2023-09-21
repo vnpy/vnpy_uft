@@ -1,3 +1,17 @@
+CHSInitConfigField = {
+    "APICheckVersion": "int32",
+    "CommLicense": "string",
+    "SafeLevel": "string",
+    "CommPassword": "string",
+    "SslVersion": "string",
+    "CertLicense": "string",
+    "CertPassword": "string",
+    "SksUser": "string",
+    "SksPassword": "string",
+    "SksPin": "string",
+    "SksCheckCertFlag": "char",
+}
+
 CHSRspInfoField = {
     "ErrorID": "int32",
     "ErrorMsg": "string",
@@ -59,6 +73,7 @@ CHSRspUserLoginField = {
     "INETime": "int32",
     "MaxOrderRef": "string",
     "UserID": "string",
+    "GFEXTime": "int32",
 }
 
 CHSReqUserPasswordUpdateField = {
@@ -84,6 +99,8 @@ CHSReqOrderInsertField = {
     "SpringPrice": "double",
     "SwapOrderFlag": "char",
     "CombPositionID": "string",
+    "ExchangeAccountID": "string",
+    "SeatIndex": "int32",
 }
 
 CHSRspOrderInsertField = {
@@ -106,6 +123,8 @@ CHSRspOrderInsertField = {
     "SpringPrice": "double",
     "SwapOrderFlag": "char",
     "CombPositionID": "string",
+    "ExchangeAccountID": "string",
+    "SeatIndex": "int32",
 }
 
 CHSReqOrderActionField = {
@@ -152,6 +171,7 @@ CHSRspExerciseOrderInsertField = {
     "InsertTime": "int32",
     "OffsetFlag": "char",
     "CloseFlag": "char",
+    "ExerciseBrokerOrderID": "string",
 }
 
 CHSReqExerciseOrderActionField = {
@@ -177,6 +197,7 @@ CHSReqLockInsertField = {
     "UnderlyingInstrID": "string",
     "LockType": "char",
     "OrderVolume": "double",
+    "LockRef": "string",
 }
 
 CHSRspLockInsertField = {
@@ -189,6 +210,7 @@ CHSRspLockInsertField = {
     "UnderlyingAccountID": "string",
     "OrderStatus": "char",
     "InsertTime": "int32",
+    "LockRef": "string",
 }
 
 CHSReqForQuoteInsertField = {
@@ -203,6 +225,82 @@ CHSRspForQuoteInsertField = {
     "OrderStatus": "char",
 }
 
+CHSReqQuoteInsertField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "BidOffsetFlag": "char",
+    "BidHedgeType": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "BidOrderRef": "string",
+    "AskOffsetFlag": "char",
+    "AskHedgeType": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "AskOrderRef": "string",
+    "ForQuoteSysID": "string",
+    "QuoteRef": "string",
+    "TopOrderType": "char",
+    "QuoteSysID": "string",
+}
+
+CHSRspQuoteInsertField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "BidOffsetFlag": "char",
+    "BidHedgeType": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "BidOrderRef": "string",
+    "AskOffsetFlag": "char",
+    "AskHedgeType": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "AskOrderRef": "string",
+    "ForQuoteSysID": "string",
+    "QuoteRef": "string",
+    "QuoteBrokerID": "string",
+    "BidOrderSysID": "string",
+    "AskOrderSysID": "string",
+    "SessionID": "int32",
+    "InsertTime": "int32",
+    "OrderStatus": "char",
+    "TopOrderType": "char",
+    "QuoteSysID": "string",
+    "BidOrderStatus": "char",
+    "AskOrderStatus": "char",
+}
+
+CHSReqQuoteActionField = {
+    "QuoteSysID": "string",
+    "ExchangeID": "string",
+    "SessionID": "int32",
+    "QuoteRef": "string",
+    "QuoteActionRef": "string",
+    "InstrumentID": "string",
+    "BidWithdrawVolume": "double",
+    "AskWithdrawVolume": "double",
+}
+
+CHSRspQuoteActionField = {
+    "AccountID": "string",
+    "QuoteSysID": "string",
+    "ExchangeID": "string",
+    "SessionID": "int32",
+    "QuoteRef": "string",
+    "QuoteActionRef": "string",
+    "OrderStatus": "char",
+    "InsertTime": "int32",
+    "InstrumentID": "string",
+    "BidWithdrawVolume": "double",
+    "AskWithdrawVolume": "double",
+    "BidQuoteSysID": "string",
+    "AskQuoteSysID": "string",
+    "BidOrderStatus": "char",
+    "AskOrderStatus": "char",
+}
+
 CHSReqCombActionInsertField = {
     "ExchangeID": "string",
     "InstrumentID": "string",
@@ -212,6 +310,8 @@ CHSReqCombActionInsertField = {
     "OrderVolume": "double",
     "HedgeType": "char",
     "Direction": "char",
+    "SecondHedgeType": "char",
+    "CombOrderRef": "string",
 }
 
 CHSRspCombActionInsertField = {
@@ -227,6 +327,8 @@ CHSRspCombActionInsertField = {
     "OrderStatus": "char",
     "InsertTime": "int32",
     "Direction": "char",
+    "SecondHedgeType": "char",
+    "CombOrderRef": "string",
 }
 
 CHSReqQueryMaxOrderVolumeField = {
@@ -335,6 +437,7 @@ CHSRspQryPositionField = {
     "CloseProfit": "double",
     "OptionsMarketValue": "double",
     "UnderlyingInstrID": "string",
+    "TASPositionVolume": "double",
 }
 
 CHSReqQryTradingAccountField = {
@@ -370,12 +473,17 @@ CHSRspQryTradingAccountField = {
     "UnFrozenBalance": "double",
     "CurrencyID": "char",
     "HedgeRiskDegree": "double",
+    "ShUsedBuyQuota": "double",
+    "SzUsedBuyQuota": "double",
+    "ShAvailableBuyQuota": "double",
+    "SzAvailableBuyQuota": "double",
 }
 
 CHSReqQryOrderField = {
     "ExchangeID": "string",
     "InstrumentID": "string",
     "OrderSysID": "string",
+    "ExchangeAccountID": "string",
 }
 
 CHSReqQryHistOrderField = {
@@ -384,6 +492,7 @@ CHSReqQryHistOrderField = {
     "OrderSysID": "string",
     "BeginDate": "int32",
     "EndDate": "int32",
+    "ExchangeAccountID": "string",
 }
 
 CHSOrderField = {
@@ -416,11 +525,14 @@ CHSOrderField = {
     "UnderlyingInstrID": "string",
     "OrderSource": "char",
     "CombPositionID": "string",
+    "ExchangeAccountID": "string",
+    "SeatIndex": "int32",
 }
 
 CHSReqQryTradeField = {
     "ExchangeID": "string",
     "InstrumentID": "string",
+    "ExchangeAccountID": "string",
 }
 
 CHSReqQryHistTradeField = {
@@ -428,6 +540,7 @@ CHSReqQryHistTradeField = {
     "InstrumentID": "string",
     "BeginDate": "int32",
     "EndDate": "int32",
+    "ExchangeAccountID": "string",
 }
 
 CHSTradeField = {
@@ -449,6 +562,7 @@ CHSTradeField = {
     "UnderlyingInstrID": "string",
     "CombPositionID": "string",
     "TradeCommission": "double",
+    "ExchangeAccountID": "string",
 }
 
 CHSReqQryExerciseField = {
@@ -485,6 +599,8 @@ CHSExerciseField = {
     "OffsetFlag": "char",
     "ExercisePreFrozenCommission": "double",
     "ExercisePreFrozenMargin": "double",
+    "ExerciseBrokerOrderID": "string",
+    "ExchangeAccountID": "string",
 }
 
 CHSReqQryLockField = {
@@ -513,6 +629,8 @@ CHSLockField = {
     "InsertTime": "int32",
     "ErrorMsg": "string",
     "OrderSource": "char",
+    "LockRef": "string",
+    "SessionID": "int32",
 }
 
 CHSReqQryCombActionField = {
@@ -546,9 +664,75 @@ CHSCombActionField = {
     "InsertTime": "int32",
     "ErrorMsg": "string",
     "OrderSource": "char",
+    "SecondHedgeType": "char",
+    "CombOrderRef": "string",
+    "SessionID": "int32",
+}
+
+CHSReqForQuoteField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+}
+
+CHSReqQryForQuoteField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "ForQuoteSysID": "string",
+}
+
+CHSForQuoteField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "ForQuoteSysID": "string",
+    "TradingDay": "int32",
+    "UpdateTime": "int32",
+}
+
+CHSReqQryQuoteField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "QuoteSysID": "string",
+    "QuoteBrokerID": "string",
+}
+
+CHSQuoteField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "QuoteBrokerID": "string",
+    "OrderStatus": "char",
+    "BidOffsetFlag": "char",
+    "BidHedgeType": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "AskOffsetFlag": "char",
+    "AskHedgeType": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "QuoteRef": "string",
+    "ForQuoteSysID": "string",
+    "ErrorMsg": "string",
+    "QuoteSysID": "string",
+    "BidOrderSysID": "string",
+    "AskOrderSysID": "string",
+    "BidBrokerOrderID": "string",
+    "AskBrokerOrderID": "string",
+    "BidOrderRef": "string",
+    "AskOrderRef": "string",
+    "SessionID": "int32",
+    "TradingDay": "int32",
+    "InsertDate": "int32",
+    "InsertTime": "int32",
+    "ReportTime": "int32",
+    "TopOrderType": "char",
+    "BidOrderStatus": "char",
+    "AskOrderStatus": "char",
 }
 
 CHSReqQryPositionCombineDetailField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "CombStrategyID": "string",
 }
 
 CHSRspQryPositionCombineDetailField = {
@@ -565,6 +749,7 @@ CHSRspQryPositionCombineDetailField = {
     "TotalSplitVolume": "double",
     "PositionMargin": "double",
     "OpenDate": "int32",
+    "SecondHedgeType": "char",
 }
 
 CHSReqQryInstrumentField = {
@@ -814,6 +999,9 @@ CHSRspQryPositionDetailField = {
     "TradeType": "char",
     "PositionMargin": "double",
     "CombInstrumentID": "string",
+    "CurrentPositionVolume": "double",
+    "SettlementPrice": "double",
+    "PositionSerialID": "int32",
 }
 
 CHSReqQrySysConfigField = {
@@ -878,6 +1066,9 @@ CHSDepthMarketDataField = {
     "PreOpenInterest": "double",
     "InstrumentTradeStatus": "char",
     "OpenRestriction": "string",
+    "IOPV": "double",
+    "AuctionPrice": "double",
+    "SendingTime": "int32",
 }
 
 CHSOrderActionField = {
@@ -933,7 +1124,7 @@ CHSReqQryClientNoticeField = {
 
 CHSClientNoticeField = {
     "AccountID": "string",
-    "MsgContent": "string",
+    "MsgBody": "string",
     "MsgTitle": "string",
     "MsgType": "char",
     "MsgDate": "int32",
@@ -1007,3 +1198,275 @@ CHSRspQrySecuDepthMarketField = {
     "AskPrice5": "double",
     "AskVolume5": "double",
 }
+
+CHSExchangeStatusField = {
+    "ExchangeID": "string",
+    "ExchangeStatus": "char",
+    "TradingFlag": "char",
+}
+
+CHSProductStatusField = {
+    "ExchangeID": "string",
+    "ProductType": "char",
+    "ProductID": "string",
+    "TradingFlag": "char",
+    "ProductStatus": "char",
+}
+
+CHSReqQryWithdrawFundField = {
+    "CurrencyID": "char",
+    "SysNodeID": "int32",
+}
+
+CHSRspQryWithdrawFundField = {
+    "AccountID": "string",
+    "CurrencyID": "char",
+    "SysNodeID": "int32",
+    "SysNodeName": "string",
+    "WithdrawBalance": "double",
+}
+
+CHSReqQryQuoteExField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "QuoteQueryType": "char",
+    "QuoteBrokerID": "string",
+}
+
+CHSQuoteExField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "QuoteBrokerID": "string",
+    "BidOffsetFlag": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "BidTradePrice": "double",
+    "BidTradeVolume": "double",
+    "BidCancelVolume": "double",
+    "BidBrokerOrderID": "string",
+    "BidOrderStatus": "char",
+    "AskOffsetFlag": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "AskTradePrice": "double",
+    "AskTradeVolume": "double",
+    "AskCancelVolume": "double",
+    "AskBrokerOrderID": "string",
+    "AskOrderStatus": "char",
+    "ErrorMsg": "string",
+    "TradingDay": "int32",
+    "InsertDate": "int32",
+    "InsertTime": "int32",
+    "ReportTime": "int32",
+    "SessionID": "int32",
+    "UnderlyingInstrID": "string",
+}
+
+CHSReqQryCombInstrumentField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+}
+
+CHSRspQryCombInstrumentField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "Direction": "char",
+    "SecondDirection": "char",
+    "CombStrategyType": "char",
+    "CombMarginCoeff": "double",
+    "PriorityLevel": "double",
+}
+
+CHSReqQrySeatIDField = {
+    "ExchangeID": "string",
+}
+
+CHSRspQrySeatIDField = {
+    "ExchangeID": "string",
+    "SeatIndex": "int32",
+    "SeatID": "string",
+}
+
+CHSReqOptionSelfCloseField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "OrderVolume": "double",
+    "SelfCloseType": "char",
+}
+
+CHSRspOptionSelfCloseField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "OrderVolume": "double",
+    "SelfCloseType": "char",
+}
+
+CHSReqOptionSelfCloseActionField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "SelfCloseType": "char",
+}
+
+CHSRspOptionSelfCloseActionField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "SelfCloseType": "char",
+}
+
+CHSReqQryOptionSelfCloseField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+}
+
+CHSOptionSelfCloseField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "OrderVolume": "double",
+    "SelfCloseType": "char",
+    "OrderStatus": "char",
+    "SetSelfCloseType": "char",
+    "ErrorMsg": "string",
+    "SelfCloseOrderSysID": "string",
+}
+
+CHSReqQryOptionSelfCloseResultField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+}
+
+CHSRspQryOptionSelfCloseResultField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "SelfCloseType": "char",
+    "OrderVolume": "double",
+}
+
+CHSTransferField = {
+    "AccountID": "string",
+    "TransferSerialID": "int32",
+    "BankID": "string",
+    "BankName": "string",
+    "BusinessName": "string",
+    "OccurBalance": "double",
+    "PostBalance": "double",
+    "TransferTime": "int32",
+    "TransferStatus": "char",
+    "TransferSource": "char",
+    "Remarks": "string",
+    "CurrencyID": "char",
+    "OrderSourceDate": "int32",
+    "TradingDay": "int32",
+    "TransferOccasion": "string",
+}
+
+CHSSMCertInfoField = {
+    "CertID": "string",
+    "OperatorID": "string",
+    "DeviceID": "string",
+    "CertInfo": "string",
+    "SksPin": "string",
+    "IsCurrent": "int",
+}
+
+CHSReqOptQuoteInsertField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "BidOffsetFlag": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "AskOffsetFlag": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "QuoteRef": "string",
+    "ForQuoteSysID": "string",
+}
+
+CHSRspOptQuoteInsertField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "BidOffsetFlag": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "AskOffsetFlag": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "QuoteBrokerID": "string",
+    "InsertTime": "int32",
+    "BidOrderStatus": "char",
+    "AskOrderStatus": "char",
+    "QuoteRef": "string",
+    "ForQuoteSysID": "string",
+    "OrderStatus": "char",
+    "SessionID": "int32",
+}
+
+CHSReqOptQuoteActionField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "BidWithdrawVolume": "double",
+    "AskWithdrawVolume": "double",
+    "QuoteRef": "string",
+}
+
+CHSRspOptQuoteActionField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "InsertTime": "int32",
+    "QuoteBrokerID": "string",
+    "BidWithdrawVolume": "double",
+    "AskWithdrawVolume": "double",
+    "BidOrderStatus": "char",
+    "AskOrderStatus": "char",
+    "QuoteRef": "string",
+    "OrderStatus": "char",
+    "SessionID": "int32",
+}
+
+CHSReqQryOptQuoteField = {
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "QuoteQueryType": "char",
+    "QuoteBrokerID": "string",
+}
+
+CHSOptQuoteField = {
+    "AccountID": "string",
+    "ExchangeID": "string",
+    "InstrumentID": "string",
+    "QuoteBrokerID": "string",
+    "BidOffsetFlag": "char",
+    "BidOrderPrice": "double",
+    "BidOrderVolume": "double",
+    "BidTradePrice": "double",
+    "BidTradeVolume": "double",
+    "BidCancelVolume": "double",
+    "BidBrokerOrderID": "string",
+    "BidOrderStatus": "char",
+    "AskOffsetFlag": "char",
+    "AskOrderPrice": "double",
+    "AskOrderVolume": "double",
+    "AskTradePrice": "double",
+    "AskTradeVolume": "double",
+    "AskCancelVolume": "double",
+    "AskBrokerOrderID": "string",
+    "AskOrderStatus": "char",
+    "ErrorMsg": "string",
+    "TradingDay": "int32",
+    "InsertDate": "int32",
+    "InsertTime": "int32",
+    "ReportTime": "int32",
+    "SessionID": "int32",
+    "UnderlyingInstrID": "string",
+    "QuoteRef": "string",
+    "ForQuoteSysID": "string",
+    "OrderStatus": "char",
+}
+

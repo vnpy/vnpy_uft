@@ -13,7 +13,34 @@
 #endif // _MSC_VER > 1000
 
 #include "./HSDataType.h"
-#pragma pack(push,4)
+#define API_STRUCT_CHECK_VERSION    220017
+#pragma pack(push,8)
+struct CHSInitConfigField
+{
+    /// API结构体版本校验
+    HSCheckVersion          APICheckVersion;
+    /// 通讯证书
+    HSLicenseFile           CommLicense;
+    /// 安全级别
+    HSSafeLevel             SafeLevel;
+    /// 通讯密码
+    HSLicensePassward       CommPassword;
+    /// SSL版本
+    HSSslVersion            SslVersion;
+    /// SSL证书
+    HSLicenseFile           CertLicense;
+    /// SSL密码
+    HSLicensePassward       CertPassword;
+    /// 国密配置：证书服务商用户名(资金账号)
+    HSSksUser	            SksUser;
+    /// 国密配置：证书服务商密码(交易密码)
+    HSSksPassword	        SksPassword;
+    /// 国密配置：证书服务商pin密码
+    HSSksPin	            SksPin;
+    /// 国密配置：证书服务商根证书校验
+    HSSksCheckCertFlag      SksCheckCertFlag;
+};
+
 struct CHSRspInfoField
 {
     /// 错误代码
@@ -21,7 +48,6 @@ struct CHSRspInfoField
     /// 错误提示
     HSErrorMsg                    ErrorMsg;
 };
-
 
 ///接入认证
 struct CHSReqAuthenticateField
@@ -131,6 +157,8 @@ struct CHSRspUserLoginField
     HSRef                         MaxOrderRef;
     /// 客户编号
     HSUserID                      UserID;
+    /// 广期所当前时间
+    HSTime                        GFEXTime;
 };
 
 ///密码更改
@@ -177,6 +205,10 @@ struct CHSReqOrderInsertField
     HSSwapOrderFlag               SwapOrderFlag;
     /// 组合持仓编码
     HSCombPositionID              CombPositionID;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
+    /// 席位索引
+    HSSeatIndex                   SeatIndex;
 };
 ///报单录入应答
 struct CHSRspOrderInsertField
@@ -219,6 +251,10 @@ struct CHSRspOrderInsertField
     HSSwapOrderFlag               SwapOrderFlag;
     /// 组合持仓编码
     HSCombPositionID              CombPositionID;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
+    /// 席位索引
+    HSSeatIndex                   SeatIndex;
 };
 
 ///撤单
@@ -305,6 +341,8 @@ struct CHSRspExerciseOrderInsertField
     HSOffsetFlag                  OffsetFlag;
     /// 期权行权后生成的头寸是否自动平仓
     HSCloseFlag                   CloseFlag;
+    /// 经纪公司行权报单编码
+    HSBrokerOrderID               ExerciseBrokerOrderID;
 };
 
 ///行权撤单
@@ -351,6 +389,8 @@ struct CHSReqLockInsertField
     HSLockType                    LockType;
     /// 报单数量
     HSVolume                      OrderVolume;
+    /// 锁定引用
+    HSRef                         LockRef;
 };
 ///锁定录入应答
 struct CHSRspLockInsertField
@@ -373,6 +413,8 @@ struct CHSRspLockInsertField
     HSOrderStatus                 OrderStatus;
     /// 报单时间
     HSTime                        InsertTime;
+    /// 锁定引用
+    HSRef                         LockRef;
 };
 
 ///询价录入
@@ -396,6 +438,153 @@ struct CHSRspForQuoteInsertField
     HSOrderStatus                 OrderStatus;
 };
 
+///报价录入
+struct CHSReqQuoteInsertField
+{
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方开平方向
+    HSOffsetFlag                   BidOffsetFlag;
+    /// 买方套保标志
+    HSHedgeType                    BidHedgeType;
+    /// 买方报价价格
+    HSPrice                        BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                       BidOrderVolume;
+    /// 买方报单引用
+    HSRef                          BidOrderRef;
+    /// 卖方开平方向
+    HSOffsetFlag                   AskOffsetFlag;
+    /// 卖方套保标志
+    HSHedgeType                    AskHedgeType;
+    /// 卖方报价价格
+    HSPrice                        AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                       AskOrderVolume;
+    /// 卖方委托引用
+    HSRef                          AskOrderRef;
+    /// 询价报单编码
+    HSOrderSysID                   ForQuoteSysID;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+    /// 顶单类型
+    HSTopOrderType                 TopOrderType;
+    /// 报价报单编码
+    HSOrderSysID                   QuoteSysID;    
+};
+///报价录入应答
+struct CHSRspQuoteInsertField
+{
+    /// 账号
+    HSAccountID                    AccountID;
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方开平方向
+    HSOffsetFlag                   BidOffsetFlag;
+    /// 买方套保标志
+    HSHedgeType                    BidHedgeType;
+    /// 买方报价价格
+    HSPrice                        BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                       BidOrderVolume;
+    /// 买方委托引用
+    HSRef                          BidOrderRef;
+    /// 卖方开平方向
+    HSOffsetFlag                   AskOffsetFlag;
+    /// 卖方套保标志
+    HSHedgeType                    AskHedgeType;
+    /// 卖方报价价格
+    HSPrice                        AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                       AskOrderVolume;
+    /// 卖方委托引用
+    HSRef                          AskOrderRef;
+    /// 询价报单编码
+    HSOrderSysID                   ForQuoteSysID;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+    /// 报价编号
+    HSBrokerOrderID                QuoteBrokerID;
+    /// 买方报单编码
+    HSOrderSysID                   BidOrderSysID;
+    /// 卖方报单编码
+    HSOrderSysID                   AskOrderSysID;
+    /// 会话编号
+    HSSessionID                    SessionID;
+    /// 报单时间
+    HSTime                         InsertTime;
+    /// 报单状态
+    HSOrderStatus                  OrderStatus;
+    /// 顶单类型
+    HSTopOrderType                 TopOrderType;
+    /// 报价报单编码
+    HSOrderSysID                   QuoteSysID;
+    /// 买方报单状态
+    HSOrderStatus                  BidOrderStatus;
+    /// 卖方报单状态
+    HSOrderStatus                  AskOrderStatus;
+};
+
+///报价撤单
+struct CHSReqQuoteActionField
+{
+    /// 报价报单编码
+    HSOrderSysID                   QuoteSysID;
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 会话编号
+    HSSessionID                    SessionID;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+    /// 报价操作引用
+    HSRef                          QuoteActionRef;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方报价撤单数量
+    HSVolume                       BidWithdrawVolume;
+    /// 卖方报价撤单数量
+    HSVolume                       AskWithdrawVolume;
+};
+
+///报价撤单应答
+struct CHSRspQuoteActionField
+{
+    /// 账号
+    HSAccountID                    AccountID;
+    /// 报价报单编码
+    HSOrderSysID                   QuoteSysID;
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 会话编号
+    HSSessionID                    SessionID;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+    /// 报价操作引用
+    HSRef                          QuoteActionRef;
+    /// 报单状态
+    HSOrderStatus                  OrderStatus;
+    /// 报单时间
+    HSTime                         InsertTime;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方报价撤单数量
+    HSVolume                       BidWithdrawVolume;
+    /// 卖方报价撤单数量
+    HSVolume                       AskWithdrawVolume;
+    /// 买方报单编码
+    HSOrderSysID                   BidQuoteSysID;
+    /// 卖方报单编码
+    HSOrderSysID                   AskQuoteSysID;
+    /// 买报单状态
+    HSOrderStatus                  BidOrderStatus;
+    /// 卖报单状态
+    HSOrderStatus                  AskOrderStatus;
+};
+
 ///申请组合录入
 struct CHSReqCombActionInsertField
 {
@@ -415,6 +604,10 @@ struct CHSReqCombActionInsertField
     HSHedgeType                   HedgeType;
     /// 买卖方向
     HSDirection                   Direction;
+    /// 第二腿投机/套保/备兑类型
+    HSHedgeType                   SecondHedgeType;
+    /// 组合报单引用
+    HSRef                         CombOrderRef;
 };
 ///申请组合录入应答
 struct CHSRspCombActionInsertField
@@ -443,6 +636,10 @@ struct CHSRspCombActionInsertField
     HSTime                        InsertTime;
     /// 买卖方向
     HSDirection                   Direction;
+    /// 第二腿投机/套保/备兑类型
+    HSHedgeType                   SecondHedgeType;
+    /// 组合报单引用
+    HSRef                         CombOrderRef;
 };
 
 ///最大报单数量获取
@@ -644,6 +841,8 @@ struct CHSRspQryPositionField
     HSBalance                     OptionsMarketValue;
     /// 期权对应的标的合约代码
     HSInstrumentID                UnderlyingInstrID;
+    /// TAS持仓数量
+    HSVolume                      TASPositionVolume;
 };
 
 ///资金账户查询
@@ -711,6 +910,14 @@ struct CHSRspQryTradingAccountField
     HSCurrencyID                  CurrencyID;
     /// 对冲风险度
     HSRiskDegree                  HedgeRiskDegree;
+    /// 上海已用限购额度
+    HSBalance                     ShUsedBuyQuota;
+    /// 深圳已用限购额度
+    HSBalance                     SzUsedBuyQuota;
+    /// 上海可用限购额度
+    HSBalance                     ShAvailableBuyQuota;
+    /// 深圳可用限购额度
+    HSBalance                     SzAvailableBuyQuota;
 };
 
 ///报单查询
@@ -722,6 +929,8 @@ struct CHSReqQryOrderField
     HSInstrumentID                InstrumentID;
     /// 报单编码
     HSOrderSysID                  OrderSysID;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
 };
 
 ///历史报单查询
@@ -737,6 +946,8 @@ struct CHSReqQryHistOrderField
     HSDate                         BeginDate;
     /// 结束日期
     HSDate                         EndDate;
+    /// 交易编码
+    HSExchangeAccountID            ExchangeAccountID;
 };
 
 ///报单信息
@@ -800,6 +1011,10 @@ struct CHSOrderField
     HSOrderSource                 OrderSource;
     /// 组合持仓编码
     HSCombPositionID              CombPositionID;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
+    /// 席位索引
+    HSSeatIndex                   SeatIndex;
 };
 
 ///成交查询
@@ -809,6 +1024,8 @@ struct CHSReqQryTradeField
     HSExchangeID                  ExchangeID;
     /// 合约代码
     HSInstrumentID                InstrumentID;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
 };
 
 ///历史成交查询
@@ -822,6 +1039,8 @@ struct CHSReqQryHistTradeField
     HSDate                         BeginDate;
     /// 结束日期
     HSDate                         EndDate;
+    /// 交易编码
+    HSExchangeAccountID            ExchangeAccountID;
 };
 
 ///成交信息
@@ -863,6 +1082,8 @@ struct CHSTradeField
     HSCombPositionID              CombPositionID;
     /// 成交手续费
     HSBalance                     TradeCommission;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
 };
 
 ///行权查询
@@ -932,6 +1153,10 @@ struct CHSExerciseField
     HSBalance                     ExercisePreFrozenCommission;
     /// 行权预冻结保证金
     HSBalance                     ExercisePreFrozenMargin;
+    /// 经纪公司行权报单编码
+    HSBrokerOrderID               ExerciseBrokerOrderID;
+    /// 交易编码
+    HSExchangeAccountID           ExchangeAccountID;
 };
 
 ///锁定查询
@@ -985,6 +1210,10 @@ struct CHSLockField
     HSErrorMsg                    ErrorMsg;
     /// 报单发起方
     HSOrderSource                 OrderSource;
+    /// 锁定引用
+    HSRef                         LockRef;
+    /// 会话编码
+    HSSessionID                   SessionID;
 };
 
 ///申请组合查询
@@ -1048,11 +1277,137 @@ struct CHSCombActionField
     HSErrorMsg                    ErrorMsg;
     /// 报单发起方
     HSOrderSource                 OrderSource;
+    /// 第二腿投机/套保/备兑类型
+    HSHedgeType                   SecondHedgeType;
+    /// 组合报单引用
+    HSRef                         CombOrderRef;
+    /// 会话编码
+    HSSessionID                   SessionID;
 };
+
+///询价订阅，订阅取消请求
+struct CHSReqForQuoteField
+{
+    HSExchangeID                  ExchangeID;
+    HSInstrumentID                InstrumentID;
+};
+
+///询价查询
+struct CHSReqQryForQuoteField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 询价报单编码
+    HSOrderSysID                  ForQuoteSysID;
+};
+
+///询价信息
+struct CHSForQuoteField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 询价报单编码
+    HSOrderSysID                  ForQuoteSysID;
+    /// 交易日
+    HSDate                        TradingDay;
+    /// 最后更新时间
+    HSTime                        UpdateTime;
+};
+
+///报价查询
+struct CHSReqQryQuoteField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 报价报单编码
+    HSOrderSysID                  QuoteSysID;
+    /// 报价编号
+    HSBrokerOrderID               QuoteBrokerID;
+};
+
+///报价信息
+struct CHSQuoteField
+{
+    /// 账号
+    HSAccountID                    AccountID;
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 报价编号
+    HSBrokerOrderID                QuoteBrokerID;
+    /// 报价状态
+    HSOrderStatus                  OrderStatus;
+    /// 买方开平方向
+    HSOffsetFlag                   BidOffsetFlag;
+    /// 买方套保标志
+    HSHedgeType                    BidHedgeType;
+    /// 买方报价价格
+    HSPrice                        BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                       BidOrderVolume;
+    /// 卖方开平方向
+    HSOffsetFlag                   AskOffsetFlag;
+    /// 卖方套保标志
+    HSHedgeType                    AskHedgeType;
+    /// 卖方报价价格
+    HSPrice                        AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                       AskOrderVolume;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+    /// 询价报单编码
+    HSOrderSysID                   ForQuoteSysID;
+    /// 提示信息
+    HSErrorMsg                     ErrorMsg;
+    /// 报价报单编码
+    HSOrderSysID                   QuoteSysID;
+    /// 买方报单编码
+    HSOrderSysID                   BidOrderSysID;
+    /// 卖方报单编码
+    HSOrderSysID                   AskOrderSysID;
+    /// 买方委托编号
+    HSBrokerOrderID                BidBrokerOrderID;
+    /// 卖方委托编号
+    HSBrokerOrderID                AskBrokerOrderID;
+    /// 买方委托引用
+    HSRef                          BidOrderRef;
+    /// 卖方委托引用
+    HSRef                          AskOrderRef;
+    /// 会话编号
+    HSSessionID                    SessionID;
+    /// 交易日
+    HSDate                         TradingDay;
+    /// 报单日期
+    HSDate                         InsertDate;
+    /// 报单时间
+    HSTime                         InsertTime;
+    /// 申报时间
+    HSTime                         ReportTime;
+    /// 顶单类型
+    HSTopOrderType                 TopOrderType;
+    /// 买方报单状态
+    HSOrderStatus                  BidOrderStatus;
+    /// 卖方报单状态
+    HSOrderStatus                  AskOrderStatus;
+};
+
 
 ///组合持仓明细查询
 struct CHSReqQryPositionCombineDetailField
 {
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 组合策略编码
+    HSCombStrategyID              CombStrategyID;
 };
 ///组合持仓明细查询应答
 struct CHSRspQryPositionCombineDetailField
@@ -1083,6 +1438,8 @@ struct CHSRspQryPositionCombineDetailField
     HSBalance                     PositionMargin;
     /// 开仓日期
     HSDate                        OpenDate;
+    /// 第二腿投机/套保/备兑类型
+    HSHedgeType                   SecondHedgeType;
 };
 
 ///合约信息查询
@@ -1539,6 +1896,12 @@ struct CHSRspQryPositionDetailField
     HSBalance                     PositionMargin;
     /// 组合合约代码
     HSInstrumentID                CombInstrumentID;
+    /// 当前持仓数量
+    HSVolume                      CurrentPositionVolume;
+    /// 结算价
+    HSPrice                       SettlementPrice;
+    /// 持仓流水号
+    HSNum                         PositionSerialID;
 };
 
 ///经纪公司配置参数查询
@@ -1554,7 +1917,7 @@ struct CHSRspQrySysConfigField
     HSConfigValue                 ConfigValue;
 };
 
-/// 行情订阅，取消订阅请求
+///行情订阅，取消订阅请求
 struct CHSReqDepthMarketDataField
 {
     HSExchangeID                  ExchangeID;
@@ -1659,6 +2022,12 @@ struct CHSDepthMarketDataField
     HSInstrumentTradeStatus       InstrumentTradeStatus;
     /// 合约实时开仓限制
     HSOpenRestriction             OpenRestriction;
+    /// 基金份额参考净值
+    HSPrice                       IOPV;
+    /// 动态参考价格
+    HSPrice                       AuctionPrice;
+    /// 行情发送时间
+    HSTime                        SendingTime;
 };
 
 ///撤单信息
@@ -1765,7 +2134,7 @@ struct CHSClientNoticeField
     /// 账号
     HSAccountID                   AccountID;
     /// 消息正文
-    HSMsgBody                     MsgContent;
+    HSMsgBody                     MsgBody;
     /// 消息标题
     HSMsgTitle                    MsgTitle;
     /// 消息类型
@@ -1906,6 +2275,521 @@ struct CHSRspQrySecuDepthMarketField
     HSPrice                        AskPrice5;
     /// 申卖量五
     HSVolume                       AskVolume5;
+};
+
+///交易所状态信息
+struct CHSExchangeStatusField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 交易所状态
+    HSExchangeStatus              ExchangeStatus;
+    /// 申报标志
+    HSTradingFlag                 TradingFlag;
+};
+
+///合约品种状态信息
+struct CHSProductStatusField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 产品类型
+    HSProductType                 ProductType;
+    /// 合约品种代码
+    HSProductID                   ProductID;
+    /// 申报标志
+    HSTradingFlag                 TradingFlag;
+    /// 合约品种交易状态
+    HSExchangeStatus              ProductStatus;
+};
+
+///可取资金查询请求
+struct CHSReqQryWithdrawFundField
+{
+    /// 币种类别
+    HSCurrencyID                  CurrencyID;
+    /// 系统节点号
+    HSSysnodeID                   SysNodeID;
+};
+
+///可取资金查询应答
+struct CHSRspQryWithdrawFundField
+{
+    /// 账号
+    HSAccountID                   AccountID;
+    /// 币种类别
+    HSCurrencyID                  CurrencyID;
+    /// 系统节点号
+    HSSysnodeID                   SysNodeID;
+    /// 系统节点名称
+    HSSysnodeName                 SysNodeName;
+    /// 可取资金
+    HSBalance                     WithdrawBalance;
+};
+
+///股票期权报价查询
+struct CHSReqQryQuoteExField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 查询模式
+    HSType                        QuoteQueryType;
+    /// 报价编号
+    HSBrokerOrderID               QuoteBrokerID;
+};
+
+///股票期权报价信息
+struct CHSQuoteExField
+{
+    /// 账号
+    HSAccountID                   AccountID;
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 报价编号
+    HSBrokerOrderID               QuoteBrokerID;
+    /// 买方开平方向
+    HSOffsetFlag                  BidOffsetFlag;
+    /// 买方报价价格
+    HSPrice                       BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                      BidOrderVolume;
+    /// 买方成交价格
+    HSPrice                       BidTradePrice;
+    /// 买方成交数量
+    HSVolume                      BidTradeVolume;
+    /// 买方撤单数量
+    HSVolume                      BidCancelVolume;
+    /// 买方委托编号
+    HSBrokerOrderID               BidBrokerOrderID;
+    /// 买方报单状态
+    HSOrderStatus                 BidOrderStatus;
+    /// 卖方开平方向
+    HSOffsetFlag                  AskOffsetFlag;
+    /// 卖方报价价格
+    HSPrice                       AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                      AskOrderVolume;
+    /// 卖方成交价格
+    HSPrice                       AskTradePrice;
+    /// 卖方成交数量
+    HSVolume                      AskTradeVolume;
+    /// 卖方撤单数量
+    HSVolume                      AskCancelVolume;
+    /// 卖方委托编号
+    HSBrokerOrderID               AskBrokerOrderID;
+    /// 卖方报单状态
+    HSOrderStatus                 AskOrderStatus;
+    /// 提示信息
+    HSErrorMsg                    ErrorMsg;
+    /// 交易日
+    HSDate                        TradingDay;
+    /// 报单日期
+    HSDate                        InsertDate;
+    /// 报单时间
+    HSTime                        InsertTime;
+    /// 申报时间
+    HSTime                        ReportTime;
+    /// 会话编号
+    HSSessionID                   SessionID;
+    /// 期权对应的标的合约代码
+    HSInstrumentID                UnderlyingInstrID;
+};
+
+///组合合约查询
+struct CHSReqQryCombInstrumentField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+};
+
+///组合合约查询应答
+struct CHSRspQryCombInstrumentField
+{
+    /// 账号
+    HSAccountID                   AccountID;
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 买卖方向
+    HSDirection                   Direction;
+    /// 第二腿买卖方向
+    HSDirection                   SecondDirection;
+    /// 组合策略类型
+    HSCombStrategyType            CombStrategyType;
+    /// 组合保证金系数
+    HSVolume                      CombMarginCoeff;
+    /// 优先级
+    HSVolume                      PriorityLevel;
+};
+
+///席位查询请求
+struct CHSReqQrySeatIDField
+{
+    /// 交易类别
+    HSExchangeID                  ExchangeID;
+};
+
+///席位查询应答
+struct CHSRspQrySeatIDField
+{
+    /// 交易类别
+    HSExchangeID                  ExchangeID;
+    /// 席位索引
+    HSSeatIndex                   SeatIndex;
+    /// 席位号
+    HSSeatID                      SeatID;
+};
+
+///期权对冲设置请求
+struct CHSReqOptionSelfCloseField
+{
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+    /// 报单数量
+    HSVolume	                  OrderVolume;
+    /// 对冲类型
+    HSSelfCloseType	              SelfCloseType;
+};
+
+///期权对冲设置应答
+struct CHSRspOptionSelfCloseField
+{
+    /// 资金账号
+    HSAccountID	                  AccountID;
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+    /// 报单数量
+    HSVolume	                  OrderVolume;
+    /// 对冲类型
+    HSSelfCloseType	              SelfCloseType;
+};
+
+///期权对冲设置取消请求
+struct CHSReqOptionSelfCloseActionField
+{
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+    /// 对冲类型
+    HSSelfCloseType	              SelfCloseType;
+};
+
+///期权对冲设置取消应答
+struct CHSRspOptionSelfCloseActionField
+{
+    /// 资金账号
+    HSAccountID	                  AccountID;
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+    /// 对冲类型
+    HSSelfCloseType	              SelfCloseType;
+};
+
+///查询期权自对冲请求
+struct CHSReqQryOptionSelfCloseField
+{
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+};
+
+///期权自对冲信息
+struct CHSOptionSelfCloseField
+{
+    /// 资金账号
+    HSAccountID	                  AccountID;
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+    /// 报单数量
+    HSVolume	                  OrderVolume;
+    /// 对冲类型
+    HSSelfCloseType	              SelfCloseType;
+    /// 报单状态
+    HSOrderStatus	              OrderStatus;
+    /// 对冲设置操作类型
+    HSSetSelfCloseType	          SetSelfCloseType;
+    /// 错误信息
+    HSErrorMsg	                  ErrorMsg;
+    /// 报单编码
+    HSOrderSysID	              SelfCloseOrderSysID;
+};
+
+///期权对冲设置结果查询请求
+struct CHSReqQryOptionSelfCloseResultField
+{
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+};
+
+///期权对冲设置结果查询应答
+struct CHSRspQryOptionSelfCloseResultField
+{
+    /// 资金账号
+    HSAccountID	                  AccountID;
+    /// 交易所代码
+    HSExchangeID	              ExchangeID;
+    /// 合约代码
+    HSInstrumentID	              InstrumentID;
+    /// 对冲类型
+    HSSelfCloseType	              SelfCloseType;
+    /// 报单数量
+    HSVolume	                  OrderVolume;
+};
+
+///银行转账信息
+struct CHSTransferField
+{
+    /// 账号
+    HSAccountID                   AccountID;
+    /// 转账流水
+    HSNum                         TransferSerialID;
+    /// 银行代码
+    HSBankID                      BankID;
+    /// 银行名称
+    HSBankName                    BankName;
+    /// 业务名称
+    HSBusinessName                BusinessName;
+    /// 发生金额
+    HSBalance                     OccurBalance;
+    /// 后资金额
+    HSBalance                     PostBalance;
+    /// 转账时间
+    HSTime                        TransferTime;
+    /// 转账状态
+    HSTransferStatus              TransferStatus;
+    /// 转账发起方
+    HSTransferSource              TransferSource;
+    /// 备注
+    HSRemarks                     Remarks;
+    /// 币种
+    HSCurrencyID                  CurrencyID;
+    /// 交易发起方日期
+    HSDate                        OrderSourceDate;
+    /// 交易日期
+    HSDate                        TradingDay;
+    /// 转账场景
+    HSOccasion                    TransferOccasion;
+};
+
+/// 国密证书信息
+struct CHSSMCertInfoField
+{
+    /// 证书标识
+    HSCertID	                  CertID;
+    /// 操作员账号
+    HSAccountID	                  OperatorID;
+    /// 设备标识
+    HSDeviceID	                  DeviceID;
+    /// 证书信息
+    HSCertInfo	                  CertInfo;
+    /// SKSpin密码
+    HSSksPin	                  SksPin;
+    /// 是否当前的设备标识
+    HSIsCurrent                   IsCurrent;
+};
+
+///股票期权报价录入
+struct CHSReqOptQuoteInsertField
+{
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方开平方向
+    HSOffsetFlag                   BidOffsetFlag;
+    /// 买方报价价格
+    HSPrice                        BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                       BidOrderVolume;
+    /// 卖方开平方向
+    HSOffsetFlag                   AskOffsetFlag;
+    /// 卖方报价价格
+    HSPrice                        AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                       AskOrderVolume;	
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+	/// 询价主场单号
+    HSOrderSysID                   ForQuoteSysID;
+};
+///股票期权报价录入应答
+struct CHSRspOptQuoteInsertField
+{
+    /// 账号
+    HSAccountID                    AccountID;
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方开平方向
+    HSOffsetFlag                   BidOffsetFlag;
+    /// 买方报价价格
+    HSPrice                        BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                       BidOrderVolume;
+    /// 卖方开平方向
+    HSOffsetFlag                   AskOffsetFlag;
+    /// 卖方报价价格
+    HSPrice                        AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                       AskOrderVolume;
+    /// 报价编号
+    HSBrokerOrderID                QuoteBrokerID;
+    /// 报单时间
+    HSTime                         InsertTime;
+    /// 买方报单状态
+    HSOrderStatus                  BidOrderStatus;
+    /// 卖方报单状态
+    HSOrderStatus                  AskOrderStatus;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+	/// 询价主场单号
+    HSOrderSysID                   ForQuoteSysID;
+	/// 报价状态
+    HSOrderStatus       	       OrderStatus;
+    /// 会话编号
+    HSSessionID                    SessionID;
+};
+
+///股票期权报价撤单
+struct CHSReqOptQuoteActionField
+{
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 买方报价撤单数量
+    HSVolume                       BidWithdrawVolume;
+    /// 卖方报价撤单数量
+    HSVolume                       AskWithdrawVolume;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+};
+
+///股票期权报价撤单应答
+struct CHSRspOptQuoteActionField
+{
+    /// 账号
+    HSAccountID                    AccountID;
+    /// 交易类别
+    HSExchangeID                   ExchangeID;
+    /// 合约代码
+    HSInstrumentID                 InstrumentID;
+    /// 报单时间
+    HSTime                         InsertTime;
+    /// 报价编号
+    HSBrokerOrderID                QuoteBrokerID;
+    /// 买方报价撤单数量
+    HSVolume                       BidWithdrawVolume;
+    /// 卖方报价撤单数量
+    HSVolume                       AskWithdrawVolume;
+    /// 买报单状态
+    HSOrderStatus                  BidOrderStatus;
+    /// 卖报单状态
+    HSOrderStatus                  AskOrderStatus;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+	/// 报价状态
+    HSOrderStatus       	       OrderStatus;
+    /// 会话编号
+    HSSessionID                    SessionID;
+};
+
+///股票期权报价查询
+struct CHSReqQryOptQuoteField
+{
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 查询模式
+    HSType                        QuoteQueryType;
+    /// 报价编号
+    HSBrokerOrderID               QuoteBrokerID;
+};
+
+///股票期权报价信息
+struct CHSOptQuoteField
+{
+    /// 账号
+    HSAccountID                   AccountID;
+    /// 交易所代码
+    HSExchangeID                  ExchangeID;
+    /// 合约代码
+    HSInstrumentID                InstrumentID;
+    /// 报价编号
+    HSBrokerOrderID               QuoteBrokerID;
+    /// 买方开平方向
+    HSOffsetFlag                  BidOffsetFlag;
+    /// 买方报价价格
+    HSPrice                       BidOrderPrice;
+    /// 买方报价数量
+    HSVolume                      BidOrderVolume;
+    /// 买方成交价格
+    HSPrice                       BidTradePrice;
+    /// 买方成交数量
+    HSVolume                      BidTradeVolume;
+    /// 买方撤单数量
+    HSVolume                      BidCancelVolume;
+    /// 买方委托编号
+    HSBrokerOrderID               BidBrokerOrderID;
+    /// 买方报单状态
+    HSOrderStatus                 BidOrderStatus;
+    /// 卖方开平方向
+    HSOffsetFlag                  AskOffsetFlag;
+    /// 卖方报价价格
+    HSPrice                       AskOrderPrice;
+    /// 卖方报价数量
+    HSVolume                      AskOrderVolume;
+    /// 卖方成交价格
+    HSPrice                       AskTradePrice;
+    /// 卖方成交数量
+    HSVolume                      AskTradeVolume;
+    /// 卖方撤单数量
+    HSVolume                      AskCancelVolume;
+    /// 卖方委托编号
+    HSBrokerOrderID               AskBrokerOrderID;
+    /// 卖方报单状态
+    HSOrderStatus                 AskOrderStatus;
+    /// 提示信息
+    HSErrorMsg                    ErrorMsg;
+    /// 交易日
+    HSDate                        TradingDay;
+    /// 报单日期
+    HSDate                        InsertDate;
+    /// 报单时间
+    HSTime                        InsertTime;
+    /// 申报时间
+    HSTime                        ReportTime;
+    /// 会话编号
+    HSSessionID                   SessionID;
+    /// 期权对应的标的合约代码
+    HSInstrumentID                UnderlyingInstrID;
+    /// 报价委托引用
+    HSRef                          QuoteRef;
+    /// 询价报单编码
+    HSOrderSysID                   ForQuoteSysID;
+    /// 报价状态
+    HSOrderStatus                  OrderStatus;
 };
 
 #pragma pack(pop)

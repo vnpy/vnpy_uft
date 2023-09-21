@@ -23,50 +23,68 @@ using namespace pybind11;
 #define ONRSPEXERCISEORDERACTION 9
 #define ONRSPERRORLOCKINSERT 10
 #define ONRSPFORQUOTEINSERT 11
-#define ONRSPERRORCOMBACTIONINSERT 12
-#define ONRSPQUERYMAXORDERVOLUME 13
-#define ONRSPQRYLOCKVOLUME 14
-#define ONRSPQUERYEXERCISEVOLUME 15
-#define ONRSPQRYCOMBVOLUME 16
-#define ONRSPQRYPOSITION 17
-#define ONRSPQRYTRADINGACCOUNT 18
-#define ONRSPQRYORDER 19
-#define ONRSPQRYTRADE 20
-#define ONRSPQRYEXERCISE 21
-#define ONRSPQRYLOCK 22
-#define ONRSPQRYCOMBACTION 23
-#define ONRSPQRYPOSITIONCOMBINEDETAIL 24
-#define ONRSPQRYINSTRUMENT 25
-#define ONRSPQRYCOVEREDSHORT 26
-#define ONRSPQRYEXERCISEASSIGN 27
-#define ONRSPTRANSFER 28
-#define ONRSPQRYTRANSFER 29
-#define ONRSPQUERYBANKBALANCE 30
-#define ONRSPQUERYBANKACCOUNT 31
-#define ONRSPMULTICENTREFUNDTRANS 32
-#define ONRSPQUERYBILLCONTENT 33
-#define ONRSPBILLCONFIRM 34
-#define ONRSPQRYMARGIN 35
-#define ONRSPQRYCOMMISSION 36
-#define ONRSPQRYPOSITIONDETAIL 37
-#define ONRSPQRYEXCHANGERATE 38
-#define ONRSPQRYSYSCONFIG 39
-#define ONRSPQRYDEPTHMARKETDATA 40
-#define ONRSPFUNDTRANS 41
-#define ONRSPQRYFUNDTRANS 42
-#define ONRSPQRYCLIENTNOTICE 43
-#define ONRSPQRYOPTUNDERLY 44
-#define ONRSPQRYSECUDEPTHMARKET 45
-#define ONRSPQRYHISTORDER 46
-#define ONRSPQRYHISTTRADE 47
-#define ONRTNTRADE 48
-#define ONRTNORDER 49
-#define ONRTNEXERCISE 50
-#define ONRTNCOMBACTION 51
-#define ONRTNLOCK 52
-#define ONERRRTNORDERACTION 53
-#define ONRTNCLIENTNOTICE 54
-
+#define ONRSPERRORQUOTEINSERT 12
+#define ONRSPQUOTEACTION 13
+#define ONRSPERRORCOMBACTIONINSERT 14
+#define ONRSPQUERYMAXORDERVOLUME 15
+#define ONRSPQRYLOCKVOLUME 16
+#define ONRSPQUERYEXERCISEVOLUME 17
+#define ONRSPQRYCOMBVOLUME 18
+#define ONRSPQRYPOSITION 19
+#define ONRSPQRYTRADINGACCOUNT 20
+#define ONRSPQRYORDER 21
+#define ONRSPQRYTRADE 22
+#define ONRSPQRYEXERCISE 23
+#define ONRSPQRYLOCK 24
+#define ONRSPQRYCOMBACTION 25
+#define ONRSPQRYFORQUOTE 26
+#define ONRSPQRYQUOTE 27
+#define ONRSPQRYPOSITIONCOMBINEDETAIL 28
+#define ONRSPQRYINSTRUMENT 29
+#define ONRSPQRYCOVEREDSHORT 30
+#define ONRSPQRYEXERCISEASSIGN 31
+#define ONRSPTRANSFER 32
+#define ONRSPQRYTRANSFER 33
+#define ONRSPQUERYBANKBALANCE 34
+#define ONRSPQUERYBANKACCOUNT 35
+#define ONRSPMULTICENTREFUNDTRANS 36
+#define ONRSPQUERYBILLCONTENT 37
+#define ONRSPBILLCONFIRM 38
+#define ONRSPQRYMARGIN 39
+#define ONRSPQRYCOMMISSION 40
+#define ONRSPQRYPOSITIONDETAIL 41
+#define ONRSPQRYEXCHANGERATE 42
+#define ONRSPQRYSYSCONFIG 43
+#define ONRSPQRYDEPTHMARKETDATA 44
+#define ONRSPFUNDTRANS 45
+#define ONRSPQRYFUNDTRANS 46
+#define ONRSPQRYCLIENTNOTICE 47
+#define ONRSPQRYOPTUNDERLY 48
+#define ONRSPQRYSECUDEPTHMARKET 49
+#define ONRSPQRYHISTORDER 50
+#define ONRSPQRYHISTTRADE 51
+#define ONRSPQRYCOMBINSTRUMENT 52
+#define ONRSPQRYSEATID 53
+#define ONRSPOPTIONSELFCLOSE 54
+#define ONRSPOPTIONSELFCLOSEACTION 55
+#define ONRSPQRYOPTIONSELFCLOSERESULT 56
+#define ONRSPQRYOPTIONSELFCLOSE 57
+#define ONRSPOPTQUOTEINSERT 58
+#define ONRSPOPTQUOTEACTION 59
+#define ONRSPQRYOPTQUOTE 60
+#define ONRTNTRADE 61
+#define ONRTNORDER 62
+#define ONRTNEXERCISE 63
+#define ONRTNCOMBACTION 64
+#define ONRTNLOCK 65
+#define ONERRRTNORDERACTION 66
+#define ONRTNCLIENTNOTICE 67
+#define ONRTNFORQUOTE 68
+#define ONRTNQUOTE 69
+#define ONRTNEXCHANGESTATUS 70
+#define ONRTNPRODUCTSTATUS 71
+#define ONRTNOPTIONSELFCLOSE 72
+#define ONRTNOPTQUOTE 73
 
 ///-------------------------------------------------------------------------------------
 ///C++ SPI的回调函数方法实现
@@ -296,7 +314,11 @@ public:
 
 	void processRspForQuoteInsert(Task *task);
 
-	void processRspErrorCombActionInsert(Task *task);
+    void processRspErrorQuoteInsert(Task *task);
+
+    void processRspQuoteAction(Task *task);
+
+    void processRspErrorCombActionInsert(Task *task);
 
 	void processRspQueryMaxOrderVolume(Task *task);
 
@@ -320,7 +342,11 @@ public:
 
 	void processRspQryCombAction(Task *task);
 
-	void processRspQryPositionCombineDetail(Task *task);
+    void processRspQryForQuote(Task *task);
+
+    void processRspQryQuote(Task *task);
+
+    void processRspQryPositionCombineDetail(Task *task);
 
 	void processRspQryInstrument(Task *task);
 
@@ -368,7 +394,25 @@ public:
 
 	void processRspQryHistTrade(Task *task);
 
-	void processRtnTrade(Task *task);
+    void processRspQryCombInstrument(Task *task);
+
+    void processRspQrySeatID(Task *task);
+
+    void processRspOptionSelfClose(Task *task);
+
+    void processRspOptionSelfCloseAction(Task *task);
+
+    void processRspQryOptionSelfCloseResult(Task *task);
+
+    void processRspQryOptionSelfClose(Task *task);
+
+    void processRspOptQuoteInsert(Task *task);
+
+    void processRspOptQuoteAction(Task *task);
+
+    void processRspQryOptQuote(Task *task);
+
+    void processRtnTrade(Task *task);
 
 	void processRtnOrder(Task *task);
 
@@ -381,6 +425,18 @@ public:
 	void processErrRtnOrderAction(Task *task);
 
 	void processRtnClientNotice(Task *task);
+
+    void processRtnForQuote(Task *task);
+
+    void processRtnQuote(Task *task);
+
+    void processRtnExchangeStatus(Task *task);
+
+    void processRtnProductStatus(Task *task);
+
+    void processRtnOptionSelfClose(Task *task);
+
+    void processRtnOptQuote(Task *task);
 
     //-------------------------------------------------------------------------------------
     //data：回调函数的数据字典
@@ -414,7 +470,11 @@ public:
 
 	virtual void onRspForQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
-	virtual void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) {};
+    virtual void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQueryMaxOrderVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -438,7 +498,11 @@ public:
 
 	virtual void onRspQryCombAction(const dict &data, const dict &error, int reqid, bool last) {};
 
-	virtual void onRspQryPositionCombineDetail(const dict &data, const dict &error, int reqid, bool last) {};
+    virtual void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQryPositionCombineDetail(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQryInstrument(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -486,7 +550,25 @@ public:
 
 	virtual void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) {};
 
-	virtual void onRtnTrade(const dict &data) {};
+    virtual void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) {};
+
+    virtual void onRtnTrade(const dict &data) {};
 
 	virtual void onRtnOrder(const dict &data) {};
 
@@ -499,6 +581,19 @@ public:
 	virtual void onErrRtnOrderAction(const dict &data) {};
 
 	virtual void onRtnClientNotice(const dict &data) {};
+
+
+    virtual void onRtnForQuote(const dict &data) {};
+
+    virtual void onRtnQuote(const dict &data) {};
+
+    virtual void onRtnExchangeStatus(const dict &data) {};
+
+    virtual void onRtnProductStatus(const dict &data) {};
+
+    virtual void onRtnOptionSelfClose(const dict &data) {};
+
+    virtual void onRtnOptQuote(const dict &data) {};
 
     //-------------------------------------------------------------------------------------
     //req:主动函数的请求字典
@@ -542,7 +637,11 @@ public:
 
 	int reqForQuoteInsert(const dict &req, int reqid);
 
-	int reqCombActionInsert(const dict &req, int reqid);
+int reqQuoteInsert(const dict &req, int reqid);
+
+int reqQuoteAction(const dict &req, int reqid);
+
+int reqCombActionInsert(const dict &req, int reqid);
 
 	int reqQueryMaxOrderVolume(const dict &req, int reqid);
 
@@ -566,7 +665,11 @@ public:
 
 	int reqQryCombAction(const dict &req, int reqid);
 
-	int reqQryPositionCombineDetail(const dict &req, int reqid);
+int reqQryForQuote(const dict &req, int reqid);
+
+int reqQryQuote(const dict &req, int reqid);
+
+int reqQryPositionCombineDetail(const dict &req, int reqid);
 
 	int reqQryInstrument(const dict &req, int reqid);
 
@@ -612,5 +715,23 @@ public:
 
 	int reqQryHistOrder(const dict &req, int reqid);
 
-	int reqQryHistTrade(const dict &req, int reqid);
-};
+int reqQryHistTrade(const dict &req, int reqid);
+
+int reqQryCombInstrument(const dict &req, int reqid);
+
+int reqQrySeatID(const dict &req, int reqid);
+
+int reqOptionSelfClose(const dict &req, int reqid);
+
+int reqOptionSelfCloseAction(const dict &req, int reqid);
+
+int reqQryOptionSelfCloseResult(const dict &req, int reqid);
+
+int reqQryOptionSelfClose(const dict &req, int reqid);
+
+int reqOptQuoteInsert(const dict &req, int reqid);
+
+int reqOptQuoteAction(const dict &req, int reqid);
+
+int reqQryOptQuote(const dict &req, int reqid);
+

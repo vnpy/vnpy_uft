@@ -16,7 +16,9 @@ using namespace pybind11;
 #define ONRSPDEPTHMARKETDATASUBSCRIBE 2
 #define ONRSPDEPTHMARKETDATACANCEL 3
 #define ONRTNDEPTHMARKETDATA 4
-
+#define ONRSPFORQUOTESUBSCRIBE 5
+#define ONRSPFORQUOTECANCEL 6
+#define ONRTNFORQUOTE 7
 
 
 ///-------------------------------------------------------------------------------------
@@ -81,6 +83,13 @@ public:
 
 	void processRtnDepthMarketData(Task *task);
 
+	void processRspForQuoteSubscribe(Task *task);
+
+    void processRspForQuoteCancel(Task *task);
+
+    void processRtnForQuote(Task *task);
+
+
 	//-------------------------------------------------------------------------------------
 	//data：回调函数的数据字典
 	//error：回调函数的错误字典
@@ -97,6 +106,12 @@ public:
 	virtual void onRspDepthMarketDataCancel(const dict &error, int reqid, bool last) {};
 
 	virtual void onRtnDepthMarketData(const dict &data) {};
+
+    virtual void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) {};
+
+    virtual void onRspForQuoteCancel(const dict &error, int reqid, bool last) {};
+
+    virtual void onRtnForQuote(const dict &data) {};
 
 	//-------------------------------------------------------------------------------------
 	//req:主动函数的请求字典
@@ -117,6 +132,10 @@ public:
 	int reqDepthMarketDataSubscribe(const dict &req, int reqid);
 
 	int reqDepthMarketDataCancel(const dict &req, int reqid);
+
+    int reqForQuoteSubscribe(const dict &req, int reqid);
+
+    int reqForQuoteCancel(const dict &req, int reqid);
 
 	string getApiErrorMsg(int nErrorCode);
 };

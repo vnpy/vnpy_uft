@@ -67,6 +67,49 @@ void MdApi::OnRtnDepthMarketData(CHSDepthMarketDataField *pDepthMarketData)
 };
 
 
+void MdApi::OnRspForQuoteSubscribe(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	Task task = Task();
+	task.task_name = ONRSPFORQUOTESUBSCRIBE;
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
+void MdApi::OnRspForQuoteCancel(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	Task task = Task();
+	task.task_name = ONRSPFORQUOTECANCEL;
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
+void MdApi::OnRtnForQuote(CHSForQuoteField *pForQuote)
+{
+	Task task = Task();
+	task.task_name = ONRTNFORQUOTE;
+	if (pForQuote)
+	{
+		CHSForQuoteField *task_data = new CHSForQuoteField();
+		*task_data = *pForQuote;
+		task.task_data = task_data;
+	}
+	this->task_queue.push(task);
+};
+
 ///-------------------------------------------------------------------------------------
 ///工作线程从队列中取出数据，转化为python对象后，进行推送
 ///-------------------------------------------------------------------------------------
@@ -110,6 +153,24 @@ void MdApi::processTask()
 				this->processRtnDepthMarketData(&task);
 				break;
 			}
+
+			case ONRSPFORQUOTESUBSCRIBE:
+            {
+                this->processRspForQuoteSubscribe(&task);
+                break;
+            }
+
+            case ONRSPFORQUOTECANCEL:
+            {
+                this->processRspForQuoteCancel(&task);
+                break;
+            }
+
+            case ONRTNFORQUOTE:
+            {
+                this->processRtnForQuote(&task);
+                break;
+            }
             };
         }
     }
@@ -208,9 +269,57 @@ void MdApi::processRtnDepthMarketData(Task *task)
 		data["PreOpenInterest"] = task_data->PreOpenInterest;
 		data["InstrumentTradeStatus"] = task_data->InstrumentTradeStatus;
 		data["OpenRestriction"] = toUtf(task_data->OpenRestriction);
+		data["IOPV"] = task_data->IOPV;
+		data["AuctionPrice"] = task_data->AuctionPrice;
+		data["SendingTime"] = task_data->SendingTime;
 		delete task_data;
 	}
 	this->onRtnDepthMarketData(data);
+};
+
+void MdApi::processRspForQuoteSubscribe(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspForQuoteSubscribe(error, task->task_id, task->task_last);
+};
+
+void MdApi::processRspForQuoteCancel(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspForQuoteCancel(error, task->task_id, task->task_last);
+};
+
+void MdApi::processRtnForQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSForQuoteField *task_data = (CHSForQuoteField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["TradingDay"] = task_data->TradingDay;
+		data["UpdateTime"] = task_data->UpdateTime;
+		delete task_data;
+	}
+	this->onRtnForQuote(data);
 };
 
 
@@ -294,6 +403,26 @@ int MdApi::reqDepthMarketDataCancel(const dict &req, int reqid)
 };
 
 
+int MdApi::reqForQuoteSubscribe(const dict &req, int reqid)
+{
+	CHSReqForQuoteField myreq = CHSReqForQuoteField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	int i = this->api->ReqForQuoteSubscribe(&myreq, reqid);
+	return i;
+};
+
+int MdApi::reqForQuoteCancel(const dict &req, int reqid)
+{
+	CHSReqForQuoteField myreq = CHSReqForQuoteField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	int i = this->api->ReqForQuoteCancel(&myreq, reqid);
+	return i;
+};
+
 ///-------------------------------------------------------------------------------------
 ///Pybind11封装
 ///-------------------------------------------------------------------------------------
@@ -362,6 +491,29 @@ public:
 			cout << e.what() << endl;
 		}
 	};
+	void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) override
+    {
+        try
+        {
+            PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteSubscribe, error, reqid, last);
+        }
+        catch (const error_already_set &e)
+        {
+            cout << e.what() << endl;
+        }
+    };
+
+    void onRspForQuoteCancel(const dict &error, int reqid, bool last) override
+    {
+        try
+        {
+            PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteCancel, error, reqid, last);
+        }
+        catch (const error_already_set &e)
+        {
+            cout << e.what() << endl;
+        }
+    };
 };
 
 
@@ -381,12 +533,17 @@ PYBIND11_MODULE(vnuftmd, m)
 		.def("getApiErrorMsg", &MdApi::getApiErrorMsg)
 		.def("reqDepthMarketDataSubscribe", &MdApi::reqDepthMarketDataSubscribe)
 		.def("reqDepthMarketDataCancel", &MdApi::reqDepthMarketDataCancel)
+        .def("reqForQuoteSubscribe", &MdApi::reqForQuoteSubscribe)
+        .def("reqForQuoteCancel", &MdApi::reqForQuoteCancel)
 
-		.def("onFrontConnected", &MdApi::onFrontConnected)
-		.def("onFrontDisconnected", &MdApi::onFrontDisconnected)
-		.def("onRspDepthMarketDataSubscribe", &MdApi::onRspDepthMarketDataSubscribe)
-		.def("onRspDepthMarketDataCancel", &MdApi::onRspDepthMarketDataCancel)
-		.def("onRtnDepthMarketData", &MdApi::onRtnDepthMarketData)
-		;
+        .def("onFrontConnected", &MdApi::onFrontConnected)
+        .def("onFrontDisconnected", &MdApi::onFrontDisconnected)
+        .def("onRspDepthMarketDataSubscribe", &MdApi::onRspDepthMarketDataSubscribe)
+        .def("onRspDepthMarketDataCancel", &MdApi::onRspDepthMarketDataCancel)
+        .def("onRtnDepthMarketData", &MdApi::onRtnDepthMarketData)
+        .def("onRspForQuoteSubscribe", &MdApi::onRspForQuoteSubscribe)
+        .def("onRspForQuoteCancel", &MdApi::onRspForQuoteCancel)
+        .def("onRtnForQuote", &MdApi::onRtnForQuote)
+        ;
 
 }

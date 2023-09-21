@@ -3,11 +3,25 @@ from typing import Dict
 
 TYPE_CPP2PY: Dict[str, str] = {
     "int": "int",
+    "int8": "int",
     "int32": "int32",
     "int64": "int64",
+    "__int64": "int64",
     "char": "char",
     "double": "double",
     "short": "int",
+    "int8_t": "int",
+    "uint8": "int",
+    "uint8_t": "int",
+    "uint16": "int",
+    "uint32": "int32",
+    "uint64": "int64",
+    "int16_t": "int",
+    "uint16_t": "int",
+    'uint64_t': 'int',
+    'uint32_t': 'int',
+    'int64_t': 'int',
+    'int32_t': 'int',
 }
 
 
@@ -21,7 +35,7 @@ class DataTypeGenerator:
 
     def run(self) -> None:
         """主函数"""
-        self.f_cpp = open(self.filename, "r")
+        self.f_cpp = open(self.filename, "r", encoding='utf-8')
         self.f_define = open(f"{self.prefix}_constant.py", "w")
         self.f_typedef = open(f"{self.prefix}_typedef.py", "w")
 
@@ -59,8 +73,9 @@ class DataTypeGenerator:
 
     def process_typedef(self, line: str) -> None:
         """处理类型定义"""
+        line = line.replace('\t',' ')
         words = line.split(" ")
-        words = [word for word in words if word != " "]
+        words = [word for word in words if word.strip() not in ["", 'unsigned']]
 
         name = words[2]
         typedef = TYPE_CPP2PY[words[1]]
