@@ -94,28 +94,29 @@ using namespace pybind11;
 class TdApi : public CHSTradeSpi
 {
 private:
-	CHSTradeApi* api;                     //API对象
-    thread task_thread;                    //工作线程指针（向python中推送数据）
-    TaskQueue task_queue;                //任务队列
-    bool active = false;                //工作状态
+	CHSTradeApi* api;                    //API对象
+	thread task_thread;                  //工作线程指针（向python中推送数据）
+	TaskQueue task_queue;                //任务队列
+	bool active = false;                 //工作状态
 
 public:
-    TdApi()
-    {
-    };
+	TdApi()
+	{
+	};
 
-    ~TdApi()
-    {
-        if (this->active)
-        {
-            this->exit();
-        }
-    };
+	~TdApi()
+	{
+		if (this->active)
+		{
+			this->exit();
+		}
+	};
 
-    //-------------------------------------------------------------------------------------
-    //API回调函数
-    //-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	//API回调函数
+	//-------------------------------------------------------------------------------------
 
+	/// Description: 当客户端与交易后台开始建立通信连接，连接成功后此方法被回调。
 	/// Description: 当客户端与交易后台开始建立通信连接，连接成功后此方法被回调。
 	virtual void OnFrontConnected();
 
@@ -156,6 +157,13 @@ public:
 	/// Description:询价录入
 	virtual void OnRspForQuoteInsert(CHSRspForQuoteInsertField *pRspForQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
+	/// Description:报价录入
+	/// Others     :报价错误此方法被回调，pRspQuoteInsert保存了请求时出错的结构体数据。
+	virtual void OnRspErrorQuoteInsert(CHSRspQuoteInsertField *pRspQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:报价撤单
+	virtual void OnRspQuoteAction(CHSRspQuoteActionField *pRspQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
 	/// Description:申请组合录入
 	virtual void OnRspErrorCombActionInsert(CHSRspCombActionInsertField *pRspCombActionInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
@@ -191,6 +199,12 @@ public:
 
 	/// Description:申请组合查询
 	virtual void OnRspQryCombAction(CHSCombActionField *pRspQryCombAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:询价查询
+	virtual void OnRspQryForQuote(CHSForQuoteField *pRspQryForQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:报价查询
+	virtual void OnRspQryQuote(CHSQuoteField *pRspQryQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:组合持仓明细查询
 	virtual void OnRspQryPositionCombineDetail(CHSRspQryPositionCombineDetailField *pRspQryPositionCombineDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
@@ -264,6 +278,33 @@ public:
 	/// Description:历史成交查询
 	virtual void OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
+	/// Description:组合合约查询
+	virtual void OnRspQryCombInstrument(CHSRspQryCombInstrumentField *pRspQryCombInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:席位查询
+	virtual void OnRspQrySeatID(CHSRspQrySeatIDField *pRspQrySeatID, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:期权自对冲设置
+	virtual void OnRspOptionSelfClose(CHSRspOptionSelfCloseField *pReqOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:期权自对冲设置取消
+	virtual void OnRspOptionSelfCloseAction(CHSRspOptionSelfCloseActionField *pReqOptionSelfCloseAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:期权自对冲设置结果查询
+	virtual void OnRspQryOptionSelfCloseResult(CHSRspQryOptionSelfCloseResultField *pReqQryOptionSelfCloseResult, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:期权自对冲查询
+	virtual void OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:股票期权报价录入
+	virtual void OnRspOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:股票期权报价撤单
+	virtual void OnRspOptQuoteAction(CHSRspOptQuoteActionField *pRspOptQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:股票期权报价查询
+	virtual void OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
 	/// Description: 主推-成交回报
 	virtual void OnRtnTrade(CHSTradeField *pRtnTrade);
 
@@ -281,14 +322,32 @@ public:
 
 	/// Description: 主推-撤单错误回报
 	virtual void OnErrRtnOrderAction(CHSOrderActionField *pRtnOrder);
-
+	
 	/// Description: 主推-客户通知
 	virtual void OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice);
 
-    //-------------------------------------------------------------------------------------
-    //task：任务
-    //-------------------------------------------------------------------------------------
-    void processTask();
+	/// Description: 主推-询价回报
+	virtual void OnRtnForQuote(CHSForQuoteField *pRtnForQuote);
+
+	/// Description: 主推-报价回报
+	virtual void OnRtnQuote(CHSQuoteField *pRtnQuote);
+
+	/// Description: 主推-交易所状态
+	virtual void OnRtnExchangeStatus(CHSExchangeStatusField *pRtnExchangeStatus);
+
+	/// Description: 主推-合约品种状态
+	virtual void OnRtnProductStatus(CHSProductStatusField *pRtnProductStatus);
+
+	/// Description: 主推-期权自对冲
+	virtual void OnRtnOptionSelfClose(CHSOptionSelfCloseField *pRtnOptionSelfClose);
+
+	/// Description: 主推-股票期权报价回报
+	virtual void OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote);
+
+	//-------------------------------------------------------------------------------------
+	//task：任务
+	//-------------------------------------------------------------------------------------
+	void processTask();
 
 	void processFrontConnected(Task *task);
 
@@ -314,11 +373,11 @@ public:
 
 	void processRspForQuoteInsert(Task *task);
 
-    void processRspErrorQuoteInsert(Task *task);
+	void processRspErrorQuoteInsert(Task *task);
 
-    void processRspQuoteAction(Task *task);
+	void processRspQuoteAction(Task *task);
 
-    void processRspErrorCombActionInsert(Task *task);
+	void processRspErrorCombActionInsert(Task *task);
 
 	void processRspQueryMaxOrderVolume(Task *task);
 
@@ -342,11 +401,11 @@ public:
 
 	void processRspQryCombAction(Task *task);
 
-    void processRspQryForQuote(Task *task);
+	void processRspQryForQuote(Task *task);
 
-    void processRspQryQuote(Task *task);
+	void processRspQryQuote(Task *task);
 
-    void processRspQryPositionCombineDetail(Task *task);
+	void processRspQryPositionCombineDetail(Task *task);
 
 	void processRspQryInstrument(Task *task);
 
@@ -394,25 +453,25 @@ public:
 
 	void processRspQryHistTrade(Task *task);
 
-    void processRspQryCombInstrument(Task *task);
+	void processRspQryCombInstrument(Task *task);
 
-    void processRspQrySeatID(Task *task);
+	void processRspQrySeatID(Task *task);
 
-    void processRspOptionSelfClose(Task *task);
+	void processRspOptionSelfClose(Task *task);
 
-    void processRspOptionSelfCloseAction(Task *task);
+	void processRspOptionSelfCloseAction(Task *task);
 
-    void processRspQryOptionSelfCloseResult(Task *task);
+	void processRspQryOptionSelfCloseResult(Task *task);
 
-    void processRspQryOptionSelfClose(Task *task);
+	void processRspQryOptionSelfClose(Task *task);
 
-    void processRspOptQuoteInsert(Task *task);
+	void processRspOptQuoteInsert(Task *task);
 
-    void processRspOptQuoteAction(Task *task);
+	void processRspOptQuoteAction(Task *task);
 
-    void processRspQryOptQuote(Task *task);
+	void processRspQryOptQuote(Task *task);
 
-    void processRtnTrade(Task *task);
+	void processRtnTrade(Task *task);
 
 	void processRtnOrder(Task *task);
 
@@ -426,25 +485,25 @@ public:
 
 	void processRtnClientNotice(Task *task);
 
-    void processRtnForQuote(Task *task);
+	void processRtnForQuote(Task *task);
 
-    void processRtnQuote(Task *task);
+	void processRtnQuote(Task *task);
 
-    void processRtnExchangeStatus(Task *task);
+	void processRtnExchangeStatus(Task *task);
 
-    void processRtnProductStatus(Task *task);
+	void processRtnProductStatus(Task *task);
 
-    void processRtnOptionSelfClose(Task *task);
+	void processRtnOptionSelfClose(Task *task);
 
-    void processRtnOptQuote(Task *task);
+	void processRtnOptQuote(Task *task);
 
-    //-------------------------------------------------------------------------------------
-    //data：回调函数的数据字典
-    //error：回调函数的错误字典
-    //id：请求id
-    //last：是否为最后返回
-    //i：整数
-    //-------------------------------------------------------------------------------------    
+	//-------------------------------------------------------------------------------------
+	//data：回调函数的数据字典
+	//error：回调函数的错误字典
+	//id：请求id
+	//last：是否为最后返回
+	//i：整数
+	//-------------------------------------------------------------------------------------    
 
 	virtual void onFrontConnected() {};
 
@@ -470,11 +529,11 @@ public:
 
 	virtual void onRspForQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQueryMaxOrderVolume(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -498,11 +557,11 @@ public:
 
 	virtual void onRspQryCombAction(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryPositionCombineDetail(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryPositionCombineDetail(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQryInstrument(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -550,25 +609,25 @@ public:
 
 	virtual void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) {};
 
-    virtual void onRtnTrade(const dict &data) {};
+	virtual void onRtnTrade(const dict &data) {};
 
 	virtual void onRtnOrder(const dict &data) {};
 
@@ -582,28 +641,27 @@ public:
 
 	virtual void onRtnClientNotice(const dict &data) {};
 
+	virtual void onRtnForQuote(const dict &data) {};
 
-    virtual void onRtnForQuote(const dict &data) {};
+	virtual void onRtnQuote(const dict &data) {};
 
-    virtual void onRtnQuote(const dict &data) {};
+	virtual void onRtnExchangeStatus(const dict &data) {};
 
-    virtual void onRtnExchangeStatus(const dict &data) {};
+	virtual void onRtnProductStatus(const dict &data) {};
 
-    virtual void onRtnProductStatus(const dict &data) {};
+	virtual void onRtnOptionSelfClose(const dict &data) {};
 
-    virtual void onRtnOptionSelfClose(const dict &data) {};
+	virtual void onRtnOptQuote(const dict &data) {};
 
-    virtual void onRtnOptQuote(const dict &data) {};
-
-    //-------------------------------------------------------------------------------------
-    //req:主动函数的请求字典
-    //-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	//req:主动函数的请求字典
+	//-------------------------------------------------------------------------------------
 
 	void newTradeApi(string pszFlowPath);
 
-    int init(string pszLicFile, string pszSafeLevel, string pszPwd, string pszSslFile, string pszSslPwd);
+	int init(string pszLicFile, string pszSafeLevel, string pszPwd, string pszSslFile, string pszSslPwd);
 
-    int join();
+	int join();
 
 	int exit();
 
@@ -637,11 +695,11 @@ public:
 
 	int reqForQuoteInsert(const dict &req, int reqid);
 
-int reqQuoteInsert(const dict &req, int reqid);
+	int reqQuoteInsert(const dict &req, int reqid);
 
-int reqQuoteAction(const dict &req, int reqid);
+	int reqQuoteAction(const dict &req, int reqid);
 
-int reqCombActionInsert(const dict &req, int reqid);
+	int reqCombActionInsert(const dict &req, int reqid);
 
 	int reqQueryMaxOrderVolume(const dict &req, int reqid);
 
@@ -665,11 +723,11 @@ int reqCombActionInsert(const dict &req, int reqid);
 
 	int reqQryCombAction(const dict &req, int reqid);
 
-int reqQryForQuote(const dict &req, int reqid);
+	int reqQryForQuote(const dict &req, int reqid);
 
-int reqQryQuote(const dict &req, int reqid);
+	int reqQryQuote(const dict &req, int reqid);
 
-int reqQryPositionCombineDetail(const dict &req, int reqid);
+	int reqQryPositionCombineDetail(const dict &req, int reqid);
 
 	int reqQryInstrument(const dict &req, int reqid);
 
@@ -715,23 +773,23 @@ int reqQryPositionCombineDetail(const dict &req, int reqid);
 
 	int reqQryHistOrder(const dict &req, int reqid);
 
-int reqQryHistTrade(const dict &req, int reqid);
+	int reqQryHistTrade(const dict &req, int reqid);
 
-int reqQryCombInstrument(const dict &req, int reqid);
+	int reqQryCombInstrument(const dict &req, int reqid);
 
-int reqQrySeatID(const dict &req, int reqid);
+	int reqQrySeatID(const dict &req, int reqid);
 
-int reqOptionSelfClose(const dict &req, int reqid);
+	int reqOptionSelfClose(const dict &req, int reqid);
 
-int reqOptionSelfCloseAction(const dict &req, int reqid);
+	int reqOptionSelfCloseAction(const dict &req, int reqid);
 
-int reqQryOptionSelfCloseResult(const dict &req, int reqid);
+	int reqQryOptionSelfCloseResult(const dict &req, int reqid);
 
-int reqQryOptionSelfClose(const dict &req, int reqid);
+	int reqQryOptionSelfClose(const dict &req, int reqid);
 
-int reqOptQuoteInsert(const dict &req, int reqid);
+	int reqOptQuoteInsert(const dict &req, int reqid);
 
-int reqOptQuoteAction(const dict &req, int reqid);
+	int reqOptQuoteAction(const dict &req, int reqid);
 
-int reqQryOptQuote(const dict &req, int reqid);
-
+	int reqQryOptQuote(const dict &req, int reqid);
+}

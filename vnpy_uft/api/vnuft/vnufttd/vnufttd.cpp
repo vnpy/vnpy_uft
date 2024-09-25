@@ -7,6 +7,7 @@
 ///-------------------------------------------------------------------------------------
 ///C++的回调函数将数据保存到队列中
 ///-------------------------------------------------------------------------------------
+
 void TdApi::OnFrontConnected()
 {
 	Task task = Task();
@@ -1352,7 +1353,6 @@ void TdApi::OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice)
 	this->task_queue.push(task);
 };
 
-
 void TdApi::OnRtnForQuote(CHSForQuoteField *pRtnForQuote)
 {
 	Task task = Task();
@@ -1437,11 +1437,11 @@ void TdApi::OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote)
 
 void TdApi::processTask()
 {
-    try
-    {
-        while (this->active)
-        {
-            Task task = this->task_queue.pop();
+	try
+	{
+		while (this->active)
+		{
+			Task task = this->task_queue.pop();
 
 			switch (task.task_name)
 			{
@@ -1511,23 +1511,23 @@ void TdApi::processTask()
 				break;
 			}
 
-case ONRSPFORQUOTEINSERT:
-{
-	this->processRspForQuoteInsert(&task);
-	break;
-}
+			case ONRSPFORQUOTEINSERT:
+			{
+				this->processRspForQuoteInsert(&task);
+				break;
+			}
 
-case ONRSPERRORQUOTEINSERT:
-{
-	this->processRspErrorQuoteInsert(&task);
-	break;
-}
+			case ONRSPERRORQUOTEINSERT:
+			{
+				this->processRspErrorQuoteInsert(&task);
+				break;
+			}
 
-case ONRSPQUOTEACTION:
-{
-	this->processRspQuoteAction(&task);
-	break;
-}
+			case ONRSPQUOTEACTION:
+			{
+				this->processRspQuoteAction(&task);
+				break;
+			}
 
 			case ONRSPERRORCOMBACTIONINSERT:
 			{
@@ -1595,23 +1595,23 @@ case ONRSPQUOTEACTION:
 				break;
 			}
 
-case ONRSPQRYCOMBACTION:
-{
-	this->processRspQryCombAction(&task);
-	break;
-}
+			case ONRSPQRYCOMBACTION:
+			{
+				this->processRspQryCombAction(&task);
+				break;
+			}
 
-case ONRSPQRYFORQUOTE:
-{
-	this->processRspQryForQuote(&task);
-	break;
-}
+			case ONRSPQRYFORQUOTE:
+			{
+				this->processRspQryForQuote(&task);
+				break;
+			}
 
-case ONRSPQRYQUOTE:
-{
-	this->processRspQryQuote(&task);
-	break;
-}
+			case ONRSPQRYQUOTE:
+			{
+				this->processRspQryQuote(&task);
+				break;
+			}
 
 			case ONRSPQRYPOSITIONCOMBINEDETAIL:
 			{
@@ -1751,65 +1751,65 @@ case ONRSPQRYQUOTE:
 				break;
 			}
 
-case ONRSPQRYHISTTRADE:
-{
-	this->processRspQryHistTrade(&task);
-	break;
-}
+			case ONRSPQRYHISTTRADE:
+			{
+				this->processRspQryHistTrade(&task);
+				break;
+			}
 
-case ONRSPQRYCOMBINSTRUMENT:
-{
-	this->processRspQryCombInstrument(&task);
-	break;
-}
+			case ONRSPQRYCOMBINSTRUMENT:
+			{
+				this->processRspQryCombInstrument(&task);
+				break;
+			}
 
-case ONRSPQRYSEATID:
-{
-	this->processRspQrySeatID(&task);
-	break;
-}
+			case ONRSPQRYSEATID:
+			{
+				this->processRspQrySeatID(&task);
+				break;
+			}
 
-case ONRSPOPTIONSELFCLOSE:
-{
-	this->processRspOptionSelfClose(&task);
-	break;
-}
+			case ONRSPOPTIONSELFCLOSE:
+			{
+				this->processRspOptionSelfClose(&task);
+				break;
+			}
 
-case ONRSPOPTIONSELFCLOSEACTION:
-{
-	this->processRspOptionSelfCloseAction(&task);
-	break;
-}
+			case ONRSPOPTIONSELFCLOSEACTION:
+			{
+				this->processRspOptionSelfCloseAction(&task);
+				break;
+			}
 
-case ONRSPQRYOPTIONSELFCLOSERESULT:
-{
-	this->processRspQryOptionSelfCloseResult(&task);
-	break;
-}
+			case ONRSPQRYOPTIONSELFCLOSERESULT:
+			{
+				this->processRspQryOptionSelfCloseResult(&task);
+				break;
+			}
 
-case ONRSPQRYOPTIONSELFCLOSE:
-{
-	this->processRspQryOptionSelfClose(&task);
-	break;
-}
+			case ONRSPQRYOPTIONSELFCLOSE:
+			{
+				this->processRspQryOptionSelfClose(&task);
+				break;
+			}
 
-case ONRSPOPTQUOTEINSERT:
-{
-	this->processRspOptQuoteInsert(&task);
-	break;
-}
+			case ONRSPOPTQUOTEINSERT:
+			{
+				this->processRspOptQuoteInsert(&task);
+				break;
+			}
 
-case ONRSPOPTQUOTEACTION:
-{
-	this->processRspOptQuoteAction(&task);
-	break;
-}
+			case ONRSPOPTQUOTEACTION:
+			{
+				this->processRspOptQuoteAction(&task);
+				break;
+			}
 
-case ONRSPQRYOPTQUOTE:
-{
-	this->processRspQryOptQuote(&task);
-	break;
-}
+			case ONRSPQRYOPTQUOTE:
+			{
+				this->processRspQryOptQuote(&task);
+				break;
+			}
 
 			case ONRTNTRADE:
 			{
@@ -1853,47 +1853,47 @@ case ONRSPQRYOPTQUOTE:
 				break;
 			}
 
-            case ONRTNFORQUOTE:
-            {
-                this->processRtnForQuote(&task);
-                break;
-            }
+			case ONRTNFORQUOTE:
+			{
+				this->processRtnForQuote(&task);
+				break;
+			}
 
-            case ONRTNQUOTE:
-            {
-                this->processRtnQuote(&task);
-                break;
-            }
+			case ONRTNQUOTE:
+			{
+				this->processRtnQuote(&task);
+				break;
+			}
 
-            case ONRTNEXCHANGESTATUS:
-            {
-                this->processRtnExchangeStatus(&task);
-                break;
-            }
+			case ONRTNEXCHANGESTATUS:
+			{
+				this->processRtnExchangeStatus(&task);
+				break;
+			}
 
-            case ONRTNPRODUCTSTATUS:
-            {
-                this->processRtnProductStatus(&task);
-                break;
-            }
+			case ONRTNPRODUCTSTATUS:
+			{
+				this->processRtnProductStatus(&task);
+				break;
+			}
 
-            case ONRTNOPTIONSELFCLOSE:
-            {
-                this->processRtnOptionSelfClose(&task);
-                break;
-            }
+			case ONRTNOPTIONSELFCLOSE:
+			{
+				this->processRtnOptionSelfClose(&task);
+				break;
+			}
 
-            case ONRTNOPTQUOTE:
-            {
-                this->processRtnOptQuote(&task);
-                break;
-            }
+			case ONRTNOPTQUOTE:
+			{
+				this->processRtnOptQuote(&task);
+				break;
+			}
 			};
-        }
-    }
-    catch (const TerminatedError&)
-    {
-    }
+		}
+	}
+	catch (const TerminatedError&)
+	{
+	}
 };
 
 void TdApi::processFrontConnected(Task *task)
@@ -4078,7 +4078,6 @@ void TdApi::processRtnClientNotice(Task *task)
 	this->onRtnClientNotice(data);
 };
 
-
 void TdApi::processRtnForQuote(Task *task)
 {
 	gil_scoped_acquire acquire;
@@ -4898,7 +4897,6 @@ int TdApi::reqQryHistTrade(const dict &req, int reqid)
 	return i;
 };
 
-
 int TdApi::reqQryCombInstrument(const dict &req, int reqid)
 {
 	CHSReqQryCombInstrumentField myreq = CHSReqQryCombInstrumentField();
@@ -5003,15 +5001,16 @@ int TdApi::reqQryOptQuote(const dict &req, int reqid)
 	int i = this->api->ReqQryOptQuote(&myreq, reqid);
 	return i;
 };
+
 ///-------------------------------------------------------------------------------------
-///Boost.Python封装
+///Pybind11封装
 ///-------------------------------------------------------------------------------------
 
 class PyTdApi : public TdApi
 {
 public:
-    using TdApi::TdApi;
-    
+	using TdApi::TdApi;
+	
 	void onFrontConnected() override
 	{
 		try
@@ -5144,41 +5143,41 @@ public:
 		}
 	};
 
-void onRspForQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspForQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspForQuoteInsert, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspForQuoteInsert, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspErrorQuoteInsert, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspErrorQuoteInsert, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQuoteAction, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQuoteAction, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
 	void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) override
 	{
@@ -5312,41 +5311,41 @@ void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last)
 		}
 	};
 
-void onRspQryCombAction(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryCombAction(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryCombAction, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryCombAction, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryForQuote, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryForQuote, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryQuote, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryQuote, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
 	void onRspQryPositionCombineDetail(const dict &data, const dict &error, int reqid, bool last) override
 	{
@@ -5624,125 +5623,125 @@ void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) ov
 		}
 	};
 
-void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryHistTrade, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryHistTrade, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryCombInstrument, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryCombInstrument, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQrySeatID, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQrySeatID, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspOptionSelfClose, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspOptionSelfClose, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspOptionSelfCloseAction, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspOptionSelfCloseAction, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptionSelfCloseResult, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryOptionSelfCloseResult, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptionSelfClose, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryOptionSelfClose, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteInsert, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteInsert, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteAction, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteAction, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) override
-{
-	try
+	void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptQuote, data, error, reqid, last);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryOptQuote, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
 	void onRtnTrade(const dict &data) override
 	{
@@ -5816,94 +5815,94 @@ void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last)
 		}
 	};
 
-void onRtnClientNotice(const dict &data) override
-{
-	try
+	void onRtnClientNotice(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnClientNotice, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnClientNotice, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRtnForQuote(const dict &data) override
-{
-	try
+	void onRtnForQuote(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnForQuote, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnForQuote, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRtnQuote(const dict &data) override
-{
-	try
+	void onRtnQuote(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnQuote, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnQuote, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRtnExchangeStatus(const dict &data) override
-{
-	try
+	void onRtnExchangeStatus(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnExchangeStatus, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnExchangeStatus, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRtnProductStatus(const dict &data) override
-{
-	try
+	void onRtnProductStatus(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnProductStatus, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnProductStatus, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRtnOptionSelfClose(const dict &data) override
-{
-	try
+	void onRtnOptionSelfClose(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnOptionSelfClose, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnOptionSelfClose, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 
-void onRtnOptQuote(const dict &data) override
-{
-	try
+	void onRtnOptQuote(const dict &data) override
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRtnOptQuote, data);
-	}
-	catch (const error_already_set &e)
-	{
-		cout << e.what() << endl;
-	}
-};
-
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnOptQuote, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
+}
 
 PYBIND11_MODULE(vnufttd, m)
 {
-    class_<TdApi, PyTdApi> TdApi(m, "TdApi", module_local());
+	class_<TdApi, PyTdApi> TdApi(m, "TdApi", module_local());
 	TdApi
 		.def(init<>())
 		.def("newTradeApi", &TdApi::newTradeApi)
@@ -5915,9 +5914,6 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("registerFensServer", &TdApi::registerFensServer)
 		.def("getApiErrorMsg", &TdApi::getApiErrorMsg)
 		.def("getTradingDate", &TdApi::getTradingDate)
-
-
-
 		.def("reqAuthenticate", &TdApi::reqAuthenticate)
 		.def("reqSubmitUserSystemInfo", &TdApi::reqSubmitUserSystemInfo)
 		.def("reqUserLogin", &TdApi::reqUserLogin)
@@ -5929,8 +5925,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("reqLockInsert", &TdApi::reqLockInsert)
 		.def("reqForQuoteInsert", &TdApi::reqForQuoteInsert)
 		.def("reqQuoteInsert", &TdApi::reqQuoteInsert)
-        .def("reqQuoteAction", &TdApi::reqQuoteAction)
-
+		.def("reqQuoteAction", &TdApi::reqQuoteAction)
 		.def("reqCombActionInsert", &TdApi::reqCombActionInsert)
 		.def("reqQueryMaxOrderVolume", &TdApi::reqQueryMaxOrderVolume)
 		.def("reqQryLockVolume", &TdApi::reqQryLockVolume)
@@ -5943,10 +5938,8 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("reqQryExercise", &TdApi::reqQryExercise)
 		.def("reqQryLock", &TdApi::reqQryLock)
 		.def("reqQryCombAction", &TdApi::reqQryCombAction)
-
 		.def("reqQryForQuote", &TdApi::reqQryForQuote)
-        .def("reqQryQuote", &TdApi::reqQryQuote)
-
+		.def("reqQryQuote", &TdApi::reqQryQuote)
 		.def("reqQryPositionCombineDetail", &TdApi::reqQryPositionCombineDetail)
 		.def("reqQryInstrument", &TdApi::reqQryInstrument)
 		.def("reqQryCoveredShort", &TdApi::reqQryCoveredShort)
@@ -5972,15 +5965,14 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("reqQryHistOrder", &TdApi::reqQryHistOrder)
 		.def("reqQryHistTrade", &TdApi::reqQryHistTrade)
 		.def("reqQryCombInstrument", &TdApi::reqQryCombInstrument)
-        .def("reqQrySeatID", &TdApi::reqQrySeatID)
-        .def("reqOptionSelfClose", &TdApi::reqOptionSelfClose)
-        .def("reqOptionSelfCloseAction", &TdApi::reqOptionSelfCloseAction)
-        .def("reqQryOptionSelfCloseResult", &TdApi::reqQryOptionSelfCloseResult)
-        .def("reqQryOptionSelfClose", &TdApi::reqQryOptionSelfClose)
-        .def("reqOptQuoteInsert", &TdApi::reqOptQuoteInsert)
-        .def("reqOptQuoteAction", &TdApi::reqOptQuoteAction)
-        .def("reqQryOptQuote", &TdApi::reqQryOptQuote)
-
+		.def("reqQrySeatID", &TdApi::reqQrySeatID)
+		.def("reqOptionSelfClose", &TdApi::reqOptionSelfClose)
+		.def("reqOptionSelfCloseAction", &TdApi::reqOptionSelfCloseAction)
+		.def("reqQryOptionSelfCloseResult", &TdApi::reqQryOptionSelfCloseResult)
+		.def("reqQryOptionSelfClose", &TdApi::reqQryOptionSelfClose)
+		.def("reqOptQuoteInsert", &TdApi::reqOptQuoteInsert)
+		.def("reqOptQuoteAction", &TdApi::reqOptQuoteAction)
+		.def("reqQryOptQuote", &TdApi::reqQryOptQuote)
 
 		.def("onFrontConnected", &TdApi::onFrontConnected)
 		.def("onFrontDisconnected", &TdApi::onFrontDisconnected)
@@ -5995,7 +5987,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("onRspErrorLockInsert", &TdApi::onRspErrorLockInsert)
 		.def("onRspForQuoteInsert", &TdApi::onRspForQuoteInsert)
 		.def("onRspErrorQuoteInsert", &TdApi::onRspErrorQuoteInsert)
-        .def("onRspQuoteAction", &TdApi::onRspQuoteAction)
+		.def("onRspQuoteAction", &TdApi::onRspQuoteAction)
 		.def("onRspErrorCombActionInsert", &TdApi::onRspErrorCombActionInsert)
 		.def("onRspQueryMaxOrderVolume", &TdApi::onRspQueryMaxOrderVolume)
 		.def("onRspQryLockVolume", &TdApi::onRspQryLockVolume)
@@ -6009,7 +6001,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("onRspQryLock", &TdApi::onRspQryLock)
 		.def("onRspQryCombAction", &TdApi::onRspQryCombAction)
 		.def("onRspQryForQuote", &TdApi::onRspQryForQuote)
-        .def("onRspQryQuote", &TdApi::onRspQryQuote)
+		.def("onRspQryQuote", &TdApi::onRspQryQuote)
 		.def("onRspQryPositionCombineDetail", &TdApi::onRspQryPositionCombineDetail)
 		.def("onRspQryInstrument", &TdApi::onRspQryInstrument)
 		.def("onRspQryCoveredShort", &TdApi::onRspQryCoveredShort)
@@ -6035,14 +6027,14 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("onRspQryHistOrder", &TdApi::onRspQryHistOrder)
 		.def("onRspQryHistTrade", &TdApi::onRspQryHistTrade)
 		.def("onRspQryCombInstrument", &TdApi::onRspQryCombInstrument)
-        .def("onRspQrySeatID", &TdApi::onRspQrySeatID)
-        .def("onRspOptionSelfClose", &TdApi::onRspOptionSelfClose)
-        .def("onRspOptionSelfCloseAction", &TdApi::onRspOptionSelfCloseAction)
-        .def("onRspQryOptionSelfCloseResult", &TdApi::onRspQryOptionSelfCloseResult)
-        .def("onRspQryOptionSelfClose", &TdApi::onRspQryOptionSelfClose)
-        .def("onRspOptQuoteInsert", &TdApi::onRspOptQuoteInsert)
-        .def("onRspOptQuoteAction", &TdApi::onRspOptQuoteAction)
-        .def("onRspQryOptQuote", &TdApi::onRspQryOptQuote)
+		.def("onRspQrySeatID", &TdApi::onRspQrySeatID)
+		.def("onRspOptionSelfClose", &TdApi::onRspOptionSelfClose)
+		.def("onRspOptionSelfCloseAction", &TdApi::onRspOptionSelfCloseAction)
+		.def("onRspQryOptionSelfCloseResult", &TdApi::onRspQryOptionSelfCloseResult)
+		.def("onRspQryOptionSelfClose", &TdApi::onRspQryOptionSelfClose)
+		.def("onRspOptQuoteInsert", &TdApi::onRspOptQuoteInsert)
+		.def("onRspOptQuoteAction", &TdApi::onRspOptQuoteAction)
+		.def("onRspQryOptQuote", &TdApi::onRspQryOptQuote)
 		.def("onRtnTrade", &TdApi::onRtnTrade)
 		.def("onRtnOrder", &TdApi::onRtnOrder)
 		.def("onRtnExercise", &TdApi::onRtnExercise)
@@ -6051,10 +6043,10 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("onErrRtnOrderAction", &TdApi::onErrRtnOrderAction)
 		.def("onRtnClientNotice", &TdApi::onRtnClientNotice)
 		.def("onRtnForQuote", &TdApi::onRtnForQuote)
-        .def("onRtnQuote", &TdApi::onRtnQuote)
-        .def("onRtnExchangeStatus", &TdApi::onRtnExchangeStatus)
-        .def("onRtnProductStatus", &TdApi::onRtnProductStatus)
-        .def("onRtnOptionSelfClose", &TdApi::onRtnOptionSelfClose)
-        .def("onRtnOptQuote", &TdApi::onRtnOptQuote)
+		.def("onRtnQuote", &TdApi::onRtnQuote)
+		.def("onRtnExchangeStatus", &TdApi::onRtnExchangeStatus)
+		.def("onRtnProductStatus", &TdApi::onRtnProductStatus)
+		.def("onRtnOptionSelfClose", &TdApi::onRtnOptionSelfClose)
+		.def("onRtnOptQuote", &TdApi::onRtnOptQuote)
 		;
 }
