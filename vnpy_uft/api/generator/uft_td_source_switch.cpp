@@ -70,6 +70,18 @@ case ONRSPFORQUOTEINSERT:
 	break;
 }
 
+case ONRSPERRORQUOTEINSERT:
+{
+	this->processRspErrorQuoteInsert(&task);
+	break;
+}
+
+case ONRSPQUOTEACTION:
+{
+	this->processRspQuoteAction(&task);
+	break;
+}
+
 case ONRSPERRORCOMBACTIONINSERT:
 {
 	this->processRspErrorCombActionInsert(&task);
@@ -139,6 +151,18 @@ case ONRSPQRYLOCK:
 case ONRSPQRYCOMBACTION:
 {
 	this->processRspQryCombAction(&task);
+	break;
+}
+
+case ONRSPQRYFORQUOTE:
+{
+	this->processRspQryForQuote(&task);
+	break;
+}
+
+case ONRSPQRYQUOTE:
+{
+	this->processRspQryQuote(&task);
 	break;
 }
 
@@ -286,6 +310,60 @@ case ONRSPQRYHISTTRADE:
 	break;
 }
 
+case ONRSPQRYCOMBINSTRUMENT:
+{
+	this->processRspQryCombInstrument(&task);
+	break;
+}
+
+case ONRSPQRYSEATID:
+{
+	this->processRspQrySeatID(&task);
+	break;
+}
+
+case ONRSPOPTIONSELFCLOSE:
+{
+	this->processRspOptionSelfClose(&task);
+	break;
+}
+
+case ONRSPOPTIONSELFCLOSEACTION:
+{
+	this->processRspOptionSelfCloseAction(&task);
+	break;
+}
+
+case ONRSPQRYOPTIONSELFCLOSERESULT:
+{
+	this->processRspQryOptionSelfCloseResult(&task);
+	break;
+}
+
+case ONRSPQRYOPTIONSELFCLOSE:
+{
+	this->processRspQryOptionSelfClose(&task);
+	break;
+}
+
+case ONRSPOPTQUOTEINSERT:
+{
+	this->processRspOptQuoteInsert(&task);
+	break;
+}
+
+case ONRSPOPTQUOTEACTION:
+{
+	this->processRspOptQuoteAction(&task);
+	break;
+}
+
+case ONRSPQRYOPTQUOTE:
+{
+	this->processRspQryOptQuote(&task);
+	break;
+}
+
 case ONRTNTRADE:
 {
 	this->processRtnTrade(&task);
@@ -325,6 +403,42 @@ case ONERRRTNORDERACTION:
 case ONRTNCLIENTNOTICE:
 {
 	this->processRtnClientNotice(&task);
+	break;
+}
+
+case ONRTNFORQUOTE:
+{
+	this->processRtnForQuote(&task);
+	break;
+}
+
+case ONRTNQUOTE:
+{
+	this->processRtnQuote(&task);
+	break;
+}
+
+case ONRTNEXCHANGESTATUS:
+{
+	this->processRtnExchangeStatus(&task);
+	break;
+}
+
+case ONRTNPRODUCTSTATUS:
+{
+	this->processRtnProductStatus(&task);
+	break;
+}
+
+case ONRTNOPTIONSELFCLOSE:
+{
+	this->processRtnOptionSelfClose(&task);
+	break;
+}
+
+case ONRTNOPTQUOTE:
+{
+	this->processRtnOptQuote(&task);
 	break;
 }
 

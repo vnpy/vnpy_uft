@@ -8,3 +8,9 @@ void processRspDepthMarketDataCancel(Task *task);
 
 void processRtnDepthMarketData(Task *task);
 
+void processRspForQuoteSubscribe(Task *task);
+
+void processRspForQuoteCancel(Task *task);
+
+void processRtnForQuote(Task *task);
+

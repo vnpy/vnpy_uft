@@ -22,6 +22,10 @@ virtual void onRspErrorLockInsert(const dict &data, const dict &error, int reqid
 
 virtual void onRspForQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
+virtual void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
+
 virtual void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspQueryMaxOrderVolume(const dict &data, const dict &error, int reqid, bool last) {};
@@ -45,6 +49,10 @@ virtual void onRspQryExercise(const dict &data, const dict &error, int reqid, bo
 virtual void onRspQryLock(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspQryCombAction(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) {};
 
 virtual void onRspQryPositionCombineDetail(const dict &data, const dict &error, int reqid, bool last) {};
 
@@ -94,6 +102,24 @@ virtual void onRspQryHistOrder(const dict &data, const dict &error, int reqid, b
 
 virtual void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) {};
 
+virtual void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
+
+virtual void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) {};
+
 virtual void onRtnTrade(const dict &data) {};
 
 virtual void onRtnOrder(const dict &data) {};
@@ -107,4 +133,16 @@ virtual void onRtnLock(const dict &data) {};
 virtual void onErrRtnOrderAction(const dict &data) {};
 
 virtual void onRtnClientNotice(const dict &data) {};
+
+virtual void onRtnForQuote(const dict &data) {};
+
+virtual void onRtnQuote(const dict &data) {};
+
+virtual void onRtnExchangeStatus(const dict &data) {};
+
+virtual void onRtnProductStatus(const dict &data) {};
+
+virtual void onRtnOptionSelfClose(const dict &data) {};
+
+virtual void onRtnOptQuote(const dict &data) {};
 

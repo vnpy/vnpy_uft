@@ -142,6 +142,30 @@ void onRspForQuoteInsert(const dict &data, const dict &error, int reqid, bool la
 	}
 };
 
+void onRspErrorQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspErrorQuoteInsert, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQuoteAction(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQuoteAction, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
 void onRspErrorCombActionInsert(const dict &data, const dict &error, int reqid, bool last) override
 {
 	try
@@ -279,6 +303,30 @@ void onRspQryCombAction(const dict &data, const dict &error, int reqid, bool las
 	try
 	{
 		PYBIND11_OVERLOAD(void, TdApi, onRspQryCombAction, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryForQuote(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryForQuote, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryQuote(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryQuote, data, error, reqid, last);
 	}
 	catch (const error_already_set &e)
 	{
@@ -574,6 +622,114 @@ void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last
 	}
 };
 
+void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryCombInstrument, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQrySeatID, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspOptionSelfClose, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspOptionSelfCloseAction(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspOptionSelfCloseAction, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryOptionSelfCloseResult(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptionSelfCloseResult, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptionSelfClose, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteInsert, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteAction, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptQuote, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
 void onRtnTrade(const dict &data) override
 {
 	try
@@ -651,6 +807,78 @@ void onRtnClientNotice(const dict &data) override
 	try
 	{
 		PYBIND11_OVERLOAD(void, TdApi, onRtnClientNotice, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnForQuote(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnForQuote, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnQuote(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnQuote, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnExchangeStatus(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnExchangeStatus, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnProductStatus(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnProductStatus, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnOptionSelfClose(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnOptionSelfClose, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnOptQuote(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnOptQuote, data);
 	}
 	catch (const error_already_set &e)
 	{

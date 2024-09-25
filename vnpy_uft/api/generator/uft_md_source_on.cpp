@@ -58,3 +58,39 @@ void onRtnDepthMarketData(const dict &data) override
 	}
 };
 
+void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteSubscribe, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspForQuoteCancel(const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteCancel, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnForQuote(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, MdApi, onRtnForQuote, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+

@@ -8,3 +8,9 @@ virtual void onRspDepthMarketDataCancel(const dict &error, int reqid, bool last)
 
 virtual void onRtnDepthMarketData(const dict &data) {};
 
+virtual void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) {};
+
+virtual void onRspForQuoteCancel(const dict &error, int reqid, bool last) {};
+
+virtual void onRtnForQuote(const dict &data) {};
+

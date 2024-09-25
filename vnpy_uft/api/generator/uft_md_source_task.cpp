@@ -56,3 +56,46 @@ void MdApi::OnRtnDepthMarketData(CHSDepthMarketDataField *pDepthMarketData)
 	this->task_queue.push(task);
 };
 
+void MdApi::OnRspForQuoteSubscribe(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) 
+{
+	Task task = Task();
+	task.task_name = ONRSPFORQUOTESUBSCRIBE;
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
+void MdApi::OnRspForQuoteCancel(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) 
+{
+	Task task = Task();
+	task.task_name = ONRSPFORQUOTECANCEL;
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
+void MdApi::OnRtnForQuote(CHSForQuoteField *pForQuote) 
+{
+	Task task = Task();
+	task.task_name = ONRTNFORQUOTE;
+	if (pForQuote)
+	{
+		CHSForQuoteField *task_data = new CHSForQuoteField();
+		*task_data = *pForQuote;
+		task.task_data = task_data;
+	}
+	this->task_queue.push(task);
+};
+

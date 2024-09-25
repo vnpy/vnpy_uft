@@ -81,6 +81,7 @@ void TdApi::processRspUserLogin(Task *task)
 		data["INETime"] = task_data->INETime;
 		data["MaxOrderRef"] = toUtf(task_data->MaxOrderRef);
 		data["UserID"] = toUtf(task_data->UserID);
+		data["GFEXTime"] = task_data->GFEXTime;
 		delete task_data;
 	}
 	dict error;
@@ -140,6 +141,8 @@ void TdApi::processRspErrorOrderInsert(Task *task)
 		data["SpringPrice"] = task_data->SpringPrice;
 		data["SwapOrderFlag"] = task_data->SwapOrderFlag;
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
+		data["SeatIndex"] = task_data->SeatIndex;
 		delete task_data;
 	}
 	dict error;
@@ -201,6 +204,7 @@ void TdApi::processRspErrorExerciseOrderInsert(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["OffsetFlag"] = task_data->OffsetFlag;
 		data["CloseFlag"] = task_data->CloseFlag;
+		data["ExerciseBrokerOrderID"] = toUtf(task_data->ExerciseBrokerOrderID);
 		delete task_data;
 	}
 	dict error;
@@ -257,6 +261,7 @@ void TdApi::processRspErrorLockInsert(Task *task)
 		data["UnderlyingAccountID"] = toUtf(task_data->UnderlyingAccountID);
 		data["OrderStatus"] = task_data->OrderStatus;
 		data["InsertTime"] = task_data->InsertTime;
+		data["LockRef"] = toUtf(task_data->LockRef);
 		delete task_data;
 	}
 	dict error;
@@ -294,6 +299,86 @@ void TdApi::processRspForQuoteInsert(Task *task)
 	this->onRspForQuoteInsert(data, error, task->task_id, task->task_last);
 };
 
+void TdApi::processRspErrorQuoteInsert(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQuoteInsertField *task_data = (CHSRspQuoteInsertField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["BidOffsetFlag"] = task_data->BidOffsetFlag;
+		data["BidHedgeType"] = task_data->BidHedgeType;
+		data["BidOrderPrice"] = task_data->BidOrderPrice;
+		data["BidOrderVolume"] = task_data->BidOrderVolume;
+		data["BidOrderRef"] = toUtf(task_data->BidOrderRef);
+		data["AskOffsetFlag"] = task_data->AskOffsetFlag;
+		data["AskHedgeType"] = task_data->AskHedgeType;
+		data["AskOrderPrice"] = task_data->AskOrderPrice;
+		data["AskOrderVolume"] = task_data->AskOrderVolume;
+		data["AskOrderRef"] = toUtf(task_data->AskOrderRef);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["BidOrderSysID"] = toUtf(task_data->BidOrderSysID);
+		data["AskOrderSysID"] = toUtf(task_data->AskOrderSysID);
+		data["SessionID"] = task_data->SessionID;
+		data["InsertTime"] = task_data->InsertTime;
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["TopOrderType"] = task_data->TopOrderType;
+		data["QuoteSysID"] = toUtf(task_data->QuoteSysID);
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspErrorQuoteInsert(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQuoteAction(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQuoteActionField *task_data = (CHSRspQuoteActionField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["QuoteSysID"] = toUtf(task_data->QuoteSysID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["SessionID"] = task_data->SessionID;
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["QuoteActionRef"] = toUtf(task_data->QuoteActionRef);
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["InsertTime"] = task_data->InsertTime;
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["BidWithdrawVolume"] = task_data->BidWithdrawVolume;
+		data["AskWithdrawVolume"] = task_data->AskWithdrawVolume;
+		data["BidQuoteSysID"] = toUtf(task_data->BidQuoteSysID);
+		data["AskQuoteSysID"] = toUtf(task_data->AskQuoteSysID);
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQuoteAction(data, error, task->task_id, task->task_last);
+};
+
 void TdApi::processRspErrorCombActionInsert(Task *task)
 {
 	gil_scoped_acquire acquire;
@@ -313,6 +398,8 @@ void TdApi::processRspErrorCombActionInsert(Task *task)
 		data["OrderStatus"] = task_data->OrderStatus;
 		data["InsertTime"] = task_data->InsertTime;
 		data["Direction"] = task_data->Direction;
+		data["SecondHedgeType"] = task_data->SecondHedgeType;
+		data["CombOrderRef"] = toUtf(task_data->CombOrderRef);
 		delete task_data;
 	}
 	dict error;
@@ -471,6 +558,7 @@ void TdApi::processRspQryPosition(Task *task)
 		data["CloseProfit"] = task_data->CloseProfit;
 		data["OptionsMarketValue"] = task_data->OptionsMarketValue;
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
+		data["TASPositionVolume"] = task_data->TASPositionVolume;
 		delete task_data;
 	}
 	dict error;
@@ -520,6 +608,10 @@ void TdApi::processRspQryTradingAccount(Task *task)
 		data["UnFrozenBalance"] = task_data->UnFrozenBalance;
 		data["CurrencyID"] = task_data->CurrencyID;
 		data["HedgeRiskDegree"] = task_data->HedgeRiskDegree;
+		data["ShUsedBuyQuota"] = task_data->ShUsedBuyQuota;
+		data["SzUsedBuyQuota"] = task_data->SzUsedBuyQuota;
+		data["ShAvailableBuyQuota"] = task_data->ShAvailableBuyQuota;
+		data["SzAvailableBuyQuota"] = task_data->SzAvailableBuyQuota;
 		delete task_data;
 	}
 	dict error;
@@ -569,6 +661,8 @@ void TdApi::processRspQryOrder(Task *task)
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
 		data["OrderSource"] = task_data->OrderSource;
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
+		data["SeatIndex"] = task_data->SeatIndex;
 		delete task_data;
 	}
 	dict error;
@@ -607,6 +701,7 @@ void TdApi::processRspQryTrade(Task *task)
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
 		data["TradeCommission"] = task_data->TradeCommission;
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
 		delete task_data;
 	}
 	dict error;
@@ -646,6 +741,8 @@ void TdApi::processRspQryExercise(Task *task)
 		data["OffsetFlag"] = task_data->OffsetFlag;
 		data["ExercisePreFrozenCommission"] = task_data->ExercisePreFrozenCommission;
 		data["ExercisePreFrozenMargin"] = task_data->ExercisePreFrozenMargin;
+		data["ExerciseBrokerOrderID"] = toUtf(task_data->ExerciseBrokerOrderID);
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
 		delete task_data;
 	}
 	dict error;
@@ -677,6 +774,8 @@ void TdApi::processRspQryLock(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
 		data["OrderSource"] = task_data->OrderSource;
+		data["LockRef"] = toUtf(task_data->LockRef);
+		data["SessionID"] = task_data->SessionID;
 		delete task_data;
 	}
 	dict error;
@@ -713,6 +812,9 @@ void TdApi::processRspQryCombAction(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
 		data["OrderSource"] = task_data->OrderSource;
+		data["SecondHedgeType"] = task_data->SecondHedgeType;
+		data["CombOrderRef"] = toUtf(task_data->CombOrderRef);
+		data["SessionID"] = task_data->SessionID;
 		delete task_data;
 	}
 	dict error;
@@ -724,6 +826,82 @@ void TdApi::processRspQryCombAction(Task *task)
 		delete task_error;
 	}
 	this->onRspQryCombAction(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryForQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSForQuoteField *task_data = (CHSForQuoteField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["TradingDay"] = task_data->TradingDay;
+		data["UpdateTime"] = task_data->UpdateTime;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryForQuote(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSQuoteField *task_data = (CHSQuoteField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["BidOffsetFlag"] = task_data->BidOffsetFlag;
+		data["BidHedgeType"] = task_data->BidHedgeType;
+		data["BidOrderPrice"] = task_data->BidOrderPrice;
+		data["BidOrderVolume"] = task_data->BidOrderVolume;
+		data["AskOffsetFlag"] = task_data->AskOffsetFlag;
+		data["AskHedgeType"] = task_data->AskHedgeType;
+		data["AskOrderPrice"] = task_data->AskOrderPrice;
+		data["AskOrderVolume"] = task_data->AskOrderVolume;
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		data["QuoteSysID"] = toUtf(task_data->QuoteSysID);
+		data["BidOrderSysID"] = toUtf(task_data->BidOrderSysID);
+		data["AskOrderSysID"] = toUtf(task_data->AskOrderSysID);
+		data["BidBrokerOrderID"] = toUtf(task_data->BidBrokerOrderID);
+		data["AskBrokerOrderID"] = toUtf(task_data->AskBrokerOrderID);
+		data["BidOrderRef"] = toUtf(task_data->BidOrderRef);
+		data["AskOrderRef"] = toUtf(task_data->AskOrderRef);
+		data["SessionID"] = task_data->SessionID;
+		data["TradingDay"] = task_data->TradingDay;
+		data["InsertDate"] = task_data->InsertDate;
+		data["InsertTime"] = task_data->InsertTime;
+		data["ReportTime"] = task_data->ReportTime;
+		data["TopOrderType"] = task_data->TopOrderType;
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryQuote(data, error, task->task_id, task->task_last);
 };
 
 void TdApi::processRspQryPositionCombineDetail(Task *task)
@@ -746,6 +924,7 @@ void TdApi::processRspQryPositionCombineDetail(Task *task)
 		data["TotalSplitVolume"] = task_data->TotalSplitVolume;
 		data["PositionMargin"] = task_data->PositionMargin;
 		data["OpenDate"] = task_data->OpenDate;
+		data["SecondHedgeType"] = task_data->SecondHedgeType;
 		delete task_data;
 	}
 	dict error;
@@ -1129,6 +1308,9 @@ void TdApi::processRspQryPositionDetail(Task *task)
 		data["TradeType"] = task_data->TradeType;
 		data["PositionMargin"] = task_data->PositionMargin;
 		data["CombInstrumentID"] = toUtf(task_data->CombInstrumentID);
+		data["CurrentPositionVolume"] = task_data->CurrentPositionVolume;
+		data["SettlementPrice"] = task_data->SettlementPrice;
+		data["PositionSerialID"] = task_data->PositionSerialID;
 		delete task_data;
 	}
 	dict error;
@@ -1238,6 +1420,9 @@ void TdApi::processRspQryDepthMarketData(Task *task)
 		data["PreOpenInterest"] = task_data->PreOpenInterest;
 		data["InstrumentTradeStatus"] = task_data->InstrumentTradeStatus;
 		data["OpenRestriction"] = toUtf(task_data->OpenRestriction);
+		data["IOPV"] = task_data->IOPV;
+		data["AuctionPrice"] = task_data->AuctionPrice;
+		data["SendingTime"] = task_data->SendingTime;
 		delete task_data;
 	}
 	dict error;
@@ -1308,7 +1493,7 @@ void TdApi::processRspQryClientNotice(Task *task)
 	{
 		CHSClientNoticeField *task_data = (CHSClientNoticeField*)task->task_data;
 		data["AccountID"] = toUtf(task_data->AccountID);
-		data["MsgContent"] = toUtf(task_data->MsgContent);
+		data["MsgBody"] = toUtf(task_data->MsgBody);
 		data["MsgTitle"] = toUtf(task_data->MsgTitle);
 		data["MsgType"] = task_data->MsgType;
 		data["MsgDate"] = task_data->MsgDate;
@@ -1454,6 +1639,8 @@ void TdApi::processRspQryHistOrder(Task *task)
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
 		data["OrderSource"] = task_data->OrderSource;
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
+		data["SeatIndex"] = task_data->SeatIndex;
 		delete task_data;
 	}
 	dict error;
@@ -1492,6 +1679,7 @@ void TdApi::processRspQryHistTrade(Task *task)
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
 		data["TradeCommission"] = task_data->TradeCommission;
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
 		delete task_data;
 	}
 	dict error;
@@ -1503,6 +1691,279 @@ void TdApi::processRspQryHistTrade(Task *task)
 		delete task_error;
 	}
 	this->onRspQryHistTrade(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryCombInstrument(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQryCombInstrumentField *task_data = (CHSRspQryCombInstrumentField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["Direction"] = task_data->Direction;
+		data["SecondDirection"] = task_data->SecondDirection;
+		data["CombStrategyType"] = task_data->CombStrategyType;
+		data["CombMarginCoeff"] = task_data->CombMarginCoeff;
+		data["PriorityLevel"] = task_data->PriorityLevel;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryCombInstrument(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQrySeatID(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQrySeatIDField *task_data = (CHSRspQrySeatIDField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["SeatIndex"] = task_data->SeatIndex;
+		data["SeatID"] = toUtf(task_data->SeatID);
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQrySeatID(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspOptionSelfClose(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspOptionSelfCloseField *task_data = (CHSRspOptionSelfCloseField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["OrderVolume"] = task_data->OrderVolume;
+		data["SelfCloseType"] = task_data->SelfCloseType;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspOptionSelfClose(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspOptionSelfCloseAction(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspOptionSelfCloseActionField *task_data = (CHSRspOptionSelfCloseActionField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["SelfCloseType"] = task_data->SelfCloseType;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspOptionSelfCloseAction(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryOptionSelfCloseResult(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQryOptionSelfCloseResultField *task_data = (CHSRspQryOptionSelfCloseResultField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["SelfCloseType"] = task_data->SelfCloseType;
+		data["OrderVolume"] = task_data->OrderVolume;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryOptionSelfCloseResult(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryOptionSelfClose(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSOptionSelfCloseField *task_data = (CHSOptionSelfCloseField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["OrderVolume"] = task_data->OrderVolume;
+		data["SelfCloseType"] = task_data->SelfCloseType;
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["SetSelfCloseType"] = task_data->SetSelfCloseType;
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		data["SelfCloseOrderSysID"] = toUtf(task_data->SelfCloseOrderSysID);
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryOptionSelfClose(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspOptQuoteInsert(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspOptQuoteInsertField *task_data = (CHSRspOptQuoteInsertField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["BidOffsetFlag"] = task_data->BidOffsetFlag;
+		data["BidOrderPrice"] = task_data->BidOrderPrice;
+		data["BidOrderVolume"] = task_data->BidOrderVolume;
+		data["AskOffsetFlag"] = task_data->AskOffsetFlag;
+		data["AskOrderPrice"] = task_data->AskOrderPrice;
+		data["AskOrderVolume"] = task_data->AskOrderVolume;
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["InsertTime"] = task_data->InsertTime;
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["SessionID"] = task_data->SessionID;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspOptQuoteInsert(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspOptQuoteAction(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspOptQuoteActionField *task_data = (CHSRspOptQuoteActionField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["InsertTime"] = task_data->InsertTime;
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["BidWithdrawVolume"] = task_data->BidWithdrawVolume;
+		data["AskWithdrawVolume"] = task_data->AskWithdrawVolume;
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["SessionID"] = task_data->SessionID;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspOptQuoteAction(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryOptQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSOptQuoteField *task_data = (CHSOptQuoteField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["BidOffsetFlag"] = task_data->BidOffsetFlag;
+		data["BidOrderPrice"] = task_data->BidOrderPrice;
+		data["BidOrderVolume"] = task_data->BidOrderVolume;
+		data["BidTradePrice"] = task_data->BidTradePrice;
+		data["BidTradeVolume"] = task_data->BidTradeVolume;
+		data["BidCancelVolume"] = task_data->BidCancelVolume;
+		data["BidBrokerOrderID"] = toUtf(task_data->BidBrokerOrderID);
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOffsetFlag"] = task_data->AskOffsetFlag;
+		data["AskOrderPrice"] = task_data->AskOrderPrice;
+		data["AskOrderVolume"] = task_data->AskOrderVolume;
+		data["AskTradePrice"] = task_data->AskTradePrice;
+		data["AskTradeVolume"] = task_data->AskTradeVolume;
+		data["AskCancelVolume"] = task_data->AskCancelVolume;
+		data["AskBrokerOrderID"] = toUtf(task_data->AskBrokerOrderID);
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		data["TradingDay"] = task_data->TradingDay;
+		data["InsertDate"] = task_data->InsertDate;
+		data["InsertTime"] = task_data->InsertTime;
+		data["ReportTime"] = task_data->ReportTime;
+		data["SessionID"] = task_data->SessionID;
+		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["OrderStatus"] = task_data->OrderStatus;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryOptQuote(data, error, task->task_id, task->task_last);
 };
 
 void TdApi::processRtnTrade(Task *task)
@@ -1530,6 +1991,7 @@ void TdApi::processRtnTrade(Task *task)
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
 		data["TradeCommission"] = task_data->TradeCommission;
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
 		delete task_data;
 	}
 	this->onRtnTrade(data);
@@ -1571,6 +2033,8 @@ void TdApi::processRtnOrder(Task *task)
 		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
 		data["OrderSource"] = task_data->OrderSource;
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
+		data["SeatIndex"] = task_data->SeatIndex;
 		delete task_data;
 	}
 	this->onRtnOrder(data);
@@ -1602,6 +2066,8 @@ void TdApi::processRtnExercise(Task *task)
 		data["OffsetFlag"] = task_data->OffsetFlag;
 		data["ExercisePreFrozenCommission"] = task_data->ExercisePreFrozenCommission;
 		data["ExercisePreFrozenMargin"] = task_data->ExercisePreFrozenMargin;
+		data["ExerciseBrokerOrderID"] = toUtf(task_data->ExerciseBrokerOrderID);
+		data["ExchangeAccountID"] = toUtf(task_data->ExchangeAccountID);
 		delete task_data;
 	}
 	this->onRtnExercise(data);
@@ -1630,6 +2096,9 @@ void TdApi::processRtnCombAction(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
 		data["OrderSource"] = task_data->OrderSource;
+		data["SecondHedgeType"] = task_data->SecondHedgeType;
+		data["CombOrderRef"] = toUtf(task_data->CombOrderRef);
+		data["SessionID"] = task_data->SessionID;
 		delete task_data;
 	}
 	this->onRtnCombAction(data);
@@ -1653,6 +2122,8 @@ void TdApi::processRtnLock(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
 		data["OrderSource"] = task_data->OrderSource;
+		data["LockRef"] = toUtf(task_data->LockRef);
+		data["SessionID"] = task_data->SessionID;
 		delete task_data;
 	}
 	this->onRtnLock(data);
@@ -1699,7 +2170,7 @@ void TdApi::processRtnClientNotice(Task *task)
 	{
 		CHSClientNoticeField *task_data = (CHSClientNoticeField*)task->task_data;
 		data["AccountID"] = toUtf(task_data->AccountID);
-		data["MsgContent"] = toUtf(task_data->MsgContent);
+		data["MsgBody"] = toUtf(task_data->MsgBody);
 		data["MsgTitle"] = toUtf(task_data->MsgTitle);
 		data["MsgType"] = task_data->MsgType;
 		data["MsgDate"] = task_data->MsgDate;
@@ -1707,5 +2178,160 @@ void TdApi::processRtnClientNotice(Task *task)
 		delete task_data;
 	}
 	this->onRtnClientNotice(data);
+};
+
+void TdApi::processRtnForQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSForQuoteField *task_data = (CHSForQuoteField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["TradingDay"] = task_data->TradingDay;
+		data["UpdateTime"] = task_data->UpdateTime;
+		delete task_data;
+	}
+	this->onRtnForQuote(data);
+};
+
+void TdApi::processRtnQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSQuoteField *task_data = (CHSQuoteField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["BidOffsetFlag"] = task_data->BidOffsetFlag;
+		data["BidHedgeType"] = task_data->BidHedgeType;
+		data["BidOrderPrice"] = task_data->BidOrderPrice;
+		data["BidOrderVolume"] = task_data->BidOrderVolume;
+		data["AskOffsetFlag"] = task_data->AskOffsetFlag;
+		data["AskHedgeType"] = task_data->AskHedgeType;
+		data["AskOrderPrice"] = task_data->AskOrderPrice;
+		data["AskOrderVolume"] = task_data->AskOrderVolume;
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		data["QuoteSysID"] = toUtf(task_data->QuoteSysID);
+		data["BidOrderSysID"] = toUtf(task_data->BidOrderSysID);
+		data["AskOrderSysID"] = toUtf(task_data->AskOrderSysID);
+		data["BidBrokerOrderID"] = toUtf(task_data->BidBrokerOrderID);
+		data["AskBrokerOrderID"] = toUtf(task_data->AskBrokerOrderID);
+		data["BidOrderRef"] = toUtf(task_data->BidOrderRef);
+		data["AskOrderRef"] = toUtf(task_data->AskOrderRef);
+		data["SessionID"] = task_data->SessionID;
+		data["TradingDay"] = task_data->TradingDay;
+		data["InsertDate"] = task_data->InsertDate;
+		data["InsertTime"] = task_data->InsertTime;
+		data["ReportTime"] = task_data->ReportTime;
+		data["TopOrderType"] = task_data->TopOrderType;
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		delete task_data;
+	}
+	this->onRtnQuote(data);
+};
+
+void TdApi::processRtnExchangeStatus(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSExchangeStatusField *task_data = (CHSExchangeStatusField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["ExchangeStatus"] = task_data->ExchangeStatus;
+		data["TradingFlag"] = task_data->TradingFlag;
+		delete task_data;
+	}
+	this->onRtnExchangeStatus(data);
+};
+
+void TdApi::processRtnProductStatus(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSProductStatusField *task_data = (CHSProductStatusField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["ProductType"] = task_data->ProductType;
+		data["ProductID"] = toUtf(task_data->ProductID);
+		data["TradingFlag"] = task_data->TradingFlag;
+		data["ProductStatus"] = task_data->ProductStatus;
+		delete task_data;
+	}
+	this->onRtnProductStatus(data);
+};
+
+void TdApi::processRtnOptionSelfClose(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSOptionSelfCloseField *task_data = (CHSOptionSelfCloseField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["OrderVolume"] = task_data->OrderVolume;
+		data["SelfCloseType"] = task_data->SelfCloseType;
+		data["OrderStatus"] = task_data->OrderStatus;
+		data["SetSelfCloseType"] = task_data->SetSelfCloseType;
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		data["SelfCloseOrderSysID"] = toUtf(task_data->SelfCloseOrderSysID);
+		delete task_data;
+	}
+	this->onRtnOptionSelfClose(data);
+};
+
+void TdApi::processRtnOptQuote(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSOptQuoteField *task_data = (CHSOptQuoteField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["QuoteBrokerID"] = toUtf(task_data->QuoteBrokerID);
+		data["BidOffsetFlag"] = task_data->BidOffsetFlag;
+		data["BidOrderPrice"] = task_data->BidOrderPrice;
+		data["BidOrderVolume"] = task_data->BidOrderVolume;
+		data["BidTradePrice"] = task_data->BidTradePrice;
+		data["BidTradeVolume"] = task_data->BidTradeVolume;
+		data["BidCancelVolume"] = task_data->BidCancelVolume;
+		data["BidBrokerOrderID"] = toUtf(task_data->BidBrokerOrderID);
+		data["BidOrderStatus"] = task_data->BidOrderStatus;
+		data["AskOffsetFlag"] = task_data->AskOffsetFlag;
+		data["AskOrderPrice"] = task_data->AskOrderPrice;
+		data["AskOrderVolume"] = task_data->AskOrderVolume;
+		data["AskTradePrice"] = task_data->AskTradePrice;
+		data["AskTradeVolume"] = task_data->AskTradeVolume;
+		data["AskCancelVolume"] = task_data->AskCancelVolume;
+		data["AskBrokerOrderID"] = toUtf(task_data->AskBrokerOrderID);
+		data["AskOrderStatus"] = task_data->AskOrderStatus;
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		data["TradingDay"] = task_data->TradingDay;
+		data["InsertDate"] = task_data->InsertDate;
+		data["InsertTime"] = task_data->InsertTime;
+		data["ReportTime"] = task_data->ReportTime;
+		data["SessionID"] = task_data->SessionID;
+		data["UnderlyingInstrID"] = toUtf(task_data->UnderlyingInstrID);
+		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["ForQuoteSysID"] = toUtf(task_data->ForQuoteSysID);
+		data["OrderStatus"] = task_data->OrderStatus;
+		delete task_data;
+	}
+	this->onRtnOptQuote(data);
 };
 

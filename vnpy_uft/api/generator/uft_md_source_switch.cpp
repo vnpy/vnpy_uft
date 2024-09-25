@@ -28,3 +28,21 @@ case ONRTNDEPTHMARKETDATA:
 	break;
 }
 
+case ONRSPFORQUOTESUBSCRIBE:
+{
+	this->processRspForQuoteSubscribe(&task);
+	break;
+}
+
+case ONRSPFORQUOTECANCEL:
+{
+	this->processRspForQuoteCancel(&task);
+	break;
+}
+
+case ONRTNFORQUOTE:
+{
+	this->processRtnForQuote(&task);
+	break;
+}
+

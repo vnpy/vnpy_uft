@@ -66,6 +66,8 @@ int TdApi::reqOrderInsert(const dict &req, int reqid)
 	getDouble(req, "SpringPrice", &myreq.SpringPrice);
 	getChar(req, "SwapOrderFlag", &myreq.SwapOrderFlag);
 	getString(req, "CombPositionID", myreq.CombPositionID);
+	getString(req, "ExchangeAccountID", myreq.ExchangeAccountID);
+	getInt32(req, "SeatIndex", &myreq.SeatIndex);
 	int i = this->api->ReqOrderInsert(&myreq, reqid);
 	return i;
 };
@@ -120,6 +122,7 @@ int TdApi::reqLockInsert(const dict &req, int reqid)
 	getString(req, "UnderlyingInstrID", myreq.UnderlyingInstrID);
 	getChar(req, "LockType", &myreq.LockType);
 	getDouble(req, "OrderVolume", &myreq.OrderVolume);
+	getString(req, "LockRef", myreq.LockRef);
 	int i = this->api->ReqLockInsert(&myreq, reqid);
 	return i;
 };
@@ -131,6 +134,46 @@ int TdApi::reqForQuoteInsert(const dict &req, int reqid)
 	getString(req, "ExchangeID", myreq.ExchangeID);
 	getString(req, "InstrumentID", myreq.InstrumentID);
 	int i = this->api->ReqForQuoteInsert(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQuoteInsert(const dict &req, int reqid)
+{
+	CHSReqQuoteInsertField myreq = CHSReqQuoteInsertField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getChar(req, "BidOffsetFlag", &myreq.BidOffsetFlag);
+	getChar(req, "BidHedgeType", &myreq.BidHedgeType);
+	getDouble(req, "BidOrderPrice", &myreq.BidOrderPrice);
+	getDouble(req, "BidOrderVolume", &myreq.BidOrderVolume);
+	getString(req, "BidOrderRef", myreq.BidOrderRef);
+	getChar(req, "AskOffsetFlag", &myreq.AskOffsetFlag);
+	getChar(req, "AskHedgeType", &myreq.AskHedgeType);
+	getDouble(req, "AskOrderPrice", &myreq.AskOrderPrice);
+	getDouble(req, "AskOrderVolume", &myreq.AskOrderVolume);
+	getString(req, "AskOrderRef", myreq.AskOrderRef);
+	getString(req, "ForQuoteSysID", myreq.ForQuoteSysID);
+	getString(req, "QuoteRef", myreq.QuoteRef);
+	getChar(req, "TopOrderType", &myreq.TopOrderType);
+	getString(req, "QuoteSysID", myreq.QuoteSysID);
+	int i = this->api->ReqQuoteInsert(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQuoteAction(const dict &req, int reqid)
+{
+	CHSReqQuoteActionField myreq = CHSReqQuoteActionField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "QuoteSysID", myreq.QuoteSysID);
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getInt32(req, "SessionID", &myreq.SessionID);
+	getString(req, "QuoteRef", myreq.QuoteRef);
+	getString(req, "QuoteActionRef", myreq.QuoteActionRef);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getDouble(req, "BidWithdrawVolume", &myreq.BidWithdrawVolume);
+	getDouble(req, "AskWithdrawVolume", &myreq.AskWithdrawVolume);
+	int i = this->api->ReqQuoteAction(&myreq, reqid);
 	return i;
 };
 
@@ -146,6 +189,8 @@ int TdApi::reqCombActionInsert(const dict &req, int reqid)
 	getDouble(req, "OrderVolume", &myreq.OrderVolume);
 	getChar(req, "HedgeType", &myreq.HedgeType);
 	getChar(req, "Direction", &myreq.Direction);
+	getChar(req, "SecondHedgeType", &myreq.SecondHedgeType);
+	getString(req, "CombOrderRef", myreq.CombOrderRef);
 	int i = this->api->ReqCombActionInsert(&myreq, reqid);
 	return i;
 };
@@ -225,6 +270,7 @@ int TdApi::reqQryOrder(const dict &req, int reqid)
 	getString(req, "ExchangeID", myreq.ExchangeID);
 	getString(req, "InstrumentID", myreq.InstrumentID);
 	getString(req, "OrderSysID", myreq.OrderSysID);
+	getString(req, "ExchangeAccountID", myreq.ExchangeAccountID);
 	int i = this->api->ReqQryOrder(&myreq, reqid);
 	return i;
 };
@@ -235,6 +281,7 @@ int TdApi::reqQryTrade(const dict &req, int reqid)
 	memset(&myreq, 0, sizeof(myreq));
 	getString(req, "ExchangeID", myreq.ExchangeID);
 	getString(req, "InstrumentID", myreq.InstrumentID);
+	getString(req, "ExchangeAccountID", myreq.ExchangeAccountID);
 	int i = this->api->ReqQryTrade(&myreq, reqid);
 	return i;
 };
@@ -272,10 +319,36 @@ int TdApi::reqQryCombAction(const dict &req, int reqid)
 	return i;
 };
 
+int TdApi::reqQryForQuote(const dict &req, int reqid)
+{
+	CHSReqQryForQuoteField myreq = CHSReqQryForQuoteField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getString(req, "ForQuoteSysID", myreq.ForQuoteSysID);
+	int i = this->api->ReqQryForQuote(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryQuote(const dict &req, int reqid)
+{
+	CHSReqQryQuoteField myreq = CHSReqQryQuoteField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getString(req, "QuoteSysID", myreq.QuoteSysID);
+	getString(req, "QuoteBrokerID", myreq.QuoteBrokerID);
+	int i = this->api->ReqQryQuote(&myreq, reqid);
+	return i;
+};
+
 int TdApi::reqQryPositionCombineDetail(const dict &req, int reqid)
 {
 	CHSReqQryPositionCombineDetailField myreq = CHSReqQryPositionCombineDetailField();
 	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getString(req, "CombStrategyID", myreq.CombStrategyID);
 	int i = this->api->ReqQryPositionCombineDetail(&myreq, reqid);
 	return i;
 };
@@ -504,6 +577,7 @@ int TdApi::reqQryHistOrder(const dict &req, int reqid)
 	getString(req, "OrderSysID", myreq.OrderSysID);
 	getInt32(req, "BeginDate", &myreq.BeginDate);
 	getInt32(req, "EndDate", &myreq.EndDate);
+	getString(req, "ExchangeAccountID", myreq.ExchangeAccountID);
 	int i = this->api->ReqQryHistOrder(&myreq, reqid);
 	return i;
 };
@@ -516,7 +590,113 @@ int TdApi::reqQryHistTrade(const dict &req, int reqid)
 	getString(req, "InstrumentID", myreq.InstrumentID);
 	getInt32(req, "BeginDate", &myreq.BeginDate);
 	getInt32(req, "EndDate", &myreq.EndDate);
+	getString(req, "ExchangeAccountID", myreq.ExchangeAccountID);
 	int i = this->api->ReqQryHistTrade(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryCombInstrument(const dict &req, int reqid)
+{
+	CHSReqQryCombInstrumentField myreq = CHSReqQryCombInstrumentField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	int i = this->api->ReqQryCombInstrument(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQrySeatID(const dict &req, int reqid)
+{
+	CHSReqQrySeatIDField myreq = CHSReqQrySeatIDField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	int i = this->api->ReqQrySeatID(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqOptionSelfClose(const dict &req, int reqid)
+{
+	CHSReqOptionSelfCloseField myreq = CHSReqOptionSelfCloseField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getDouble(req, "OrderVolume", &myreq.OrderVolume);
+	getChar(req, "SelfCloseType", &myreq.SelfCloseType);
+	int i = this->api->ReqOptionSelfClose(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqOptionSelfCloseAction(const dict &req, int reqid)
+{
+	CHSReqOptionSelfCloseActionField myreq = CHSReqOptionSelfCloseActionField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getChar(req, "SelfCloseType", &myreq.SelfCloseType);
+	int i = this->api->ReqOptionSelfCloseAction(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryOptionSelfCloseResult(const dict &req, int reqid)
+{
+	CHSReqQryOptionSelfCloseResultField myreq = CHSReqQryOptionSelfCloseResultField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	int i = this->api->ReqQryOptionSelfCloseResult(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryOptionSelfClose(const dict &req, int reqid)
+{
+	CHSReqQryOptionSelfCloseField myreq = CHSReqQryOptionSelfCloseField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	int i = this->api->ReqQryOptionSelfClose(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqOptQuoteInsert(const dict &req, int reqid)
+{
+	CHSReqOptQuoteInsertField myreq = CHSReqOptQuoteInsertField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getChar(req, "BidOffsetFlag", &myreq.BidOffsetFlag);
+	getDouble(req, "BidOrderPrice", &myreq.BidOrderPrice);
+	getDouble(req, "BidOrderVolume", &myreq.BidOrderVolume);
+	getChar(req, "AskOffsetFlag", &myreq.AskOffsetFlag);
+	getDouble(req, "AskOrderPrice", &myreq.AskOrderPrice);
+	getDouble(req, "AskOrderVolume", &myreq.AskOrderVolume);
+	getString(req, "QuoteRef", myreq.QuoteRef);
+	getString(req, "ForQuoteSysID", myreq.ForQuoteSysID);
+	int i = this->api->ReqOptQuoteInsert(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqOptQuoteAction(const dict &req, int reqid)
+{
+	CHSReqOptQuoteActionField myreq = CHSReqOptQuoteActionField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getDouble(req, "BidWithdrawVolume", &myreq.BidWithdrawVolume);
+	getDouble(req, "AskWithdrawVolume", &myreq.AskWithdrawVolume);
+	getString(req, "QuoteRef", myreq.QuoteRef);
+	int i = this->api->ReqOptQuoteAction(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryOptQuote(const dict &req, int reqid)
+{
+	CHSReqQryOptQuoteField myreq = CHSReqQryOptQuoteField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "InstrumentID", myreq.InstrumentID);
+	getChar(req, "QuoteQueryType", &myreq.QuoteQueryType);
+	getString(req, "QuoteBrokerID", myreq.QuoteBrokerID);
+	int i = this->api->ReqQryOptQuote(&myreq, reqid);
 	return i;
 };
 

@@ -18,6 +18,10 @@ int reqLockInsert(const dict &req, int reqid);
 
 int reqForQuoteInsert(const dict &req, int reqid);
 
+int reqQuoteInsert(const dict &req, int reqid);
+
+int reqQuoteAction(const dict &req, int reqid);
+
 int reqCombActionInsert(const dict &req, int reqid);
 
 int reqQueryMaxOrderVolume(const dict &req, int reqid);
@@ -41,6 +45,10 @@ int reqQryExercise(const dict &req, int reqid);
 int reqQryLock(const dict &req, int reqid);
 
 int reqQryCombAction(const dict &req, int reqid);
+
+int reqQryForQuote(const dict &req, int reqid);
+
+int reqQryQuote(const dict &req, int reqid);
 
 int reqQryPositionCombineDetail(const dict &req, int reqid);
 
@@ -89,4 +97,22 @@ int reqQrySecuDepthMarket(const dict &req, int reqid);
 int reqQryHistOrder(const dict &req, int reqid);
 
 int reqQryHistTrade(const dict &req, int reqid);
+
+int reqQryCombInstrument(const dict &req, int reqid);
+
+int reqQrySeatID(const dict &req, int reqid);
+
+int reqOptionSelfClose(const dict &req, int reqid);
+
+int reqOptionSelfCloseAction(const dict &req, int reqid);
+
+int reqQryOptionSelfCloseResult(const dict &req, int reqid);
+
+int reqQryOptionSelfClose(const dict &req, int reqid);
+
+int reqOptQuoteInsert(const dict &req, int reqid);
+
+int reqOptQuoteAction(const dict &req, int reqid);
+
+int reqQryOptQuote(const dict &req, int reqid);
 
