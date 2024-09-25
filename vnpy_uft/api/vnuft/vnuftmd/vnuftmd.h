@@ -128,7 +128,7 @@ public:
 
 	void newMdApi(string pszFlowPath);
 
-	int init(string pszLicFile, string pszSafeLevel, string pszPwd, string pszSslFile, string pszSslPwd);
+	int init(dict pInitCfgField);
 
 	int join(); 
 

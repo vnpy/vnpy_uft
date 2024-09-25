@@ -331,12 +331,26 @@ void MdApi::newMdApi(string pszFlowPath)
 	this->api->RegisterSpi(this);
 };
 
-int MdApi::init(string pszLicFile, string pszSafeLevel, string pszPwd, string pszSslFile, string pszSslPwd)
+int MdApi::init(dict pInitCfgField)
 {
 	this->active = true;
 	this->task_thread = thread(&MdApi::processTask, this);
 
-	int i = this->api->Init(pszLicFile.c_str(),pszSafeLevel.c_str(), pszPwd.c_str(), pszSslFile.c_str(), pszSslPwd.c_str());
+	CHSInitConfigField cfg = CHSInitConfigField();
+	memset(&cfg, 0, sizeof(cfg));
+	getInt32(pInitCfgField, "ExchangeID", &cfg.APICheckVersion);
+	getString(pInitCfgField, "CommLicense", cfg.CommLicense);
+	getString(pInitCfgField, "SafeLevel", cfg.SafeLevel);
+	getString(pInitCfgField, "CommPassword", cfg.CommPassword);
+	getString(pInitCfgField, "SslVersion", cfg.SslVersion);
+	getString(pInitCfgField, "CertLicense", cfg.CertLicense);
+	getString(pInitCfgField, "CertPassword", cfg.CertPassword);
+	getString(pInitCfgField, "SksUser", cfg.SksUser);
+	getString(pInitCfgField, "SksPassword", cfg.SksPassword);
+	getString(pInitCfgField, "SksPin", cfg.SksPin);
+	getChar(pInitCfgField, "SksCheckCertFlag", &cfg.SksCheckCertFlag);
+
+	int i = this->api->Init(&cfg);
 	return i;
 };
 
@@ -406,7 +420,9 @@ int MdApi::reqForQuoteSubscribe(const dict &req, int reqid)
 	memset(&myreq, 0, sizeof(myreq));
 	getString(req, "ExchangeID", myreq.ExchangeID);
 	getString(req, "InstrumentID", myreq.InstrumentID);
-	int i = this->api->ReqForQuoteSubscribe(&myreq, reqid);
+
+	CHSReqForQuoteField myreqs[1] = { myreq };
+	int i = this->api->ReqForQuoteSubscribe(myreqs, 1, reqid);
 	return i;
 };
 
@@ -416,7 +432,9 @@ int MdApi::reqForQuoteCancel(const dict &req, int reqid)
 	memset(&myreq, 0, sizeof(myreq));
 	getString(req, "ExchangeID", myreq.ExchangeID);
 	getString(req, "InstrumentID", myreq.InstrumentID);
-	int i = this->api->ReqForQuoteCancel(&myreq, reqid);
+
+	CHSReqForQuoteField myreqs[1] = { myreq };
+	int i = this->api->ReqForQuoteSubscribe(myreqs, 1, reqid);
 	return i;
 };
 

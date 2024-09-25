@@ -4243,12 +4243,26 @@ void TdApi::newTradeApi(string pszFlowPath)
 	this->api->RegisterSpi(this);
 };
 
-int TdApi::init(string pszLicFile, string pszSafeLevel, string pszPwd, string pszSslFile, string pszSslPwd)
+int TdApi::init(dict pInitCfgField)
 {
 	this->active = true;
 	this->task_thread = thread(&TdApi::processTask, this);
 
-	int i = this->api->Init(pszLicFile.c_str(), pszSafeLevel.c_str(), pszPwd.c_str(), pszSslFile.c_str(), pszSslPwd.c_str());
+	CHSInitConfigField cfg = CHSInitConfigField();
+	memset(&cfg, 0, sizeof(cfg));
+	getInt32(pInitCfgField, "ExchangeID", &cfg.APICheckVersion);
+	getString(pInitCfgField, "CommLicense", cfg.CommLicense);
+	getString(pInitCfgField, "SafeLevel", cfg.SafeLevel);
+	getString(pInitCfgField, "CommPassword", cfg.CommPassword);
+	getString(pInitCfgField, "SslVersion", cfg.SslVersion);
+	getString(pInitCfgField, "CertLicense", cfg.CertLicense);
+	getString(pInitCfgField, "CertPassword", cfg.CertPassword);
+	getString(pInitCfgField, "SksUser", cfg.SksUser);
+	getString(pInitCfgField, "SksPassword", cfg.SksPassword);
+	getString(pInitCfgField, "SksPin", cfg.SksPin);
+	getChar(pInitCfgField, "SksCheckCertFlag", &cfg.SksCheckCertFlag);
+
+	int i = this->api->Init(&cfg);
 	return i;
 };
 
@@ -4369,7 +4383,7 @@ int TdApi::reqOrderInsert(const dict &req, int reqid)
 	getChar(req, "SwapOrderFlag", &myreq.SwapOrderFlag);
 	getString(req, "CombPositionID", myreq.CombPositionID);
 	getString(req, "ExchangeAccountID", myreq.ExchangeAccountID);
-	getInt32(req, "SeatIndex", &myreq.SeatIndex);
+	getUInt32(req, "SeatIndex", &myreq.SeatIndex);
 	int i = this->api->ReqOrderInsert(&myreq, reqid);
 	return i;
 };
@@ -5898,7 +5912,7 @@ public:
 			cout << e.what() << endl;
 		}
 	};
-}
+};
 
 PYBIND11_MODULE(vnufttd, m)
 {
