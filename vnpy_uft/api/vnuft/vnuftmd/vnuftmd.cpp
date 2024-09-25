@@ -66,7 +66,6 @@ void MdApi::OnRtnDepthMarketData(CHSDepthMarketDataField *pDepthMarketData)
 	this->task_queue.push(task);
 };
 
-
 void MdApi::OnRspForQuoteSubscribe(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	Task task = Task();
@@ -116,67 +115,67 @@ void MdApi::OnRtnForQuote(CHSForQuoteField *pForQuote)
 
 void MdApi::processTask()
 {
-    try
-    {
-        while (this->active)
-        {
-            Task task = this->task_queue.pop();
-            
-            switch (task.task_name)
-            {
-			case ONFRONTCONNECTED:
+	try
+	{
+		while (this->active)
+		{
+			Task task = this->task_queue.pop();
+			
+			switch (task.task_name)
 			{
-				this->processFrontConnected(&task);
-				break;
-			}
+				case ONFRONTCONNECTED:
+				{
+					this->processFrontConnected(&task);
+					break;
+				}
 
-			case ONFRONTDISCONNECTED:
-			{
-				this->processFrontDisconnected(&task);
-				break;
-			}
+				case ONFRONTDISCONNECTED:
+				{
+					this->processFrontDisconnected(&task);
+					break;
+				}
 
-			case ONRSPDEPTHMARKETDATASUBSCRIBE:
-			{
-				this->processRspDepthMarketDataSubscribe(&task);
-				break;
-			}
+				case ONRSPDEPTHMARKETDATASUBSCRIBE:
+				{
+					this->processRspDepthMarketDataSubscribe(&task);
+					break;
+				}
 
-			case ONRSPDEPTHMARKETDATACANCEL:
-			{
-				this->processRspDepthMarketDataCancel(&task);
-				break;
-			}
+				case ONRSPDEPTHMARKETDATACANCEL:
+				{
+					this->processRspDepthMarketDataCancel(&task);
+					break;
+				}
 
-			case ONRTNDEPTHMARKETDATA:
-			{
-				this->processRtnDepthMarketData(&task);
-				break;
-			}
+				case ONRTNDEPTHMARKETDATA:
+				{
+					this->processRtnDepthMarketData(&task);
+					break;
+				}
 
-			case ONRSPFORQUOTESUBSCRIBE:
-            {
-                this->processRspForQuoteSubscribe(&task);
-                break;
-            }
+				case ONRSPFORQUOTESUBSCRIBE:
+				{
+					this->processRspForQuoteSubscribe(&task);
+					break;
+				}
 
-            case ONRSPFORQUOTECANCEL:
-            {
-                this->processRspForQuoteCancel(&task);
-                break;
-            }
+				case ONRSPFORQUOTECANCEL:
+				{
+					this->processRspForQuoteCancel(&task);
+					break;
+				}
 
-            case ONRTNFORQUOTE:
-            {
-                this->processRtnForQuote(&task);
-                break;
-            }
-            };
-        }
-    }
-    catch (const TerminatedError&)
-    {
-    }
+				case ONRTNFORQUOTE:
+				{
+					this->processRtnForQuote(&task);
+					break;
+				}
+			};
+		}
+	}
+	catch (const TerminatedError&)
+	{
+	}
 };
 
 void MdApi::processFrontConnected(Task *task)
@@ -322,7 +321,6 @@ void MdApi::processRtnForQuote(Task *task)
 	this->onRtnForQuote(data);
 };
 
-
 ///-------------------------------------------------------------------------------------
 ///Ö÷¶¯º¯Êý
 ///-------------------------------------------------------------------------------------
@@ -401,7 +399,6 @@ int MdApi::reqDepthMarketDataCancel(const dict &req, int reqid)
 	int i = this->api->ReqDepthMarketDataCancel(myreqs, 1, reqid);
 	return i;
 };
-
 
 int MdApi::reqForQuoteSubscribe(const dict &req, int reqid)
 {
@@ -491,29 +488,42 @@ public:
 			cout << e.what() << endl;
 		}
 	};
-	void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) override
-    {
-        try
-        {
-            PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteSubscribe, error, reqid, last);
-        }
-        catch (const error_already_set &e)
-        {
-            cout << e.what() << endl;
-        }
-    };
 
-    void onRspForQuoteCancel(const dict &error, int reqid, bool last) override
-    {
-        try
-        {
-            PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteCancel, error, reqid, last);
-        }
-        catch (const error_already_set &e)
-        {
-            cout << e.what() << endl;
-        }
-    };
+	void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteSubscribe, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
+
+	void onRspForQuoteCancel(const dict &error, int reqid, bool last) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, MdApi, onRspForQuoteCancel, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
+
+	void onRtnForQuote(const dict &data) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, MdApi, onRtnForQuote, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 };
 
 
@@ -530,20 +540,16 @@ PYBIND11_MODULE(vnuftmd, m)
 		.def("registerFensServer", &MdApi::registerFensServer)
 		.def("reqDepthMarketDataSubscribe", &MdApi::reqDepthMarketDataSubscribe)
 		.def("reqDepthMarketDataCancel", &MdApi::reqDepthMarketDataCancel)
-		.def("getApiErrorMsg", &MdApi::getApiErrorMsg)
-		.def("reqDepthMarketDataSubscribe", &MdApi::reqDepthMarketDataSubscribe)
-		.def("reqDepthMarketDataCancel", &MdApi::reqDepthMarketDataCancel)
-        .def("reqForQuoteSubscribe", &MdApi::reqForQuoteSubscribe)
-        .def("reqForQuoteCancel", &MdApi::reqForQuoteCancel)
+		.def("reqForQuoteSubscribe", &MdApi::reqForQuoteSubscribe)
+		.def("reqForQuoteCancel", &MdApi::reqForQuoteCancel)
 
-        .def("onFrontConnected", &MdApi::onFrontConnected)
-        .def("onFrontDisconnected", &MdApi::onFrontDisconnected)
-        .def("onRspDepthMarketDataSubscribe", &MdApi::onRspDepthMarketDataSubscribe)
-        .def("onRspDepthMarketDataCancel", &MdApi::onRspDepthMarketDataCancel)
-        .def("onRtnDepthMarketData", &MdApi::onRtnDepthMarketData)
-        .def("onRspForQuoteSubscribe", &MdApi::onRspForQuoteSubscribe)
-        .def("onRspForQuoteCancel", &MdApi::onRspForQuoteCancel)
-        .def("onRtnForQuote", &MdApi::onRtnForQuote)
-        ;
-
+		.def("onFrontConnected", &MdApi::onFrontConnected)
+		.def("onFrontDisconnected", &MdApi::onFrontDisconnected)
+		.def("onRspDepthMarketDataSubscribe", &MdApi::onRspDepthMarketDataSubscribe)
+		.def("onRspDepthMarketDataCancel", &MdApi::onRspDepthMarketDataCancel)
+		.def("onRtnDepthMarketData", &MdApi::onRtnDepthMarketData)
+		.def("onRspForQuoteSubscribe", &MdApi::onRspForQuoteSubscribe)
+		.def("onRspForQuoteCancel", &MdApi::onRspForQuoteCancel)
+		.def("onRtnForQuote", &MdApi::onRtnForQuote)
+		;
 }

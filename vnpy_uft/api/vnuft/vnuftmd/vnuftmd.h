@@ -30,9 +30,9 @@ class MdApi : public CHSMdSpi
 {
 private:
 	CHSMdApi* api;				//API对象
-	thread task_thread;					//工作线程指针（向python中推送数据）
-	TaskQueue task_queue;			    //任务队列
-	bool active = false;				//工作状态
+	thread task_thread;			//工作线程指针（向python中推送数据）
+	TaskQueue task_queue;		//任务队列
+	bool active = false;		//工作状态
 
 public:
 	MdApi()
@@ -67,6 +67,15 @@ public:
 	/// Description: 主推-行情
 	virtual void OnRtnDepthMarketData(CHSDepthMarketDataField *pDepthMarketData);
 
+	/// Description: 订阅-询价应答
+	virtual void OnRspForQuoteSubscribe(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description: 订阅取消-询价应答
+	virtual void OnRspForQuoteCancel(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description: 主推-询价
+	virtual void OnRtnForQuote(CHSForQuoteField *pForQuote);
+
 	//-------------------------------------------------------------------------------------
 	//task：任务
 	//-------------------------------------------------------------------------------------
@@ -85,10 +94,9 @@ public:
 
 	void processRspForQuoteSubscribe(Task *task);
 
-    void processRspForQuoteCancel(Task *task);
+	void processRspForQuoteCancel(Task *task);
 
-    void processRtnForQuote(Task *task);
-
+	void processRtnForQuote(Task *task);
 
 	//-------------------------------------------------------------------------------------
 	//data：回调函数的数据字典
@@ -97,6 +105,7 @@ public:
 	//last：是否为最后返回
 	//i：整数
 	//-------------------------------------------------------------------------------------
+
 	virtual void onFrontConnected() {};
 
 	virtual void onFrontDisconnected(int reqid) {};
@@ -107,11 +116,11 @@ public:
 
 	virtual void onRtnDepthMarketData(const dict &data) {};
 
-    virtual void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) {};
+	virtual void onRspForQuoteSubscribe(const dict &error, int reqid, bool last) {};
 
-    virtual void onRspForQuoteCancel(const dict &error, int reqid, bool last) {};
+	virtual void onRspForQuoteCancel(const dict &error, int reqid, bool last) {};
 
-    virtual void onRtnForQuote(const dict &data) {};
+	virtual void onRtnForQuote(const dict &data) {};
 
 	//-------------------------------------------------------------------------------------
 	//req:主动函数的请求字典
@@ -133,9 +142,9 @@ public:
 
 	int reqDepthMarketDataCancel(const dict &req, int reqid);
 
-    int reqForQuoteSubscribe(const dict &req, int reqid);
+	int reqForQuoteSubscribe(const dict &req, int reqid);
 
-    int reqForQuoteCancel(const dict &req, int reqid);
+	int reqForQuoteCancel(const dict &req, int reqid);
 
 	string getApiErrorMsg(int nErrorCode);
 };
