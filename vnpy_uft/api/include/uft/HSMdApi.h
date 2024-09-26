@@ -42,7 +42,7 @@ public:
     virtual void OnRtnDepthMarketData(CHSDepthMarketDataField *pDepthMarketData) {};
 
     /// Description: 订阅-询价应答
-    virtual void OnRspForQuoteSubscribe(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspForQuoteSubscribe(CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description: 订阅取消-询价应答
     virtual void OnRspForQuoteCancel(CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};

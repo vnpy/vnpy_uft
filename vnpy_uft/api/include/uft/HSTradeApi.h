@@ -66,10 +66,10 @@ public:
 
     /// Description:报价录入
     /// Others     :报价错误此方法被回调，pRspQuoteInsert保存了请求时出错的结构体数据。
-    virtual void OnRspErrorQuoteInsert(CHSRspQuoteInsertField *pRspQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspErrorQuoteInsert(CHSRspQuoteInsertField* pRspQuoteInsert, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:报价撤单
-    virtual void OnRspQuoteAction(CHSRspQuoteActionField *pRspQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQuoteAction(CHSRspQuoteActionField* pRspQuoteAction, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:申请组合录入
     virtual void OnRspErrorCombActionInsert(CHSRspCombActionInsertField *pRspCombActionInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
@@ -108,10 +108,10 @@ public:
     virtual void OnRspQryCombAction(CHSCombActionField *pRspQryCombAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:询价查询
-    virtual void OnRspQryForQuote(CHSForQuoteField *pRspQryForQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQryForQuote(CHSForQuoteField* pRspQryForQuote, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:报价查询
-    virtual void OnRspQryQuote(CHSQuoteField *pRspQryQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQryQuote(CHSQuoteField* pRspQryQuote, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:组合持仓明细查询
     virtual void OnRspQryPositionCombineDetail(CHSRspQryPositionCombineDetailField *pRspQryPositionCombineDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
@@ -185,32 +185,39 @@ public:
     /// Description:历史成交查询
     virtual void OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
+    /// Description:可取资金查询
+    virtual void OnRspQryWithdrawFund(CHSRspQryWithdrawFundField *pRspQryWithdrawFund, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
+
     /// Description:组合合约查询
     virtual void OnRspQryCombInstrument(CHSRspQryCombInstrumentField *pRspQryCombInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast){};
 
     /// Description:席位查询
-    virtual void OnRspQrySeatID(CHSRspQrySeatIDField *pRspQrySeatID, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQrySeatID(CHSRspQrySeatIDField *pRspQrySeatID, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:期权自对冲设置
-    virtual void OnRspOptionSelfClose(CHSRspOptionSelfCloseField *pReqOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspOptionSelfClose(CHSRspOptionSelfCloseField *pReqOptionSelfClose, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:期权自对冲设置取消
-    virtual void OnRspOptionSelfCloseAction(CHSRspOptionSelfCloseActionField *pReqOptionSelfCloseAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspOptionSelfCloseAction(CHSRspOptionSelfCloseActionField *pReqOptionSelfCloseAction, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:期权自对冲设置结果查询
-    virtual void OnRspQryOptionSelfCloseResult(CHSRspQryOptionSelfCloseResultField *pReqQryOptionSelfCloseResult, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQryOptionSelfCloseResult(CHSRspQryOptionSelfCloseResultField *pReqQryOptionSelfCloseResult, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:期权自对冲查询
-    virtual void OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfClose, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:股票期权报价录入
-    virtual void OnRspOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    /// Others     :股票期权报价录入错误此方法被回调，pRspOptQuoteInsert保存了请求时出错的结构体数据。
+    virtual void OnRspErrorOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:股票期权报价撤单
-    virtual void OnRspOptQuoteAction(CHSRspOptQuoteActionField *pRspOptQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspOptQuoteAction(CHSRspOptQuoteActionField *pRspOptQuoteAction, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description:股票期权报价查询
-    virtual void OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
+    virtual void OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
+
+    /// Description:股票期权组合策略信息查询
+    virtual void OnRspQryOptCombStrategy(CHSRspQryOptCombStrategyField *pRspQryOptCombStrategy, CHSRspInfoField* pRspInfo, int nRequestID, bool bIsLast) {};
 
     /// Description: 主推-成交回报
     virtual void OnRtnTrade(CHSTradeField *pRtnTrade) {};
@@ -229,27 +236,33 @@ public:
 
     /// Description: 主推-撤单错误回报
     virtual void OnErrRtnOrderAction(CHSOrderActionField *pRtnOrder) {};
-	
-	/// Description: 主推-客户通知
+
+    /// Description: 主推-客户通知
     virtual void OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice) {};
 
     /// Description: 主推-询价回报
-    virtual void OnRtnForQuote(CHSForQuoteField *pRtnForQuote) {};
+    virtual void OnRtnForQuote(CHSForQuoteField* pRtnForQuote) {};
 
     /// Description: 主推-报价回报
-    virtual void OnRtnQuote(CHSQuoteField *pRtnQuote) {};
+    virtual void OnRtnQuote(CHSQuoteField* pRtnQuote) {};
 
     /// Description: 主推-交易所状态
-    virtual void OnRtnExchangeStatus(CHSExchangeStatusField *pRtnExchangeStatus) {};
+    virtual void OnRtnExchangeStatus(CHSExchangeStatusField* pRtnExchangeStatus) {};
 
     /// Description: 主推-合约品种状态
-    virtual void OnRtnProductStatus(CHSProductStatusField *pRtnProductStatus) {};
+    virtual void OnRtnProductStatus(CHSProductStatusField* pRtnProductStatus) {};
 
     /// Description: 主推-期权自对冲
     virtual void OnRtnOptionSelfClose(CHSOptionSelfCloseField *pRtnOptionSelfClose) {};
 
     /// Description: 主推-股票期权报价回报
-    virtual void OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote) {};
+    virtual void OnRtnOptQuote(CHSOptQuoteField* pRtnOptQuote) {};
+
+    /// Description: 主推-银行转账回报
+    virtual void OnRtnTransfer(CHSTransferField* pRtnTransfer) {};
+
+    /// Description: 主推-股票期权报价撤单错误回报
+    virtual void OnErrRtnOptQuoteAction(CHSOptQuoteActionField* pRtnOptQuoteAction) {};
 };
 
 ///交易
@@ -263,7 +276,7 @@ public:
     ///              pInitCfgField            初始化入参
     ///              pExtraParam              初始化额外参数
     virtual int Init(const CHSInitConfigField *pInitCfgField, void* pExtraParam = (void*)0) = 0;
-    
+
     /// Description: API和交易柜台建立连接，连接建立成功后，主线程会等待用户操作子线程退出
     /// Return     : int 0表示连接建立成功，否则表示失败，通过调用GetApiErrorMsg可以获取详细错误信息
     virtual int Join() = 0;
@@ -330,10 +343,10 @@ public:
     virtual int  ReqForQuoteInsert(CHSReqForQuoteInsertField *pReqForQuoteInsert, int nRequestID) = 0;
 
     /// Description:报价录入
-    virtual int  ReqQuoteInsert(CHSReqQuoteInsertField *pReqQuoteInsert, int nRequestID) = 0;
+    virtual int  ReqQuoteInsert(CHSReqQuoteInsertField* pReqQuoteInsert, int nRequestID) = 0;
 
     /// Description:报价撤单
-    virtual int  ReqQuoteAction(CHSReqQuoteActionField *pReqQuoteAction, int nRequestID) = 0;
+    virtual int  ReqQuoteAction(CHSReqQuoteActionField* pReqQuoteAction, int nRequestID) = 0;
 
     /// Description:申请组合录入
     virtual int  ReqCombActionInsert(CHSReqCombActionInsertField *pReqCombActionInsert, int nRequestID) = 0;
@@ -372,10 +385,10 @@ public:
     virtual int  ReqQryCombAction(CHSReqQryCombActionField *pReqQryCombAction, int nRequestID) = 0;
 
     /// Description:询价查询
-    virtual int  ReqQryForQuote(CHSReqQryForQuoteField *pReqQryForQuote, int nRequestID) = 0;
+    virtual int  ReqQryForQuote(CHSReqQryForQuoteField* pReqQryForQuote, int nRequestID) = 0;
 
     /// Description:报价查询
-    virtual int  ReqQryQuote(CHSReqQryQuoteField *pReqQryQuote, int nRequestID) = 0;
+    virtual int  ReqQryQuote(CHSReqQryQuoteField* pReqQryQuote, int nRequestID) = 0;
 
     /// Description:组合持仓明细查询
     virtual int  ReqQryPositionCombineDetail(CHSReqQryPositionCombineDetailField *pReqQryPositionCombineDetail, int nRequestID) = 0;
@@ -449,6 +462,9 @@ public:
     /// Description:历史成交查询
     virtual int  ReqQryHistTrade(CHSReqQryHistTradeField *pReqQryHistTrade, int nRequestID) = 0;
 
+    /// Description:可取资金查询
+    virtual int  ReqQryWithdrawFund(CHSReqQryWithdrawFundField *pReqQryWithdrawFund, int nRequestID) = 0;
+
     /// Description:组合合约查询
     virtual int  ReqQryCombInstrument(CHSReqQryCombInstrumentField *pReqQryCombInstrument, int nRequestID) = 0;
 
@@ -475,6 +491,9 @@ public:
 
     /// Description:股票期权报价查询
     virtual int  ReqQryOptQuote(CHSReqQryOptQuoteField *pReqQryOptQuote, int nRequestID) = 0;
+
+    /// Description:股票期权组合策略信息查询
+    virtual int  ReqQryOptCombStrategy(CHSReqQryOptCombStrategyField *pReqQryOptCombStrategy, int nRequestID) = 0;
 protected:
     ~CHSTradeApi(){};
 };

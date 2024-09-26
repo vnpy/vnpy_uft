@@ -222,15 +222,4 @@
     <error id="ADDRESS_SUM_LIMIT" value="1219" prompt="账号登录地址个数超过限制"/>
     <error id="BATCHOPERATION_NOTALLOWED" value="1220" prompt="当前时间不允许批量操作"/>
     <error id="LOCK_NOTENOUGH" value="1221" prompt="可锁定股份数量不足"/>
-	<error id="STANDARD_CONTRACT_CHECK_FAIL" value="1222" prompt="非标准合约检查失败"/>
-	<error id="ACCOUNT_NO_AUTHCODE_ERROR" value="1223" prompt="账号未进行认证"/>
-	<error id="UNDERLYCODE_NOT_EXISTS" value="1224" prompt="该证券不在标的证券池中"/>
-	<error id="ERR_AUTHID_NOT_EXISTS" value="1230" prompt="接入认证编号不存在"/>
-	<error id="ERR_AUTH_FAILED" value="1231" prompt="接入认证失败"/>
-	<error id="ERR_PWD_NO_DEFAULT" value="1232" prompt="交易密码不能为默认密码"/>
-	<error id="ERR_PWD_NO_DIGIT" value="1233" prompt="交易密码不能为纯数字"/>
-	<error id="ERR_PWD_LEN_SMALL" value="1234" prompt="交易密码长度不足"/>
-	<error id="ERR_AUTHCODE_NOT_EXISTS" value="1235" prompt="授权信息不存在"/>
-	<error id="ERR_AUTHCODE_INVALID" value="1236" prompt="授权信息无效"/>
-	<error id="ERR_SESSION_ASSIGN" value="1237" prompt="会话分配失败或者该会话已有客户在线"/>	
 </errors>
