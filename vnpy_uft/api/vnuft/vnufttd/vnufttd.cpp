@@ -1073,6 +1073,27 @@ void TdApi::OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *
 	this->task_queue.push(task);
 };
 
+void TdApi::OnRspQryWithdrawFund(CHSRspQryWithdrawFundField *pRspQryWithdrawFund, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	Task task = Task();
+	task.task_name = ONRSPQRYWITHDRAWFUND;
+	if (pRspQryWithdrawFund)
+	{
+		CHSRspQryWithdrawFundField *task_data = new CHSRspQryWithdrawFundField();
+		*task_data = *pRspQryWithdrawFund;
+		task.task_data = task_data;
+	}
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
 void TdApi::OnRspQryCombInstrument(CHSRspQryCombInstrumentField *pRspQryCombInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	Task task = Task();
@@ -1199,10 +1220,10 @@ void TdApi::OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfCl
 	this->task_queue.push(task);
 };
 
-void TdApi::OnRspOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+void TdApi::OnRspErrorOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	Task task = Task();
-	task.task_name = ONRSPOPTQUOTEINSERT;
+	task.task_name = ONRSPERROROPTQUOTEINSERT;
 	if (pRspOptQuoteInsert)
 	{
 		CHSRspOptQuoteInsertField *task_data = new CHSRspOptQuoteInsertField();
@@ -1249,6 +1270,27 @@ void TdApi::OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField 
 	{
 		CHSOptQuoteField *task_data = new CHSOptQuoteField();
 		*task_data = *pRspQryOptQuote;
+		task.task_data = task_data;
+	}
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
+void TdApi::OnRspQryOptCombStrategy(CHSRspQryOptCombStrategyField *pRspQryOptCombStrategy, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	Task task = Task();
+	task.task_name = ONRSPQRYOPTCOMBSTRATEGY;
+	if (pRspQryOptCombStrategy)
+	{
+		CHSRspQryOptCombStrategyField *task_data = new CHSRspQryOptCombStrategyField();
+		*task_data = *pRspQryOptCombStrategy;
 		task.task_data = task_data;
 	}
 	if (pRspInfo)
@@ -1431,6 +1473,32 @@ void TdApi::OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote)
 	this->task_queue.push(task);
 };
 
+void TdApi::OnRtnTransfer(CHSTransferField *pRtnTransfer)
+{
+	Task task = Task();
+	task.task_name = ONRTNTRANSFER;
+	if (pRtnTransfer)
+	{
+		CHSTransferField *task_data = new CHSTransferField();
+		*task_data = *pRtnTransfer;
+		task.task_data = task_data;
+	}
+	this->task_queue.push(task);
+};
+
+void TdApi::OnErrRtnOptQuoteAction(CHSOptQuoteActionField *pRtnOptQuoteAction)
+{
+	Task task = Task();
+	task.task_name = ONERRRTNOPTQUOTEACTION;
+	if (pRtnOptQuoteAction)
+	{
+		CHSOptQuoteActionField *task_data = new CHSOptQuoteActionField();
+		*task_data = *pRtnOptQuoteAction;
+		task.task_data = task_data;
+	}
+	this->task_queue.push(task);
+};
+
 ///-------------------------------------------------------------------------------------
 ///工作线程从队列中取出数据，转化为python对象后，进行推送
 ///-------------------------------------------------------------------------------------
@@ -1445,449 +1513,473 @@ void TdApi::processTask()
 
 			switch (task.task_name)
 			{
-			case ONFRONTCONNECTED:
-			{
-				this->processFrontConnected(&task);
-				break;
-			}
-
-			case ONFRONTDISCONNECTED:
-			{
-				this->processFrontDisconnected(&task);
-				break;
-			}
-
-			case ONRSPAUTHENTICATE:
-			{
-				this->processRspAuthenticate(&task);
-				break;
-			}
-
-			case ONRSPSUBMITUSERSYSTEMINFO:
-			{
-				this->processRspSubmitUserSystemInfo(&task);
-				break;
-			}
-
-			case ONRSPUSERLOGIN:
-			{
-				this->processRspUserLogin(&task);
-				break;
-			}
-
-			case ONRSPUSERPASSWORDUPDATE:
-			{
-				this->processRspUserPasswordUpdate(&task);
-				break;
-			}
-
-			case ONRSPERRORORDERINSERT:
-			{
-				this->processRspErrorOrderInsert(&task);
-				break;
-			}
-
-			case ONRSPORDERACTION:
-			{
-				this->processRspOrderAction(&task);
-				break;
-			}
-
-			case ONRSPERROREXERCISEORDERINSERT:
-			{
-				this->processRspErrorExerciseOrderInsert(&task);
-				break;
-			}
-
-			case ONRSPEXERCISEORDERACTION:
-			{
-				this->processRspExerciseOrderAction(&task);
-				break;
-			}
-
-			case ONRSPERRORLOCKINSERT:
-			{
-				this->processRspErrorLockInsert(&task);
-				break;
-			}
-
-			case ONRSPFORQUOTEINSERT:
-			{
-				this->processRspForQuoteInsert(&task);
-				break;
-			}
-
-			case ONRSPERRORQUOTEINSERT:
-			{
-				this->processRspErrorQuoteInsert(&task);
-				break;
-			}
-
-			case ONRSPQUOTEACTION:
-			{
-				this->processRspQuoteAction(&task);
-				break;
-			}
-
-			case ONRSPERRORCOMBACTIONINSERT:
-			{
-				this->processRspErrorCombActionInsert(&task);
-				break;
-			}
-
-			case ONRSPQUERYMAXORDERVOLUME:
-			{
-				this->processRspQueryMaxOrderVolume(&task);
-				break;
-			}
-
-			case ONRSPQRYLOCKVOLUME:
-			{
-				this->processRspQryLockVolume(&task);
-				break;
-			}
-
-			case ONRSPQUERYEXERCISEVOLUME:
-			{
-				this->processRspQueryExerciseVolume(&task);
-				break;
-			}
-
-			case ONRSPQRYCOMBVOLUME:
-			{
-				this->processRspQryCombVolume(&task);
-				break;
-			}
-
-			case ONRSPQRYPOSITION:
-			{
-				this->processRspQryPosition(&task);
-				break;
-			}
-
-			case ONRSPQRYTRADINGACCOUNT:
-			{
-				this->processRspQryTradingAccount(&task);
-				break;
-			}
-
-			case ONRSPQRYORDER:
-			{
-				this->processRspQryOrder(&task);
-				break;
-			}
-
-			case ONRSPQRYTRADE:
-			{
-				this->processRspQryTrade(&task);
-				break;
-			}
-
-			case ONRSPQRYEXERCISE:
-			{
-				this->processRspQryExercise(&task);
-				break;
-			}
-
-			case ONRSPQRYLOCK:
-			{
-				this->processRspQryLock(&task);
-				break;
-			}
-
-			case ONRSPQRYCOMBACTION:
-			{
-				this->processRspQryCombAction(&task);
-				break;
-			}
-
-			case ONRSPQRYFORQUOTE:
-			{
-				this->processRspQryForQuote(&task);
-				break;
-			}
-
-			case ONRSPQRYQUOTE:
-			{
-				this->processRspQryQuote(&task);
-				break;
-			}
-
-			case ONRSPQRYPOSITIONCOMBINEDETAIL:
-			{
-				this->processRspQryPositionCombineDetail(&task);
-				break;
-			}
-
-			case ONRSPQRYINSTRUMENT:
-			{
-				this->processRspQryInstrument(&task);
-				break;
-			}
-
-			case ONRSPQRYCOVEREDSHORT:
-			{
-				this->processRspQryCoveredShort(&task);
-				break;
-			}
-
-			case ONRSPQRYEXERCISEASSIGN:
-			{
-				this->processRspQryExerciseAssign(&task);
-				break;
-			}
-
-			case ONRSPTRANSFER:
-			{
-				this->processRspTransfer(&task);
-				break;
-			}
-
-			case ONRSPQRYTRANSFER:
-			{
-				this->processRspQryTransfer(&task);
-				break;
-			}
-
-			case ONRSPQUERYBANKBALANCE:
-			{
-				this->processRspQueryBankBalance(&task);
-				break;
-			}
-
-			case ONRSPQUERYBANKACCOUNT:
-			{
-				this->processRspQueryBankAccount(&task);
-				break;
-			}
-
-			case ONRSPMULTICENTREFUNDTRANS:
-			{
-				this->processRspMultiCentreFundTrans(&task);
-				break;
-			}
-
-			case ONRSPQUERYBILLCONTENT:
-			{
-				this->processRspQueryBillContent(&task);
-				break;
-			}
-
-			case ONRSPBILLCONFIRM:
-			{
-				this->processRspBillConfirm(&task);
-				break;
-			}
-
-			case ONRSPQRYMARGIN:
-			{
-				this->processRspQryMargin(&task);
-				break;
-			}
-
-			case ONRSPQRYCOMMISSION:
-			{
-				this->processRspQryCommission(&task);
-				break;
-			}
-
-			case ONRSPQRYPOSITIONDETAIL:
-			{
-				this->processRspQryPositionDetail(&task);
-				break;
-			}
-
-			case ONRSPQRYEXCHANGERATE:
-			{
-				this->processRspQryExchangeRate(&task);
-				break;
-			}
-
-			case ONRSPQRYSYSCONFIG:
-			{
-				this->processRspQrySysConfig(&task);
-				break;
-			}
-
-			case ONRSPQRYDEPTHMARKETDATA:
-			{
-				this->processRspQryDepthMarketData(&task);
-				break;
-			}
-
-			case ONRSPFUNDTRANS:
-			{
-				this->processRspFundTrans(&task);
-				break;
-			}
-
-			case ONRSPQRYFUNDTRANS:
-			{
-				this->processRspQryFundTrans(&task);
-				break;
-			}
-
-			case ONRSPQRYCLIENTNOTICE:
-			{
-				this->processRspQryClientNotice(&task);
-				break;
-			}
-
-			case ONRSPQRYOPTUNDERLY:
-			{
-				this->processRspQryOptUnderly(&task);
-				break;
-			}
-
-			case ONRSPQRYSECUDEPTHMARKET:
-			{
-				this->processRspQrySecuDepthMarket(&task);
-				break;
-			}
-
-			case ONRSPQRYHISTORDER:
-			{
-				this->processRspQryHistOrder(&task);
-				break;
-			}
-
-			case ONRSPQRYHISTTRADE:
-			{
-				this->processRspQryHistTrade(&task);
-				break;
-			}
-
-			case ONRSPQRYCOMBINSTRUMENT:
-			{
-				this->processRspQryCombInstrument(&task);
-				break;
-			}
-
-			case ONRSPQRYSEATID:
-			{
-				this->processRspQrySeatID(&task);
-				break;
-			}
-
-			case ONRSPOPTIONSELFCLOSE:
-			{
-				this->processRspOptionSelfClose(&task);
-				break;
-			}
-
-			case ONRSPOPTIONSELFCLOSEACTION:
-			{
-				this->processRspOptionSelfCloseAction(&task);
-				break;
-			}
-
-			case ONRSPQRYOPTIONSELFCLOSERESULT:
-			{
-				this->processRspQryOptionSelfCloseResult(&task);
-				break;
-			}
-
-			case ONRSPQRYOPTIONSELFCLOSE:
-			{
-				this->processRspQryOptionSelfClose(&task);
-				break;
-			}
-
-			case ONRSPOPTQUOTEINSERT:
-			{
-				this->processRspOptQuoteInsert(&task);
-				break;
-			}
-
-			case ONRSPOPTQUOTEACTION:
-			{
-				this->processRspOptQuoteAction(&task);
-				break;
-			}
-
-			case ONRSPQRYOPTQUOTE:
-			{
-				this->processRspQryOptQuote(&task);
-				break;
-			}
-
-			case ONRTNTRADE:
-			{
-				this->processRtnTrade(&task);
-				break;
-			}
-
-			case ONRTNORDER:
-			{
-				this->processRtnOrder(&task);
-				break;
-			}
-
-			case ONRTNEXERCISE:
-			{
-				this->processRtnExercise(&task);
-				break;
-			}
-
-			case ONRTNCOMBACTION:
-			{
-				this->processRtnCombAction(&task);
-				break;
-			}
-
-			case ONRTNLOCK:
-			{
-				this->processRtnLock(&task);
-				break;
-			}
-
-			case ONERRRTNORDERACTION:
-			{
-				this->processErrRtnOrderAction(&task);
-				break;
-			}
-
-			case ONRTNCLIENTNOTICE:
-			{
-				this->processRtnClientNotice(&task);
-				break;
-			}
-
-			case ONRTNFORQUOTE:
-			{
-				this->processRtnForQuote(&task);
-				break;
-			}
-
-			case ONRTNQUOTE:
-			{
-				this->processRtnQuote(&task);
-				break;
-			}
-
-			case ONRTNEXCHANGESTATUS:
-			{
-				this->processRtnExchangeStatus(&task);
-				break;
-			}
-
-			case ONRTNPRODUCTSTATUS:
-			{
-				this->processRtnProductStatus(&task);
-				break;
-			}
-
-			case ONRTNOPTIONSELFCLOSE:
-			{
-				this->processRtnOptionSelfClose(&task);
-				break;
-			}
-
-			case ONRTNOPTQUOTE:
-			{
-				this->processRtnOptQuote(&task);
-				break;
-			}
+				case ONFRONTCONNECTED:
+				{
+					this->processFrontConnected(&task);
+					break;
+				}
+
+				case ONFRONTDISCONNECTED:
+				{
+					this->processFrontDisconnected(&task);
+					break;
+				}
+
+				case ONRSPAUTHENTICATE:
+				{
+					this->processRspAuthenticate(&task);
+					break;
+				}
+
+				case ONRSPSUBMITUSERSYSTEMINFO:
+				{
+					this->processRspSubmitUserSystemInfo(&task);
+					break;
+				}
+
+				case ONRSPUSERLOGIN:
+				{
+					this->processRspUserLogin(&task);
+					break;
+				}
+
+				case ONRSPUSERPASSWORDUPDATE:
+				{
+					this->processRspUserPasswordUpdate(&task);
+					break;
+				}
+
+				case ONRSPERRORORDERINSERT:
+				{
+					this->processRspErrorOrderInsert(&task);
+					break;
+				}
+
+				case ONRSPORDERACTION:
+				{
+					this->processRspOrderAction(&task);
+					break;
+				}
+
+				case ONRSPERROREXERCISEORDERINSERT:
+				{
+					this->processRspErrorExerciseOrderInsert(&task);
+					break;
+				}
+
+				case ONRSPEXERCISEORDERACTION:
+				{
+					this->processRspExerciseOrderAction(&task);
+					break;
+				}
+
+				case ONRSPERRORLOCKINSERT:
+				{
+					this->processRspErrorLockInsert(&task);
+					break;
+				}
+
+				case ONRSPFORQUOTEINSERT:
+				{
+					this->processRspForQuoteInsert(&task);
+					break;
+				}
+
+				case ONRSPERRORQUOTEINSERT:
+				{
+					this->processRspErrorQuoteInsert(&task);
+					break;
+				}
+
+				case ONRSPQUOTEACTION:
+				{
+					this->processRspQuoteAction(&task);
+					break;
+				}
+
+				case ONRSPERRORCOMBACTIONINSERT:
+				{
+					this->processRspErrorCombActionInsert(&task);
+					break;
+				}
+
+				case ONRSPQUERYMAXORDERVOLUME:
+				{
+					this->processRspQueryMaxOrderVolume(&task);
+					break;
+				}
+
+				case ONRSPQRYLOCKVOLUME:
+				{
+					this->processRspQryLockVolume(&task);
+					break;
+				}
+
+				case ONRSPQUERYEXERCISEVOLUME:
+				{
+					this->processRspQueryExerciseVolume(&task);
+					break;
+				}
+
+				case ONRSPQRYCOMBVOLUME:
+				{
+					this->processRspQryCombVolume(&task);
+					break;
+				}
+
+				case ONRSPQRYPOSITION:
+				{
+					this->processRspQryPosition(&task);
+					break;
+				}
+
+				case ONRSPQRYTRADINGACCOUNT:
+				{
+					this->processRspQryTradingAccount(&task);
+					break;
+				}
+
+				case ONRSPQRYORDER:
+				{
+					this->processRspQryOrder(&task);
+					break;
+				}
+
+				case ONRSPQRYTRADE:
+				{
+					this->processRspQryTrade(&task);
+					break;
+				}
+
+				case ONRSPQRYEXERCISE:
+				{
+					this->processRspQryExercise(&task);
+					break;
+				}
+
+				case ONRSPQRYLOCK:
+				{
+					this->processRspQryLock(&task);
+					break;
+				}
+
+				case ONRSPQRYCOMBACTION:
+				{
+					this->processRspQryCombAction(&task);
+					break;
+				}
+
+				case ONRSPQRYFORQUOTE:
+				{
+					this->processRspQryForQuote(&task);
+					break;
+				}
+
+				case ONRSPQRYQUOTE:
+				{
+					this->processRspQryQuote(&task);
+					break;
+				}
+
+				case ONRSPQRYPOSITIONCOMBINEDETAIL:
+				{
+					this->processRspQryPositionCombineDetail(&task);
+					break;
+				}
+
+				case ONRSPQRYINSTRUMENT:
+				{
+					this->processRspQryInstrument(&task);
+					break;
+				}
+
+				case ONRSPQRYCOVEREDSHORT:
+				{
+					this->processRspQryCoveredShort(&task);
+					break;
+				}
+
+				case ONRSPQRYEXERCISEASSIGN:
+				{
+					this->processRspQryExerciseAssign(&task);
+					break;
+				}
+
+				case ONRSPTRANSFER:
+				{
+					this->processRspTransfer(&task);
+					break;
+				}
+
+				case ONRSPQRYTRANSFER:
+				{
+					this->processRspQryTransfer(&task);
+					break;
+				}
+
+				case ONRSPQUERYBANKBALANCE:
+				{
+					this->processRspQueryBankBalance(&task);
+					break;
+				}
+
+				case ONRSPQUERYBANKACCOUNT:
+				{
+					this->processRspQueryBankAccount(&task);
+					break;
+				}
+
+				case ONRSPMULTICENTREFUNDTRANS:
+				{
+					this->processRspMultiCentreFundTrans(&task);
+					break;
+				}
+
+				case ONRSPQUERYBILLCONTENT:
+				{
+					this->processRspQueryBillContent(&task);
+					break;
+				}
+
+				case ONRSPBILLCONFIRM:
+				{
+					this->processRspBillConfirm(&task);
+					break;
+				}
+
+				case ONRSPQRYMARGIN:
+				{
+					this->processRspQryMargin(&task);
+					break;
+				}
+
+				case ONRSPQRYCOMMISSION:
+				{
+					this->processRspQryCommission(&task);
+					break;
+				}
+
+				case ONRSPQRYPOSITIONDETAIL:
+				{
+					this->processRspQryPositionDetail(&task);
+					break;
+				}
+
+				case ONRSPQRYEXCHANGERATE:
+				{
+					this->processRspQryExchangeRate(&task);
+					break;
+				}
+
+				case ONRSPQRYSYSCONFIG:
+				{
+					this->processRspQrySysConfig(&task);
+					break;
+				}
+
+				case ONRSPQRYDEPTHMARKETDATA:
+				{
+					this->processRspQryDepthMarketData(&task);
+					break;
+				}
+
+				case ONRSPFUNDTRANS:
+				{
+					this->processRspFundTrans(&task);
+					break;
+				}
+
+				case ONRSPQRYFUNDTRANS:
+				{
+					this->processRspQryFundTrans(&task);
+					break;
+				}
+
+				case ONRSPQRYCLIENTNOTICE:
+				{
+					this->processRspQryClientNotice(&task);
+					break;
+				}
+
+				case ONRSPQRYOPTUNDERLY:
+				{
+					this->processRspQryOptUnderly(&task);
+					break;
+				}
+
+				case ONRSPQRYSECUDEPTHMARKET:
+				{
+					this->processRspQrySecuDepthMarket(&task);
+					break;
+				}
+
+				case ONRSPQRYHISTORDER:
+				{
+					this->processRspQryHistOrder(&task);
+					break;
+				}
+
+				case ONRSPQRYHISTTRADE:
+				{
+					this->processRspQryHistTrade(&task);
+					break;
+				}
+
+				case ONRSPQRYWITHDRAWFUND:
+				{
+					this->processRspQryWithdrawFund(&task);
+					break;
+				}
+
+				case ONRSPQRYCOMBINSTRUMENT:
+				{
+					this->processRspQryCombInstrument(&task);
+					break;
+				}
+
+				case ONRSPQRYSEATID:
+				{
+					this->processRspQrySeatID(&task);
+					break;
+				}
+
+				case ONRSPOPTIONSELFCLOSE:
+				{
+					this->processRspOptionSelfClose(&task);
+					break;
+				}
+
+				case ONRSPOPTIONSELFCLOSEACTION:
+				{
+					this->processRspOptionSelfCloseAction(&task);
+					break;
+				}
+
+				case ONRSPQRYOPTIONSELFCLOSERESULT:
+				{
+					this->processRspQryOptionSelfCloseResult(&task);
+					break;
+				}
+
+				case ONRSPQRYOPTIONSELFCLOSE:
+				{
+					this->processRspQryOptionSelfClose(&task);
+					break;
+				}
+
+				case ONRSPERROROPTQUOTEINSERT:
+				{
+					this->processRspErrorOptQuoteInsert(&task);
+					break;
+				}
+
+				case ONRSPOPTQUOTEACTION:
+				{
+					this->processRspOptQuoteAction(&task);
+					break;
+				}
+
+				case ONRSPQRYOPTQUOTE:
+				{
+					this->processRspQryOptQuote(&task);
+					break;
+				}
+
+				case ONRSPQRYOPTCOMBSTRATEGY:
+				{
+					this->processRspQryOptCombStrategy(&task);
+					break;
+				}
+
+				case ONRTNTRADE:
+				{
+					this->processRtnTrade(&task);
+					break;
+				}
+
+				case ONRTNORDER:
+				{
+					this->processRtnOrder(&task);
+					break;
+				}
+
+				case ONRTNEXERCISE:
+				{
+					this->processRtnExercise(&task);
+					break;
+				}
+
+				case ONRTNCOMBACTION:
+				{
+					this->processRtnCombAction(&task);
+					break;
+				}
+
+				case ONRTNLOCK:
+				{
+					this->processRtnLock(&task);
+					break;
+				}
+
+				case ONERRRTNORDERACTION:
+				{
+					this->processErrRtnOrderAction(&task);
+					break;
+				}
+
+				case ONRTNCLIENTNOTICE:
+				{
+					this->processRtnClientNotice(&task);
+					break;
+				}
+
+				case ONRTNFORQUOTE:
+				{
+					this->processRtnForQuote(&task);
+					break;
+				}
+
+				case ONRTNQUOTE:
+				{
+					this->processRtnQuote(&task);
+					break;
+				}
+
+				case ONRTNEXCHANGESTATUS:
+				{
+					this->processRtnExchangeStatus(&task);
+					break;
+				}
+
+				case ONRTNPRODUCTSTATUS:
+				{
+					this->processRtnProductStatus(&task);
+					break;
+				}
+
+				case ONRTNOPTIONSELFCLOSE:
+				{
+					this->processRtnOptionSelfClose(&task);
+					break;
+				}
+
+				case ONRTNOPTQUOTE:
+				{
+					this->processRtnOptQuote(&task);
+					break;
+				}
+
+				case ONRTNTRANSFER:
+				{
+					this->processRtnTransfer(&task);
+					break;
+				}
+
+				case ONERRRTNOPTQUOTEACTION:
+				{
+					this->processErrRtnOptQuoteAction(&task);
+					break;
+				}
 			};
 		}
 	}
@@ -2227,8 +2319,6 @@ void TdApi::processRspErrorQuoteInsert(Task *task)
 		data["OrderStatus"] = task_data->OrderStatus;
 		data["TopOrderType"] = task_data->TopOrderType;
 		data["QuoteSysID"] = toUtf(task_data->QuoteSysID);
-		data["BidOrderStatus"] = task_data->BidOrderStatus;
-		data["AskOrderStatus"] = task_data->AskOrderStatus;
 		delete task_data;
 	}
 	dict error;
@@ -2258,12 +2348,6 @@ void TdApi::processRspQuoteAction(Task *task)
 		data["OrderStatus"] = task_data->OrderStatus;
 		data["InsertTime"] = task_data->InsertTime;
 		data["InstrumentID"] = toUtf(task_data->InstrumentID);
-		data["BidWithdrawVolume"] = task_data->BidWithdrawVolume;
-		data["AskWithdrawVolume"] = task_data->AskWithdrawVolume;
-		data["BidQuoteSysID"] = toUtf(task_data->BidQuoteSysID);
-		data["AskQuoteSysID"] = toUtf(task_data->AskQuoteSysID);
-		data["BidOrderStatus"] = task_data->BidOrderStatus;
-		data["AskOrderStatus"] = task_data->AskOrderStatus;
 		delete task_data;
 	}
 	dict error;
@@ -2329,6 +2413,7 @@ void TdApi::processRspQueryMaxOrderVolume(Task *task)
 		data["HedgeType"] = task_data->HedgeType;
 		data["OrderPrice"] = task_data->OrderPrice;
 		data["CombPositionID"] = toUtf(task_data->CombPositionID);
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
 		delete task_data;
 	}
 	dict error;
@@ -2510,6 +2595,7 @@ void TdApi::processRspQryTradingAccount(Task *task)
 		data["SzUsedBuyQuota"] = task_data->SzUsedBuyQuota;
 		data["ShAvailableBuyQuota"] = task_data->ShAvailableBuyQuota;
 		data["SzAvailableBuyQuota"] = task_data->SzAvailableBuyQuota;
+		data["YdWarrantMortgage"] = task_data->YdWarrantMortgage;
 		delete task_data;
 	}
 	dict error;
@@ -2787,8 +2873,6 @@ void TdApi::processRspQryQuote(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["ReportTime"] = task_data->ReportTime;
 		data["TopOrderType"] = task_data->TopOrderType;
-		data["BidOrderStatus"] = task_data->BidOrderStatus;
-		data["AskOrderStatus"] = task_data->AskOrderStatus;
 		delete task_data;
 	}
 	dict error;
@@ -3591,6 +3675,31 @@ void TdApi::processRspQryHistTrade(Task *task)
 	this->onRspQryHistTrade(data, error, task->task_id, task->task_last);
 };
 
+void TdApi::processRspQryWithdrawFund(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQryWithdrawFundField *task_data = (CHSRspQryWithdrawFundField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["CurrencyID"] = task_data->CurrencyID;
+		data["SysNodeID"] = task_data->SysNodeID;
+		data["SysNodeName"] = toUtf(task_data->SysNodeName);
+		data["WithdrawBalance"] = task_data->WithdrawBalance;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryWithdrawFund(data, error, task->task_id, task->task_last);
+};
+
 void TdApi::processRspQryCombInstrument(Task *task)
 {
 	gil_scoped_acquire acquire;
@@ -3745,7 +3854,7 @@ void TdApi::processRspQryOptionSelfClose(Task *task)
 	this->onRspQryOptionSelfClose(data, error, task->task_id, task->task_last);
 };
 
-void TdApi::processRspOptQuoteInsert(Task *task)
+void TdApi::processRspErrorOptQuoteInsert(Task *task)
 {
 	gil_scoped_acquire acquire;
 	dict data;
@@ -3779,7 +3888,7 @@ void TdApi::processRspOptQuoteInsert(Task *task)
 		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
 		delete task_error;
 	}
-	this->onRspOptQuoteInsert(data, error, task->task_id, task->task_last);
+	this->onRspErrorOptQuoteInsert(data, error, task->task_id, task->task_last);
 };
 
 void TdApi::processRspOptQuoteAction(Task *task)
@@ -3798,7 +3907,7 @@ void TdApi::processRspOptQuoteAction(Task *task)
 		data["AskWithdrawVolume"] = task_data->AskWithdrawVolume;
 		data["BidOrderStatus"] = task_data->BidOrderStatus;
 		data["AskOrderStatus"] = task_data->AskOrderStatus;
-		data["QuoteRef"] = toUtf(task_data->QuoteRef);
+		data["QuoteActionRef"] = toUtf(task_data->QuoteActionRef);
 		data["OrderStatus"] = task_data->OrderStatus;
 		data["SessionID"] = task_data->SessionID;
 		delete task_data;
@@ -3862,6 +3971,43 @@ void TdApi::processRspQryOptQuote(Task *task)
 		delete task_error;
 	}
 	this->onRspQryOptQuote(data, error, task->task_id, task->task_last);
+};
+
+void TdApi::processRspQryOptCombStrategy(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSRspQryOptCombStrategyField *task_data = (CHSRspQryOptCombStrategyField*)task->task_data;
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["CombStrategyID"] = toUtf(task_data->CombStrategyID);
+		data["CombStrategyName"] = toUtf(task_data->CombStrategyName);
+		data["EndDateSameFlag"] = task_data->EndDateSameFlag;
+		data["UnderlySameFlag"] = task_data->UnderlySameFlag;
+		data["UnitSameFlag"] = task_data->UnitSameFlag;
+		data["ComponentNum"] = task_data->ComponentNum;
+		data["FirstOptionsType"] = task_data->FirstOptionsType;
+		data["FirstPositionType"] = task_data->FirstPositionType;
+		data["FirstExercisePriceSeq"] = task_data->FirstExercisePriceSeq;
+		data["FirstPerInstrumentAmount"] = task_data->FirstPerInstrumentAmount;
+		data["SecondOptionsType"] = task_data->SecondOptionsType;
+		data["SecondPositionType"] = task_data->SecondPositionType;
+		data["SecondExercisePriceSeq"] = task_data->SecondExercisePriceSeq;
+		data["SecondPerInstrumentAmount"] = task_data->SecondPerInstrumentAmount;
+		data["NearSplitDays"] = task_data->NearSplitDays;
+		data["NonStandardInstrumentFlag"] = task_data->NonStandardInstrumentFlag;
+		delete task_data;
+	}
+	dict error;
+	if (task->task_error)
+	{
+		CHSRspInfoField *task_error = (CHSRspInfoField*)task->task_error;
+		error["ErrorID"] = task_error->ErrorID;
+		error["ErrorMsg"] = toUtf(task_error->ErrorMsg);
+		delete task_error;
+	}
+	this->onRspQryOptCombStrategy(data, error, task->task_id, task->task_last);
 };
 
 void TdApi::processRtnTrade(Task *task)
@@ -4131,8 +4277,6 @@ void TdApi::processRtnQuote(Task *task)
 		data["InsertTime"] = task_data->InsertTime;
 		data["ReportTime"] = task_data->ReportTime;
 		data["TopOrderType"] = task_data->TopOrderType;
-		data["BidOrderStatus"] = task_data->BidOrderStatus;
-		data["AskOrderStatus"] = task_data->AskOrderStatus;
 		delete task_data;
 	}
 	this->onRtnQuote(data);
@@ -4233,6 +4377,55 @@ void TdApi::processRtnOptQuote(Task *task)
 	this->onRtnOptQuote(data);
 };
 
+void TdApi::processRtnTransfer(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSTransferField *task_data = (CHSTransferField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["TransferSerialID"] = task_data->TransferSerialID;
+		data["BankID"] = toUtf(task_data->BankID);
+		data["BankName"] = toUtf(task_data->BankName);
+		data["BusinessName"] = toUtf(task_data->BusinessName);
+		data["OccurBalance"] = task_data->OccurBalance;
+		data["PostBalance"] = task_data->PostBalance;
+		data["TransferTime"] = task_data->TransferTime;
+		data["TransferStatus"] = task_data->TransferStatus;
+		data["TransferSource"] = task_data->TransferSource;
+		data["Remarks"] = toUtf(task_data->Remarks);
+		data["CurrencyID"] = task_data->CurrencyID;
+		data["OrderSourceDate"] = task_data->OrderSourceDate;
+		data["TradingDay"] = task_data->TradingDay;
+		data["TransferOccasion"] = toUtf(task_data->TransferOccasion);
+		delete task_data;
+	}
+	this->onRtnTransfer(data);
+};
+
+void TdApi::processErrRtnOptQuoteAction(Task *task)
+{
+	gil_scoped_acquire acquire;
+	dict data;
+	if (task->task_data)
+	{
+		CHSOptQuoteActionField *task_data = (CHSOptQuoteActionField*)task->task_data;
+		data["AccountID"] = toUtf(task_data->AccountID);
+		data["ExchangeID"] = toUtf(task_data->ExchangeID);
+		data["InstrumentID"] = toUtf(task_data->InstrumentID);
+		data["TradingDay"] = task_data->TradingDay;
+		data["InsertDate"] = task_data->InsertDate;
+		data["InsertTime"] = task_data->InsertTime;
+		data["ReportTime"] = task_data->ReportTime;
+		data["SessionID"] = task_data->SessionID;
+		data["QuoteActionRef"] = toUtf(task_data->QuoteActionRef);
+		data["ErrorMsg"] = toUtf(task_data->ErrorMsg);
+		delete task_data;
+	}
+	this->onErrRtnOptQuoteAction(data);
+};
+
 ///-------------------------------------------------------------------------------------
 ///主动函数
 ///-------------------------------------------------------------------------------------
@@ -4250,7 +4443,7 @@ int TdApi::init(dict pInitCfgField)
 
 	CHSInitConfigField cfg = CHSInitConfigField();
 	memset(&cfg, 0, sizeof(cfg));
-	getInt32(pInitCfgField, "ExchangeID", &cfg.APICheckVersion);
+	getInt32(pInitCfgField, "APICheckVersion", &cfg.APICheckVersion);
 	getString(pInitCfgField, "CommLicense", cfg.CommLicense);
 	getString(pInitCfgField, "SafeLevel", cfg.SafeLevel);
 	getString(pInitCfgField, "CommPassword", cfg.CommPassword);
@@ -4487,8 +4680,6 @@ int TdApi::reqQuoteAction(const dict &req, int reqid)
 	getString(req, "QuoteRef", myreq.QuoteRef);
 	getString(req, "QuoteActionRef", myreq.QuoteActionRef);
 	getString(req, "InstrumentID", myreq.InstrumentID);
-	getDouble(req, "BidWithdrawVolume", &myreq.BidWithdrawVolume);
-	getDouble(req, "AskWithdrawVolume", &myreq.AskWithdrawVolume);
 	int i = this->api->ReqQuoteAction(&myreq, reqid);
 	return i;
 };
@@ -4911,6 +5102,16 @@ int TdApi::reqQryHistTrade(const dict &req, int reqid)
 	return i;
 };
 
+int TdApi::reqQryWithdrawFund(const dict &req, int reqid)
+{
+	CHSReqQryWithdrawFundField myreq = CHSReqQryWithdrawFundField();
+	memset(&myreq, 0, sizeof(myreq));
+	getChar(req, "CurrencyID", &myreq.CurrencyID);
+	getInt32(req, "SysNodeID", &myreq.SysNodeID);
+	int i = this->api->ReqQryWithdrawFund(&myreq, reqid);
+	return i;
+};
+
 int TdApi::reqQryCombInstrument(const dict &req, int reqid)
 {
 	CHSReqQryCombInstrumentField myreq = CHSReqQryCombInstrumentField();
@@ -4999,7 +5200,7 @@ int TdApi::reqOptQuoteAction(const dict &req, int reqid)
 	getString(req, "InstrumentID", myreq.InstrumentID);
 	getDouble(req, "BidWithdrawVolume", &myreq.BidWithdrawVolume);
 	getDouble(req, "AskWithdrawVolume", &myreq.AskWithdrawVolume);
-	getString(req, "QuoteRef", myreq.QuoteRef);
+	getString(req, "QuoteActionRef", myreq.QuoteActionRef);
 	int i = this->api->ReqOptQuoteAction(&myreq, reqid);
 	return i;
 };
@@ -5013,6 +5214,16 @@ int TdApi::reqQryOptQuote(const dict &req, int reqid)
 	getChar(req, "QuoteQueryType", &myreq.QuoteQueryType);
 	getString(req, "QuoteBrokerID", myreq.QuoteBrokerID);
 	int i = this->api->ReqQryOptQuote(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryOptCombStrategy(const dict &req, int reqid)
+{
+	CHSReqQryOptCombStrategyField myreq = CHSReqQryOptCombStrategyField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "CombStrategyID", myreq.CombStrategyID);
+	int i = this->api->ReqQryOptCombStrategy(&myreq, reqid);
 	return i;
 };
 
@@ -5649,6 +5860,18 @@ public:
 		}
 	};
 
+	void onRspQryWithdrawFund(const dict &data, const dict &error, int reqid, bool last) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryWithdrawFund, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
+
 	void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) override
 	{
 		try
@@ -5721,11 +5944,11 @@ public:
 		}
 	};
 
-	void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
+	void onRspErrorOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
 	{
 		try
 		{
-			PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteInsert, data, error, reqid, last);
+			PYBIND11_OVERLOAD(void, TdApi, onRspErrorOptQuoteInsert, data, error, reqid, last);
 		}
 		catch (const error_already_set &e)
 		{
@@ -5750,6 +5973,18 @@ public:
 		try
 		{
 			PYBIND11_OVERLOAD(void, TdApi, onRspQryOptQuote, data, error, reqid, last);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
+
+	void onRspQryOptCombStrategy(const dict &data, const dict &error, int reqid, bool last) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRspQryOptCombStrategy, data, error, reqid, last);
 		}
 		catch (const error_already_set &e)
 		{
@@ -5912,6 +6147,30 @@ public:
 			cout << e.what() << endl;
 		}
 	};
+
+	void onRtnTransfer(const dict &data) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onRtnTransfer, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
+
+	void onErrRtnOptQuoteAction(const dict &data) override
+	{
+		try
+		{
+			PYBIND11_OVERLOAD(void, TdApi, onErrRtnOptQuoteAction, data);
+		}
+		catch (const error_already_set &e)
+		{
+			cout << e.what() << endl;
+		}
+	};
 };
 
 PYBIND11_MODULE(vnufttd, m)
@@ -5978,6 +6237,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("reqQrySecuDepthMarket", &TdApi::reqQrySecuDepthMarket)
 		.def("reqQryHistOrder", &TdApi::reqQryHistOrder)
 		.def("reqQryHistTrade", &TdApi::reqQryHistTrade)
+		.def("reqQryWithdrawFund", &TdApi::reqQryWithdrawFund)
 		.def("reqQryCombInstrument", &TdApi::reqQryCombInstrument)
 		.def("reqQrySeatID", &TdApi::reqQrySeatID)
 		.def("reqOptionSelfClose", &TdApi::reqOptionSelfClose)
@@ -5987,6 +6247,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("reqOptQuoteInsert", &TdApi::reqOptQuoteInsert)
 		.def("reqOptQuoteAction", &TdApi::reqOptQuoteAction)
 		.def("reqQryOptQuote", &TdApi::reqQryOptQuote)
+		.def("reqQryOptCombStrategy", &TdApi::reqQryOptCombStrategy)
 
 		.def("onFrontConnected", &TdApi::onFrontConnected)
 		.def("onFrontDisconnected", &TdApi::onFrontDisconnected)
@@ -6040,15 +6301,17 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("onRspQrySecuDepthMarket", &TdApi::onRspQrySecuDepthMarket)
 		.def("onRspQryHistOrder", &TdApi::onRspQryHistOrder)
 		.def("onRspQryHistTrade", &TdApi::onRspQryHistTrade)
+		.def("onRspQryWithdrawFund", &TdApi::onRspQryWithdrawFund)
 		.def("onRspQryCombInstrument", &TdApi::onRspQryCombInstrument)
 		.def("onRspQrySeatID", &TdApi::onRspQrySeatID)
 		.def("onRspOptionSelfClose", &TdApi::onRspOptionSelfClose)
 		.def("onRspOptionSelfCloseAction", &TdApi::onRspOptionSelfCloseAction)
 		.def("onRspQryOptionSelfCloseResult", &TdApi::onRspQryOptionSelfCloseResult)
 		.def("onRspQryOptionSelfClose", &TdApi::onRspQryOptionSelfClose)
-		.def("onRspOptQuoteInsert", &TdApi::onRspOptQuoteInsert)
+		.def("onRspErrorOptQuoteInsert", &TdApi::onRspErrorOptQuoteInsert)
 		.def("onRspOptQuoteAction", &TdApi::onRspOptQuoteAction)
 		.def("onRspQryOptQuote", &TdApi::onRspQryOptQuote)
+		.def("onRspQryOptCombStrategy", &TdApi::onRspQryOptCombStrategy)
 		.def("onRtnTrade", &TdApi::onRtnTrade)
 		.def("onRtnOrder", &TdApi::onRtnOrder)
 		.def("onRtnExercise", &TdApi::onRtnExercise)
@@ -6062,5 +6325,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("onRtnProductStatus", &TdApi::onRtnProductStatus)
 		.def("onRtnOptionSelfClose", &TdApi::onRtnOptionSelfClose)
 		.def("onRtnOptQuote", &TdApi::onRtnOptQuote)
+		.def("onRtnTransfer", &TdApi::onRtnTransfer)
+		.def("onErrRtnOptQuoteAction", &TdApi::onErrRtnOptQuoteAction)
 		;
 }

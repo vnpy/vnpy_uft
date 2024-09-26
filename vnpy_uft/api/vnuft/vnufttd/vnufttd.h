@@ -64,28 +64,32 @@ using namespace pybind11;
 #define ONRSPQRYSECUDEPTHMARKET 49
 #define ONRSPQRYHISTORDER 50
 #define ONRSPQRYHISTTRADE 51
-#define ONRSPQRYCOMBINSTRUMENT 52
-#define ONRSPQRYSEATID 53
-#define ONRSPOPTIONSELFCLOSE 54
-#define ONRSPOPTIONSELFCLOSEACTION 55
-#define ONRSPQRYOPTIONSELFCLOSERESULT 56
-#define ONRSPQRYOPTIONSELFCLOSE 57
-#define ONRSPOPTQUOTEINSERT 58
-#define ONRSPOPTQUOTEACTION 59
-#define ONRSPQRYOPTQUOTE 60
-#define ONRTNTRADE 61
-#define ONRTNORDER 62
-#define ONRTNEXERCISE 63
-#define ONRTNCOMBACTION 64
-#define ONRTNLOCK 65
-#define ONERRRTNORDERACTION 66
-#define ONRTNCLIENTNOTICE 67
-#define ONRTNFORQUOTE 68
-#define ONRTNQUOTE 69
-#define ONRTNEXCHANGESTATUS 70
-#define ONRTNPRODUCTSTATUS 71
-#define ONRTNOPTIONSELFCLOSE 72
-#define ONRTNOPTQUOTE 73
+#define ONRSPQRYWITHDRAWFUND 52
+#define ONRSPQRYCOMBINSTRUMENT 53
+#define ONRSPQRYSEATID 54
+#define ONRSPOPTIONSELFCLOSE 55
+#define ONRSPOPTIONSELFCLOSEACTION 56
+#define ONRSPQRYOPTIONSELFCLOSERESULT 57
+#define ONRSPQRYOPTIONSELFCLOSE 58
+#define ONRSPERROROPTQUOTEINSERT 59
+#define ONRSPOPTQUOTEACTION 60
+#define ONRSPQRYOPTQUOTE 61
+#define ONRSPQRYOPTCOMBSTRATEGY 62
+#define ONRTNTRADE 63
+#define ONRTNORDER 64
+#define ONRTNEXERCISE 65
+#define ONRTNCOMBACTION 66
+#define ONRTNLOCK 67
+#define ONERRRTNORDERACTION 68
+#define ONRTNCLIENTNOTICE 69
+#define ONRTNFORQUOTE 70
+#define ONRTNQUOTE 71
+#define ONRTNEXCHANGESTATUS 72
+#define ONRTNPRODUCTSTATUS 73
+#define ONRTNOPTIONSELFCLOSE 74
+#define ONRTNOPTQUOTE 75
+#define ONRTNTRANSFER 76
+#define ONERRRTNOPTQUOTEACTION 77
 
 ///-------------------------------------------------------------------------------------
 ///C++ SPI的回调函数方法实现
@@ -118,232 +122,244 @@ public:
 	//-------------------------------------------------------------------------------------
 
 	/// Description: 当客户端与交易后台开始建立通信连接，连接成功后此方法被回调。
-	/// Description: 当客户端与交易后台开始建立通信连接，连接成功后此方法被回调。
-	 void OnFrontConnected();
+	void OnFrontConnected();
 
 	/// Description:当客户端与交易后台通信连接异常时，该方法被调用。
 	/// Others     :通过GetApiErrorMsg(nResult)获取详细错误信息。
-	 void OnFrontDisconnected(int nResult);
+	void OnFrontDisconnected(int nResult);
 
 	/// Description:客户认证
-	 void OnRspAuthenticate(CHSRspAuthenticateField *pRspAuthenticate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspAuthenticate(CHSRspAuthenticateField *pRspAuthenticate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:终端信息上报接口(中继模式)
-	 void OnRspSubmitUserSystemInfo(CHSRspUserSystemInfoField *pRspUserSystemInfo, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspSubmitUserSystemInfo(CHSRspUserSystemInfoField *pRspUserSystemInfo, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:客户登录
-	 void OnRspUserLogin(CHSRspUserLoginField *pRspUserLogin, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspUserLogin(CHSRspUserLoginField *pRspUserLogin, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:密码更改
-	 void OnRspUserPasswordUpdate(CHSRspUserPasswordUpdateField *pRspUserPasswordUpdate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspUserPasswordUpdate(CHSRspUserPasswordUpdateField *pRspUserPasswordUpdate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:报单录入
 	/// Others     :报单错误此方法被回调，pRspOrderInsert保存了请求时出错的结构体数据。
-	 void OnRspErrorOrderInsert(CHSRspOrderInsertField *pRspOrderInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspErrorOrderInsert(CHSRspOrderInsertField *pRspOrderInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:撤单
-	 void OnRspOrderAction(CHSRspOrderActionField *pRspOrderAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspOrderAction(CHSRspOrderActionField *pRspOrderAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:行权录入
 	/// Others     :行权录入错误此方法被回调，pRspExerciseOrderInsert保存了请求时出错的结构体数据。
-	 void OnRspErrorExerciseOrderInsert(CHSRspExerciseOrderInsertField *pRspExerciseOrderInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspErrorExerciseOrderInsert(CHSRspExerciseOrderInsertField *pRspExerciseOrderInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:行权撤单
-	 void OnRspExerciseOrderAction(CHSRspExerciseOrderActionField *pRspExerciseOrderAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspExerciseOrderAction(CHSRspExerciseOrderActionField *pRspExerciseOrderAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:锁定录入
 	/// Others     :锁定错误此方法被回调，pRspExerciseOrderAction保存了请求时出错的结构体数据。
-	 void OnRspErrorLockInsert(CHSRspLockInsertField *pRspExerciseOrderAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspErrorLockInsert(CHSRspLockInsertField *pRspExerciseOrderAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:询价录入
-	 void OnRspForQuoteInsert(CHSRspForQuoteInsertField *pRspForQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspForQuoteInsert(CHSRspForQuoteInsertField *pRspForQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:报价录入
 	/// Others     :报价错误此方法被回调，pRspQuoteInsert保存了请求时出错的结构体数据。
-	 void OnRspErrorQuoteInsert(CHSRspQuoteInsertField *pRspQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspErrorQuoteInsert(CHSRspQuoteInsertField *pRspQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:报价撤单
-	 void OnRspQuoteAction(CHSRspQuoteActionField *pRspQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQuoteAction(CHSRspQuoteActionField *pRspQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:申请组合录入
-	 void OnRspErrorCombActionInsert(CHSRspCombActionInsertField *pRspCombActionInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspErrorCombActionInsert(CHSRspCombActionInsertField *pRspCombActionInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:最大报单数量获取
-	 void OnRspQueryMaxOrderVolume(CHSRspQueryMaxOrderVolumeField *pRspQueryMaxOrderVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQueryMaxOrderVolume(CHSRspQueryMaxOrderVolumeField *pRspQueryMaxOrderVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:可锁定数量获取
-	 void OnRspQryLockVolume(CHSRspQryLockVolumeField *pRspQryLockVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryLockVolume(CHSRspQryLockVolumeField *pRspQryLockVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:可行权数量获取
-	 void OnRspQueryExerciseVolume(CHSRspQueryExerciseVolumeField *pRspQueryExerciseVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQueryExerciseVolume(CHSRspQueryExerciseVolumeField *pRspQueryExerciseVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:申请组合最大数量获取
-	 void OnRspQryCombVolume(CHSRspQryCombVolumeField *pRspQryCombVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryCombVolume(CHSRspQryCombVolumeField *pRspQryCombVolume, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:持仓查询
-	 void OnRspQryPosition(CHSRspQryPositionField *pRspQryPosition, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryPosition(CHSRspQryPositionField *pRspQryPosition, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:资金账户查询
-	 void OnRspQryTradingAccount(CHSRspQryTradingAccountField *pRspQryTradingAccount, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryTradingAccount(CHSRspQryTradingAccountField *pRspQryTradingAccount, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:报单查询
-	 void OnRspQryOrder(CHSOrderField *pRspQryOrder, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryOrder(CHSOrderField *pRspQryOrder, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:成交查询
-	 void OnRspQryTrade(CHSTradeField *pRspQryTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryTrade(CHSTradeField *pRspQryTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:行权查询
-	 void OnRspQryExercise(CHSExerciseField *pRspQryExercise, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryExercise(CHSExerciseField *pRspQryExercise, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:锁定查询
-	 void OnRspQryLock(CHSLockField *pRspQryLock, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryLock(CHSLockField *pRspQryLock, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:申请组合查询
-	 void OnRspQryCombAction(CHSCombActionField *pRspQryCombAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryCombAction(CHSCombActionField *pRspQryCombAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:询价查询
-	 void OnRspQryForQuote(CHSForQuoteField *pRspQryForQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryForQuote(CHSForQuoteField *pRspQryForQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:报价查询
-	 void OnRspQryQuote(CHSQuoteField *pRspQryQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryQuote(CHSQuoteField *pRspQryQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:组合持仓明细查询
-	 void OnRspQryPositionCombineDetail(CHSRspQryPositionCombineDetailField *pRspQryPositionCombineDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryPositionCombineDetail(CHSRspQryPositionCombineDetailField *pRspQryPositionCombineDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:合约信息查询
-	 void OnRspQryInstrument(CHSRspQryInstrumentField *pRspQryInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryInstrument(CHSRspQryInstrumentField *pRspQryInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:备兑缺口查询
-	 void OnRspQryCoveredShort(CHSRspQryCoveredShortField *pRspQryCoveredShort, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryCoveredShort(CHSRspQryCoveredShortField *pRspQryCoveredShort, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:行权指派查询
-	 void OnRspQryExerciseAssign(CHSRspQryExerciseAssignField *pRspQryExerciseAssign, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryExerciseAssign(CHSRspQryExerciseAssignField *pRspQryExerciseAssign, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:银行转账
-	 void OnRspTransfer(CHSRspTransferField *pRspTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspTransfer(CHSRspTransferField *pRspTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:银行转账查询
-	 void OnRspQryTransfer(CHSRspQryTransferField *pRspQryTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryTransfer(CHSRspQryTransferField *pRspQryTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:银行余额查询
-	 void OnRspQueryBankBalance(CHSRspQueryBankBalanceField *pRspQueryBankBalance, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQueryBankBalance(CHSRspQueryBankBalanceField *pRspQueryBankBalance, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:银行账户查询
-	 void OnRspQueryBankAccount(CHSRspQueryBankAccountField *pRspQueryBankAccount, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQueryBankAccount(CHSRspQueryBankAccountField *pRspQueryBankAccount, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:多中心资金调拨
-	 void OnRspMultiCentreFundTrans(CHSRspMultiCentreFundTransField *pRspMultiCentreFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspMultiCentreFundTrans(CHSRspMultiCentreFundTransField *pRspMultiCentreFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:客户账单查询
-	 void OnRspQueryBillContent(CHSRspQueryBillContentField *pRspQueryBillContent, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQueryBillContent(CHSRspQueryBillContentField *pRspQueryBillContent, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:客户账单确认
-	 void OnRspBillConfirm(CHSRspBillConfirmField *pRspBillConfirm, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspBillConfirm(CHSRspBillConfirmField *pRspBillConfirm, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:保证金查询
-	 void OnRspQryMargin(CHSRspQryMarginField *pRspQryMargin, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryMargin(CHSRspQryMarginField *pRspQryMargin, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:手续费查询
-	 void OnRspQryCommission(CHSRspQryCommissionField *pRspQryCommission, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryCommission(CHSRspQryCommissionField *pRspQryCommission, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:持仓明细查询
-	 void OnRspQryPositionDetail(CHSRspQryPositionDetailField *pRspQryPositionDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryPositionDetail(CHSRspQryPositionDetailField *pRspQryPositionDetail, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:汇率查询
-	 void OnRspQryExchangeRate(CHSRspQryExchangeRateField *pRspQryExchangeRate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryExchangeRate(CHSRspQryExchangeRateField *pRspQryExchangeRate, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:经纪公司配置参数查询
-	 void OnRspQrySysConfig(CHSRspQrySysConfigField *pRspQrySysConfig, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQrySysConfig(CHSRspQrySysConfigField *pRspQrySysConfig, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:行情查询
-	 void OnRspQryDepthMarketData(CHSDepthMarketDataField *pRspQryDepthMarketData, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryDepthMarketData(CHSDepthMarketDataField *pRspQryDepthMarketData, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:资金调拨
-	 void OnRspFundTrans(CHSRspFundTransField *pRspFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspFundTrans(CHSRspFundTransField *pRspFundTransfer, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:资金调拨流水查询
-	 void OnRspQryFundTrans(CHSRspQryFundTransField *pRspQryFundTrans, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryFundTrans(CHSRspQryFundTransField *pRspQryFundTrans, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:查询客户通知
-	 void OnRspQryClientNotice(CHSClientNoticeField *pRspQryClientNotice, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryClientNotice(CHSClientNoticeField *pRspQryClientNotice, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:期权标的信息查询
-	 void OnRspQryOptUnderly(CHSRspQryOptUnderlyField *pRspQryOptUnderly, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryOptUnderly(CHSRspQryOptUnderlyField *pRspQryOptUnderly, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:证券行情查询
-	 void OnRspQrySecuDepthMarket(CHSRspQrySecuDepthMarketField *pRspQrySecuDepthMarket, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQrySecuDepthMarket(CHSRspQrySecuDepthMarketField *pRspQrySecuDepthMarket, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:历史报单查询
-	 void OnRspQryHistOrder(CHSOrderField *pRspQryHistOrder, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryHistOrder(CHSOrderField *pRspQryHistOrder, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:历史成交查询
-	 void OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:可取资金查询
+	void OnRspQryWithdrawFund(CHSRspQryWithdrawFundField *pRspQryWithdrawFund, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:组合合约查询
-	 void OnRspQryCombInstrument(CHSRspQryCombInstrumentField *pRspQryCombInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryCombInstrument(CHSRspQryCombInstrumentField *pRspQryCombInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:席位查询
-	 void OnRspQrySeatID(CHSRspQrySeatIDField *pRspQrySeatID, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQrySeatID(CHSRspQrySeatIDField *pRspQrySeatID, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:期权自对冲设置
-	 void OnRspOptionSelfClose(CHSRspOptionSelfCloseField *pReqOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspOptionSelfClose(CHSRspOptionSelfCloseField *pReqOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:期权自对冲设置取消
-	 void OnRspOptionSelfCloseAction(CHSRspOptionSelfCloseActionField *pReqOptionSelfCloseAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspOptionSelfCloseAction(CHSRspOptionSelfCloseActionField *pReqOptionSelfCloseAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:期权自对冲设置结果查询
-	 void OnRspQryOptionSelfCloseResult(CHSRspQryOptionSelfCloseResultField *pReqQryOptionSelfCloseResult, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryOptionSelfCloseResult(CHSRspQryOptionSelfCloseResultField *pReqQryOptionSelfCloseResult, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:期权自对冲查询
-	 void OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfClose, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:股票期权报价录入
-	 void OnRspOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	/// Others     :股票期权报价录入错误此方法被回调，pRspOptQuoteInsert保存了请求时出错的结构体数据。
+	void OnRspErrorOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:股票期权报价撤单
-	 void OnRspOptQuoteAction(CHSRspOptQuoteActionField *pRspOptQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspOptQuoteAction(CHSRspOptQuoteActionField *pRspOptQuoteAction, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description:股票期权报价查询
-	 void OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+	void OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	/// Description:股票期权组合策略信息查询
+	void OnRspQryOptCombStrategy(CHSRspQryOptCombStrategyField *pRspQryOptCombStrategy, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	/// Description: 主推-成交回报
-	 void OnRtnTrade(CHSTradeField *pRtnTrade);
+	void OnRtnTrade(CHSTradeField *pRtnTrade);
 
 	/// Description: 主推-报单回报
-	 void OnRtnOrder(CHSOrderField *pRtnOrder);
+	void OnRtnOrder(CHSOrderField *pRtnOrder);
 
 	/// Description: 主推-行权
-	 void OnRtnExercise(CHSExerciseField *pRtnExercise);
+	void OnRtnExercise(CHSExerciseField *pRtnExercise);
 
 	/// Description: 主推-申请组合
-	 void OnRtnCombAction(CHSCombActionField *pRtnCombAction);
+	void OnRtnCombAction(CHSCombActionField *pRtnCombAction);
 
 	/// Description: 主推-锁定
-	 void OnRtnLock(CHSLockField *pRtnLock);
+	void OnRtnLock(CHSLockField *pRtnLock);
 
 	/// Description: 主推-撤单错误回报
-	 void OnErrRtnOrderAction(CHSOrderActionField *pRtnOrder);
-	
+	void OnErrRtnOrderAction(CHSOrderActionField *pRtnOrder);
+
 	/// Description: 主推-客户通知
-	 void OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice);
+	void OnRtnClientNotice(CHSClientNoticeField *pRtnClientNotice);
 
 	/// Description: 主推-询价回报
-	 void OnRtnForQuote(CHSForQuoteField *pRtnForQuote);
+	void OnRtnForQuote(CHSForQuoteField *pRtnForQuote);
 
 	/// Description: 主推-报价回报
-	 void OnRtnQuote(CHSQuoteField *pRtnQuote);
+	void OnRtnQuote(CHSQuoteField *pRtnQuote);
 
 	/// Description: 主推-交易所状态
-	 void OnRtnExchangeStatus(CHSExchangeStatusField *pRtnExchangeStatus);
+	void OnRtnExchangeStatus(CHSExchangeStatusField *pRtnExchangeStatus);
 
 	/// Description: 主推-合约品种状态
-	 void OnRtnProductStatus(CHSProductStatusField *pRtnProductStatus);
+	void OnRtnProductStatus(CHSProductStatusField *pRtnProductStatus);
 
 	/// Description: 主推-期权自对冲
-	 void OnRtnOptionSelfClose(CHSOptionSelfCloseField *pRtnOptionSelfClose);
+	void OnRtnOptionSelfClose(CHSOptionSelfCloseField *pRtnOptionSelfClose);
 
 	/// Description: 主推-股票期权报价回报
-	 void OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote);
+	void OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote);
+
+	/// Description: 主推-银行转账回报
+	void OnRtnTransfer(CHSTransferField *pRtnTransfer);
+
+	/// Description: 主推-股票期权报价撤单错误回报
+	void OnErrRtnOptQuoteAction(CHSOptQuoteActionField *pRtnOptQuoteAction);
 
 	//-------------------------------------------------------------------------------------
 	//task：任务
@@ -454,6 +470,8 @@ public:
 
 	void processRspQryHistTrade(Task *task);
 
+	void processRspQryWithdrawFund(Task *task);
+
 	void processRspQryCombInstrument(Task *task);
 
 	void processRspQrySeatID(Task *task);
@@ -466,11 +484,13 @@ public:
 
 	void processRspQryOptionSelfClose(Task *task);
 
-	void processRspOptQuoteInsert(Task *task);
+	void processRspErrorOptQuoteInsert(Task *task);
 
 	void processRspOptQuoteAction(Task *task);
 
 	void processRspQryOptQuote(Task *task);
+
+	void processRspQryOptCombStrategy(Task *task);
 
 	void processRtnTrade(Task *task);
 
@@ -497,6 +517,10 @@ public:
 	void processRtnOptionSelfClose(Task *task);
 
 	void processRtnOptQuote(Task *task);
+
+	void processRtnTransfer(Task *task);
+
+	void processErrRtnOptQuoteAction(Task *task);
 
 	//-------------------------------------------------------------------------------------
 	//data：回调函数的数据字典
@@ -610,6 +634,8 @@ public:
 
 	virtual void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last) {};
 
+	virtual void onRspQryWithdrawFund(const dict &data, const dict &error, int reqid, bool last) {};
+
 	virtual void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQrySeatID(const dict &data, const dict &error, int reqid, bool last) {};
@@ -622,11 +648,13 @@ public:
 
 	virtual void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, bool last) {};
 
-	virtual void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
+	virtual void onRspErrorOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspOptQuoteAction(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last) {};
+
+	virtual void onRspQryOptCombStrategy(const dict &data, const dict &error, int reqid, bool last) {};
 
 	virtual void onRtnTrade(const dict &data) {};
 
@@ -653,6 +681,10 @@ public:
 	virtual void onRtnOptionSelfClose(const dict &data) {};
 
 	virtual void onRtnOptQuote(const dict &data) {};
+
+	virtual void onRtnTransfer(const dict &data) {};
+
+	virtual void onErrRtnOptQuoteAction(const dict &data) {};
 
 	//-------------------------------------------------------------------------------------
 	//req:主动函数的请求字典
@@ -776,6 +808,8 @@ public:
 
 	int reqQryHistTrade(const dict &req, int reqid);
 
+	int reqQryWithdrawFund(const dict &req, int reqid);
+
 	int reqQryCombInstrument(const dict &req, int reqid);
 
 	int reqQrySeatID(const dict &req, int reqid);
@@ -793,4 +827,6 @@ public:
 	int reqOptQuoteAction(const dict &req, int reqid);
 
 	int reqQryOptQuote(const dict &req, int reqid);
+
+	int reqQryOptCombStrategy(const dict &req, int reqid);
 };

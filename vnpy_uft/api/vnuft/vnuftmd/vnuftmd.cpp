@@ -338,7 +338,7 @@ int MdApi::init(dict pInitCfgField)
 
 	CHSInitConfigField cfg = CHSInitConfigField();
 	memset(&cfg, 0, sizeof(cfg));
-	getInt32(pInitCfgField, "ExchangeID", &cfg.APICheckVersion);
+	getInt32(pInitCfgField, "APICheckVersion", &cfg.APICheckVersion);
 	getString(pInitCfgField, "CommLicense", cfg.CommLicense);
 	getString(pInitCfgField, "SafeLevel", cfg.SafeLevel);
 	getString(pInitCfgField, "CommPassword", cfg.CommPassword);
