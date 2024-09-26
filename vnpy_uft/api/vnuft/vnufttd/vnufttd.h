@@ -698,7 +698,7 @@ public:
 
 	int exit();
 
-	int rgisterSubModel(int eSubType);
+	int registerSubModel(int eSubType);
 
 	int registerFront(string pszFrontAddress);
 
