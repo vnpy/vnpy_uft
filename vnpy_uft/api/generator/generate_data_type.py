@@ -4,6 +4,7 @@ from typing import Dict
 TYPE_CPP2PY: Dict[str, str] = {
     "int": "int",
     "int8": "int",
+    "int16": "int",
     "int32": "int32",
     "int64": "int64",
     "__int64": "int64",
@@ -35,7 +36,7 @@ class DataTypeGenerator:
 
     def run(self) -> None:
         """主函数"""
-        self.f_cpp = open(self.filename, "r", encoding='utf-8')
+        self.f_cpp = open(self.filename, "r", encoding='gbk')
         self.f_define = open(f"{self.prefix}_constant.py", "w")
         self.f_typedef = open(f"{self.prefix}_typedef.py", "w")
 

@@ -98,6 +98,8 @@ int reqQryHistOrder(const dict &req, int reqid);
 
 int reqQryHistTrade(const dict &req, int reqid);
 
+int reqQryWithdrawFund(const dict &req, int reqid);
+
 int reqQryCombInstrument(const dict &req, int reqid);
 
 int reqQrySeatID(const dict &req, int reqid);
@@ -115,4 +117,6 @@ int reqOptQuoteInsert(const dict &req, int reqid);
 int reqOptQuoteAction(const dict &req, int reqid);
 
 int reqQryOptQuote(const dict &req, int reqid);
+
+int reqQryOptCombStrategy(const dict &req, int reqid);
 

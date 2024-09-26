@@ -310,6 +310,12 @@ case ONRSPQRYHISTTRADE:
 	break;
 }
 
+case ONRSPQRYWITHDRAWFUND:
+{
+	this->processRspQryWithdrawFund(&task);
+	break;
+}
+
 case ONRSPQRYCOMBINSTRUMENT:
 {
 	this->processRspQryCombInstrument(&task);
@@ -346,9 +352,9 @@ case ONRSPQRYOPTIONSELFCLOSE:
 	break;
 }
 
-case ONRSPOPTQUOTEINSERT:
+case ONRSPERROROPTQUOTEINSERT:
 {
-	this->processRspOptQuoteInsert(&task);
+	this->processRspErrorOptQuoteInsert(&task);
 	break;
 }
 
@@ -361,6 +367,12 @@ case ONRSPOPTQUOTEACTION:
 case ONRSPQRYOPTQUOTE:
 {
 	this->processRspQryOptQuote(&task);
+	break;
+}
+
+case ONRSPQRYOPTCOMBSTRATEGY:
+{
+	this->processRspQryOptCombStrategy(&task);
 	break;
 }
 
@@ -439,6 +451,18 @@ case ONRTNOPTIONSELFCLOSE:
 case ONRTNOPTQUOTE:
 {
 	this->processRtnOptQuote(&task);
+	break;
+}
+
+case ONRTNTRANSFER:
+{
+	this->processRtnTransfer(&task);
+	break;
+}
+
+case ONERRRTNOPTQUOTEACTION:
+{
+	this->processErrRtnOptQuoteAction(&task);
 	break;
 }
 

@@ -102,6 +102,8 @@ void processRspQryHistOrder(Task *task);
 
 void processRspQryHistTrade(Task *task);
 
+void processRspQryWithdrawFund(Task *task);
+
 void processRspQryCombInstrument(Task *task);
 
 void processRspQrySeatID(Task *task);
@@ -114,11 +116,13 @@ void processRspQryOptionSelfCloseResult(Task *task);
 
 void processRspQryOptionSelfClose(Task *task);
 
-void processRspOptQuoteInsert(Task *task);
+void processRspErrorOptQuoteInsert(Task *task);
 
 void processRspOptQuoteAction(Task *task);
 
 void processRspQryOptQuote(Task *task);
+
+void processRspQryOptCombStrategy(Task *task);
 
 void processRtnTrade(Task *task);
 
@@ -145,4 +149,8 @@ void processRtnProductStatus(Task *task);
 void processRtnOptionSelfClose(Task *task);
 
 void processRtnOptQuote(Task *task);
+
+void processRtnTransfer(Task *task);
+
+void processErrRtnOptQuoteAction(Task *task);
 

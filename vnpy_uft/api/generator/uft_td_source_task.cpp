@@ -1063,6 +1063,27 @@ void TdApi::OnRspQryHistTrade(CHSTradeField *pRspQryHistTrade, CHSRspInfoField *
 	this->task_queue.push(task);
 };
 
+void TdApi::OnRspQryWithdrawFund(CHSRspQryWithdrawFundField *pRspQryWithdrawFund, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	Task task = Task();
+	task.task_name = ONRSPQRYWITHDRAWFUND;
+	if (pRspQryWithdrawFund)
+	{
+		CHSRspQryWithdrawFundField *task_data = new CHSRspQryWithdrawFundField();
+		*task_data = *pRspQryWithdrawFund;
+		task.task_data = task_data;
+	}
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
 void TdApi::OnRspQryCombInstrument(CHSRspQryCombInstrumentField *pRspQryCombInstrument, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	Task task = Task();
@@ -1189,10 +1210,10 @@ void TdApi::OnRspQryOptionSelfClose(CHSOptionSelfCloseField *pRspQryOptionSelfCl
 	this->task_queue.push(task);
 };
 
-void TdApi::OnRspOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) 
+void TdApi::OnRspErrorOptQuoteInsert(CHSRspOptQuoteInsertField *pRspOptQuoteInsert, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) 
 {
 	Task task = Task();
-	task.task_name = ONRSPOPTQUOTEINSERT;
+	task.task_name = ONRSPERROROPTQUOTEINSERT;
 	if (pRspOptQuoteInsert)
 	{
 		CHSRspOptQuoteInsertField *task_data = new CHSRspOptQuoteInsertField();
@@ -1239,6 +1260,27 @@ void TdApi::OnRspQryOptQuote(CHSOptQuoteField *pRspQryOptQuote, CHSRspInfoField 
 	{
 		CHSOptQuoteField *task_data = new CHSOptQuoteField();
 		*task_data = *pRspQryOptQuote;
+		task.task_data = task_data;
+	}
+	if (pRspInfo)
+	{
+		CHSRspInfoField *task_error = new CHSRspInfoField();
+		*task_error = *pRspInfo;
+		task.task_error = task_error;
+	}
+	task.task_id = nRequestID;
+	task.task_last = bIsLast;
+	this->task_queue.push(task);
+};
+
+void TdApi::OnRspQryOptCombStrategy(CHSRspQryOptCombStrategyField *pRspQryOptCombStrategy, CHSRspInfoField *pRspInfo, int nRequestID, bool bIsLast) 
+{
+	Task task = Task();
+	task.task_name = ONRSPQRYOPTCOMBSTRATEGY;
+	if (pRspQryOptCombStrategy)
+	{
+		CHSRspQryOptCombStrategyField *task_data = new CHSRspQryOptCombStrategyField();
+		*task_data = *pRspQryOptCombStrategy;
 		task.task_data = task_data;
 	}
 	if (pRspInfo)
@@ -1416,6 +1458,32 @@ void TdApi::OnRtnOptQuote(CHSOptQuoteField *pRtnOptQuote)
 	{
 		CHSOptQuoteField *task_data = new CHSOptQuoteField();
 		*task_data = *pRtnOptQuote;
+		task.task_data = task_data;
+	}
+	this->task_queue.push(task);
+};
+
+void TdApi::OnRtnTransfer(CHSTransferField *pRtnTransfer) 
+{
+	Task task = Task();
+	task.task_name = ONRTNTRANSFER;
+	if (pRtnTransfer)
+	{
+		CHSTransferField *task_data = new CHSTransferField();
+		*task_data = *pRtnTransfer;
+		task.task_data = task_data;
+	}
+	this->task_queue.push(task);
+};
+
+void TdApi::OnErrRtnOptQuoteAction(CHSOptQuoteActionField *pRtnOptQuoteAction) 
+{
+	Task task = Task();
+	task.task_name = ONERRRTNOPTQUOTEACTION;
+	if (pRtnOptQuoteAction)
+	{
+		CHSOptQuoteActionField *task_data = new CHSOptQuoteActionField();
+		*task_data = *pRtnOptQuoteAction;
 		task.task_data = task_data;
 	}
 	this->task_queue.push(task);

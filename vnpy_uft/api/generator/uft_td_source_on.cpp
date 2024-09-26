@@ -622,6 +622,18 @@ void onRspQryHistTrade(const dict &data, const dict &error, int reqid, bool last
 	}
 };
 
+void onRspQryWithdrawFund(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryWithdrawFund, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
 void onRspQryCombInstrument(const dict &data, const dict &error, int reqid, bool last) override
 {
 	try
@@ -694,11 +706,11 @@ void onRspQryOptionSelfClose(const dict &data, const dict &error, int reqid, boo
 	}
 };
 
-void onRspOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
+void onRspErrorOptQuoteInsert(const dict &data, const dict &error, int reqid, bool last) override
 {
 	try
 	{
-		PYBIND11_OVERLOAD(void, TdApi, onRspOptQuoteInsert, data, error, reqid, last);
+		PYBIND11_OVERLOAD(void, TdApi, onRspErrorOptQuoteInsert, data, error, reqid, last);
 	}
 	catch (const error_already_set &e)
 	{
@@ -723,6 +735,18 @@ void onRspQryOptQuote(const dict &data, const dict &error, int reqid, bool last)
 	try
 	{
 		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptQuote, data, error, reqid, last);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRspQryOptCombStrategy(const dict &data, const dict &error, int reqid, bool last) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRspQryOptCombStrategy, data, error, reqid, last);
 	}
 	catch (const error_already_set &e)
 	{
@@ -879,6 +903,30 @@ void onRtnOptQuote(const dict &data) override
 	try
 	{
 		PYBIND11_OVERLOAD(void, TdApi, onRtnOptQuote, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onRtnTransfer(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onRtnTransfer, data);
+	}
+	catch (const error_already_set &e)
+	{
+		cout << e.what() << endl;
+	}
+};
+
+void onErrRtnOptQuoteAction(const dict &data) override
+{
+	try
+	{
+		PYBIND11_OVERLOAD(void, TdApi, onErrRtnOptQuoteAction, data);
 	}
 	catch (const error_already_set &e)
 	{

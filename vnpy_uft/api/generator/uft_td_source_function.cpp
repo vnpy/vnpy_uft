@@ -171,8 +171,6 @@ int TdApi::reqQuoteAction(const dict &req, int reqid)
 	getString(req, "QuoteRef", myreq.QuoteRef);
 	getString(req, "QuoteActionRef", myreq.QuoteActionRef);
 	getString(req, "InstrumentID", myreq.InstrumentID);
-	getDouble(req, "BidWithdrawVolume", &myreq.BidWithdrawVolume);
-	getDouble(req, "AskWithdrawVolume", &myreq.AskWithdrawVolume);
 	int i = this->api->ReqQuoteAction(&myreq, reqid);
 	return i;
 };
@@ -595,6 +593,16 @@ int TdApi::reqQryHistTrade(const dict &req, int reqid)
 	return i;
 };
 
+int TdApi::reqQryWithdrawFund(const dict &req, int reqid)
+{
+	CHSReqQryWithdrawFundField myreq = CHSReqQryWithdrawFundField();
+	memset(&myreq, 0, sizeof(myreq));
+	getChar(req, "CurrencyID", &myreq.CurrencyID);
+	getInt32(req, "SysNodeID", &myreq.SysNodeID);
+	int i = this->api->ReqQryWithdrawFund(&myreq, reqid);
+	return i;
+};
+
 int TdApi::reqQryCombInstrument(const dict &req, int reqid)
 {
 	CHSReqQryCombInstrumentField myreq = CHSReqQryCombInstrumentField();
@@ -683,7 +691,7 @@ int TdApi::reqOptQuoteAction(const dict &req, int reqid)
 	getString(req, "InstrumentID", myreq.InstrumentID);
 	getDouble(req, "BidWithdrawVolume", &myreq.BidWithdrawVolume);
 	getDouble(req, "AskWithdrawVolume", &myreq.AskWithdrawVolume);
-	getString(req, "QuoteRef", myreq.QuoteRef);
+	getString(req, "QuoteActionRef", myreq.QuoteActionRef);
 	int i = this->api->ReqOptQuoteAction(&myreq, reqid);
 	return i;
 };
@@ -697,6 +705,16 @@ int TdApi::reqQryOptQuote(const dict &req, int reqid)
 	getChar(req, "QuoteQueryType", &myreq.QuoteQueryType);
 	getString(req, "QuoteBrokerID", myreq.QuoteBrokerID);
 	int i = this->api->ReqQryOptQuote(&myreq, reqid);
+	return i;
+};
+
+int TdApi::reqQryOptCombStrategy(const dict &req, int reqid)
+{
+	CHSReqQryOptCombStrategyField myreq = CHSReqQryOptCombStrategyField();
+	memset(&myreq, 0, sizeof(myreq));
+	getString(req, "ExchangeID", myreq.ExchangeID);
+	getString(req, "CombStrategyID", myreq.CombStrategyID);
+	int i = this->api->ReqQryOptCombStrategy(&myreq, reqid);
 	return i;
 };
 
