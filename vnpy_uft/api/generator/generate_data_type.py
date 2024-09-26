@@ -41,6 +41,7 @@ class DataTypeGenerator:
         self.f_typedef = open(f"{self.prefix}_typedef.py", "w")
 
         for line in self.f_cpp:
+            line = line.replace("\t", "    ")
             self.process_line(line)
 
         self.f_cpp.close()
