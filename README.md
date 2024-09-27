@@ -5,19 +5,19 @@
 </p>
 
 <p align="center">
-    <img src ="https://img.shields.io/badge/version-3.7.2.4.5-blueviolet.svg"/>
+    <img src ="https://img.shields.io/badge/version-3.7.4.1004-blueviolet.svg"/>
     <img src ="https://img.shields.io/badge/platform-windows|linux-yellow.svg"/>
-    <img src ="https://img.shields.io/badge/python-3.7|3.8|3.9|3.10-blue.svg" />
+    <img src ="https://img.shields.io/badge/python-3.10|3.11|3.12-blue.svg" />
     <img src ="https://img.shields.io/github/license/vnpy/vnpy.svg?color=orange"/>
 </p>
 
 ## 说明
 
-基于恒生极速API的3.7.2.4版本开发。
+基于恒生极速API的3.7.4.1004版本开发。
 
 ## 安装
 
-安装环境推荐基于3.3.0版本以上的【[**VeighNa Studio**](https://www.vnpy.com)】。
+安装环境推荐基于3.9.0版本以上的【[**VeighNa Studio**](https://www.vnpy.com)】。
 
 直接使用pip命令：
 
@@ -66,6 +66,8 @@ if __name__ == "__main__":
 
 ## 连接
 
+实盘交易时，请将期货公司提供的license.dat文件，放置于程序运行时目录（启动VeighNa Trader后，顶部标题栏所显示的目录）。
+
 期货：
 
 {
@@ -73,10 +75,8 @@ if __name__ == "__main__":
     "密码": "xxxxxx",
     "行情服务器": "101.71.12.144:9006",
     "交易服务器": "101.71.12.144:9006",
-    "服务器类型": "期货",
     "产品名称": "Hs_JT_1.0",
-    "授权编码": "20191127JTV1",
-    "委托类型": "7"
+    "授权编码": "20191127JTV1"
 }
 
 ETF期权：
@@ -84,10 +84,8 @@ ETF期权：
 {
     "用户名": "xxxxxx",
     "密码": "xxxxxx",
-    "行情服务器": "121.41.138.11:9869",
-    "交易服务器": "121.41.138.11:9869",
-    "服务器类型": "ETF期权",
+    "行情服务器": "101.71.12.149:8102",
+    "交易服务器": "101.71.12.149:8102",
     "产品名称": "",
-    "授权编码": "",
-    "委托类型": "7"
+    "授权编码": ""
 }

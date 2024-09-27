@@ -1,6 +1,5 @@
 import sys
 from datetime import datetime
-from typing import Dict, List
 from pathlib import Path
 
 from vnpy.event import EventEngine
@@ -65,7 +64,7 @@ from ..api import (
 
 
 # 委托状态映射
-STATUS_UFT2VT: Dict[str, Status] = {
+STATUS_UFT2VT: dict[str, Status] = {
     HS_OS_Reported: Status.NOTTRADED,
     HS_OS_Abandoned: Status.REJECTED,
     HS_OS_PartsTraded: Status.PARTTRADED,
@@ -75,30 +74,30 @@ STATUS_UFT2VT: Dict[str, Status] = {
 }
 
 # 多空方向映射
-DIRECTION_VT2UFT: Dict[Direction, str] = {
+DIRECTION_VT2UFT: dict[Direction, str] = {
     Direction.LONG: HS_DC_Buy,
     Direction.SHORT: HS_DC_Sell
 }
-DIRECTION_UFT2VT: Dict[str, Direction] = {v: k for k, v in DIRECTION_VT2UFT.items()}
+DIRECTION_UFT2VT: dict[str, Direction] = {v: k for k, v in DIRECTION_VT2UFT.items()}
 
 # 委托类型映射
-ORDERTYPE_VT2UFT: Dict[OrderType, str] = {
+ORDERTYPE_VT2UFT: dict[OrderType, str] = {
     OrderType.LIMIT: HS_CT_Limit,
     OrderType.MARKET: HS_CT_Market
 }
-ORDERTYPE_UFT2VT: Dict[str, OrderType] = {v: k for k, v in ORDERTYPE_VT2UFT.items()}
+ORDERTYPE_UFT2VT: dict[str, OrderType] = {v: k for k, v in ORDERTYPE_VT2UFT.items()}
 
 # 开平方向映射
-OFFSET_VT2UFT: Dict[Offset, str] = {
+OFFSET_VT2UFT: dict[Offset, str] = {
     Offset.OPEN: HS_OF_Open,
     Offset.CLOSE: HS_OF_Close,
     Offset.CLOSETODAY: HS_OF_CloseToday
 }
-OFFSET_UFT2VT: Dict[str, Offset] = {v: k for k, v in OFFSET_VT2UFT.items()}
+OFFSET_UFT2VT: dict[str, Offset] = {v: k for k, v in OFFSET_VT2UFT.items()}
 OFFSET_VT2UFT[Offset.CLOSEYESTERDAY] = HS_OF_Close
 
 # 交易所映射
-EXCHANGE_UFT2VT: Dict[str, Exchange] = {
+EXCHANGE_UFT2VT: dict[str, Exchange] = {
     HS_EI_CFFEX: Exchange.CFFEX,
     HS_EI_SHFE: Exchange.SHFE,
     HS_EI_CZCE: Exchange.CZCE,
@@ -108,10 +107,10 @@ EXCHANGE_UFT2VT: Dict[str, Exchange] = {
     HS_EI_SSE: Exchange.SSE,
     HS_EI_SZSE: Exchange.SZSE,
 }
-EXCHANGE_VT2UFT: Dict[Exchange, str] = {v: k for k, v in EXCHANGE_UFT2VT.items()}
+EXCHANGE_VT2UFT: dict[Exchange, str] = {v: k for k, v in EXCHANGE_UFT2VT.items()}
 
 # 产品类型映射
-PRODUCT_UFT2VT: Dict[str, Product] = {
+PRODUCT_UFT2VT: dict[str, Product] = {
     HS_PTYPE_Futures: Product.FUTURES,
     HS_PTYPE_OptFutu: Product.OPTION,
     HS_PTYPE_OptStock: Product.OPTION,
@@ -119,7 +118,7 @@ PRODUCT_UFT2VT: Dict[str, Product] = {
 }
 
 # 期权类型映射
-OPTIONTYPE_UFT2VT: Dict[str, OptionType] = {
+OPTIONTYPE_UFT2VT: dict[str, OptionType] = {
     HS_OT_CallOptions: OptionType.CALL,
     HS_OT_PutOptions: OptionType.PUT
 }
@@ -129,7 +128,7 @@ MAX_FLOAT = sys.float_info.max                  # 浮点数极限值
 CHINA_TZ = ZoneInfo("Asia/Shanghai")       # 中国时区
 
 # 合约数据全局缓存字典
-symbol_contract_map: Dict[str, ContractData] = {}
+symbol_contract_map: dict[str, ContractData] = {}
 
 
 class UftGateway(BaseGateway):
@@ -139,7 +138,7 @@ class UftGateway(BaseGateway):
 
     default_name: str = "UFT"
 
-    default_setting: Dict[str, str] = {
+    default_setting: dict[str, str] = {
         "用户名": "",
         "密码": "",
         "行情服务器": "",
@@ -148,7 +147,7 @@ class UftGateway(BaseGateway):
         "授权编码": ""
     }
 
-    exchanges: List[Exchange] = list(EXCHANGE_UFT2VT.values())
+    exchanges: list[Exchange] = list(EXCHANGE_UFT2VT.values())
 
     def __init__(self, event_engine: EventEngine, gateway_name: str) -> None:
         """构造函数"""
@@ -417,8 +416,8 @@ class UftTdApi(TdApi):
         self.frontid: int = 0
         self.sessionid: int = 0
 
-        self.positions: Dict[str, PositionData] = {}
-        self.orders: Dict[str, OrderData] = {}
+        self.positions: dict[str, PositionData] = {}
+        self.orders: dict[str, OrderData] = {}
 
     def onFrontConnected(self) -> None:
         """服务器连接成功回报"""
