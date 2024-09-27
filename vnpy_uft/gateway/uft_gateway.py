@@ -60,7 +60,8 @@ from ..api import (
     HS_PTYPE_Combination,
     HS_OT_CallOptions,
     HS_OT_PutOptions,
-    HS_TERT_RESUME
+    HS_TERT_RESUME,
+    API_STRUCT_CHECK_VERSION
 )
 
 
@@ -365,13 +366,11 @@ class UftMdApi(MdApi):
 
             self.registerFront(address)
 
-            self.init(
-                server_license,
-                "",
-                "",
-                "",
-                ""
-            )
+            cfg = {
+                "APICheckVersion": API_STRUCT_CHECK_VERSION,
+                "CommLicense": server_license,
+            }
+            self.init(cfg)
 
             self.connect_status = True
 
@@ -802,16 +801,13 @@ class UftTdApi(TdApi):
             path: Path = get_folder_path(self.gateway_name.lower())
             self.newTradeApi((str(path) + "\\Td").encode("GBK"))
 
-            self.rgisterSubModel(HS_TERT_RESUME)
-
             self.registerFront(address)
-            self.init(
-                server_license,
-                "",
-                "",
-                "",
-                ""
-            )
+
+            cfg = {
+                "APICheckVersion": API_STRUCT_CHECK_VERSION,
+                "CommLicense": server_license,
+            }
+            self.init(cfg)
 
             self.connect_status = True
         else:
@@ -841,6 +837,7 @@ class UftTdApi(TdApi):
             "UserApplicationInfo": "",
             "MacAddress": "",
             "IPAddress": "",
+            "UserStationInfo": ""
         }
 
         self.reqid += 1

@@ -4477,7 +4477,7 @@ int TdApi::exit()
 	return 1;
 };
 
-int TdApi::rgisterSubModel(int eSubType)
+int TdApi::registerSubModel(int eSubType)
 {
 	int i = this->api->RegisterSubModel((SUB_TERT_TYPE)eSubType);
 	return i;
@@ -6182,7 +6182,7 @@ PYBIND11_MODULE(vnufttd, m)
 		.def("init", &TdApi::init)
 		.def("join", &TdApi::join)
 		.def("exit", &TdApi::exit)
-		.def("rgisterSubModel", &TdApi::rgisterSubModel)
+		.def("registerSubModel", &TdApi::registerSubModel)
 		.def("registerFront", &TdApi::registerFront)
 		.def("registerFensServer", &TdApi::registerFensServer)
 		.def("getApiErrorMsg", &TdApi::getApiErrorMsg)
