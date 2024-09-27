@@ -5,19 +5,19 @@
 </p>
 
 <p align="center">
-    <img src ="https://img.shields.io/badge/version-3.7.2.4.5-blueviolet.svg"/>
+    <img src ="https://img.shields.io/badge/version-3.7.4.1004-blueviolet.svg"/>
     <img src ="https://img.shields.io/badge/platform-windows|linux-yellow.svg"/>
-    <img src ="https://img.shields.io/badge/python-3.7|3.8|3.9|3.10-blue.svg" />
+    <img src ="https://img.shields.io/badge/python-3.10|3.11|3.12-blue.svg" />
     <img src ="https://img.shields.io/github/license/vnpy/vnpy.svg?color=orange"/>
 </p>
 
 ## 说明
 
-基于恒生极速API的3.7.2.4版本开发。
+基于恒生极速API的3.7.4.1004版本开发。
 
 ## 安装
 
-安装环境推荐基于3.3.0版本以上的【[**VeighNa Studio**](https://www.vnpy.com)】。
+安装环境推荐基于3.9.0版本以上的【[**VeighNa Studio**](https://www.vnpy.com)】。
 
 直接使用pip命令：
 
