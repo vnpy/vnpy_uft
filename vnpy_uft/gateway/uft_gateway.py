@@ -29,8 +29,7 @@ from vnpy.trader.utility import get_folder_path, TRADER_DIR, ZoneInfo
 from vnpy.trader.event import EVENT_TIMER
 
 from ..api import (
-    FUTURES_LICENSE,
-    OPTION_LICENSE,
+    TEST_LICENSE,
     MdApi,
     TdApi,
     HS_EI_CFFEX,
@@ -145,10 +144,8 @@ class UftGateway(BaseGateway):
         "密码": "",
         "行情服务器": "",
         "交易服务器": "",
-        "服务器类型": ["期货", "ETF期权"],
         "产品名称": "",
-        "授权编码": "",
-        "委托类型": "q"
+        "授权编码": ""
     }
 
     exchanges: List[Exchange] = list(EXCHANGE_UFT2VT.values())
@@ -159,7 +156,8 @@ class UftGateway(BaseGateway):
 
         self.td_api: "UftTdApi" = UftTdApi(self)
         self.md_api: "UftMdApi" = UftMdApi(self)
-        self.server: str = ""
+
+        self.trading_day: str = ""
 
     def connect(self, setting: dict) -> None:
         """连接交易接口"""
@@ -167,10 +165,8 @@ class UftGateway(BaseGateway):
         password: str = setting["密码"]
         md_address: str = setting["行情服务器"]
         td_address: str = setting["交易服务器"]
-        self.server: str = setting["服务器类型"]
         appid: str = setting["产品名称"]
         auth_code: str = setting["授权编码"]
-        application_type: str = setting["委托类型"]
 
         if not md_address.startswith("tcp://"):
             md_address = "tcp://" + md_address
@@ -183,10 +179,7 @@ class UftGateway(BaseGateway):
         if license_path.exists():
             server_license: str = str(license_path)
         else:
-            if self.server == "期货":
-                server_license: str = FUTURES_LICENSE
-            else:
-                server_license: str = OPTION_LICENSE
+            server_license: str = TEST_LICENSE
 
         self.td_api.connect(
             td_address,
@@ -194,8 +187,7 @@ class UftGateway(BaseGateway):
             userid,
             password,
             auth_code,
-            appid,
-            application_type
+            appid
         )
         self.md_api.connect(
             md_address,
@@ -304,7 +296,7 @@ class UftMdApi(MdApi):
         if not contract:
             return
 
-        timestamp: str = f"{data['TradingDay']} {data['UpdateTime']}000"
+        timestamp: str = f"{self.gateway.trading_day} {data['UpdateTime']}000"
 
         # 过滤时间戳异常的行情数据
         try:
@@ -389,7 +381,7 @@ class UftMdApi(MdApi):
             }
 
             self.reqid += 1
-            self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
+            n = self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
 
             self.subscribed.add(symbol)
 
@@ -421,7 +413,6 @@ class UftTdApi(TdApi):
         self.password: str = ""
         self.auth_code: str = ""
         self.appid: str = ""
-        self.application_type: str = ""
 
         self.frontid: int = 0
         self.sessionid: int = 0
@@ -472,6 +463,8 @@ class UftTdApi(TdApi):
             self.sessionid = data["SessionID"]
             self.login_status = True
             self.gateway.write_log("交易服务器登录成功")
+
+            self.gateway.trading_day = data["TradingDay"]
 
             self.reqid += 1
             self.reqQryInstrument({}, self.reqid)
@@ -571,51 +564,50 @@ class UftTdApi(TdApi):
         last: bool
     ) -> None:
         """持仓查询回报"""
-        if not data and last:
+        if data:
+            # 必须已经收到了合约信息后才能处理
+            symbol: str = data["InstrumentID"]
+            contract: ContractData = symbol_contract_map.get(symbol, None)
+
+            if contract:
+                # 获取之前缓存的持仓数据缓存
+                key: str = f"{data['InstrumentID'], data['Direction']}"
+                position: PositionData = self.positions.get(key, None)
+                if not position:
+                    position: PositionData = PositionData(
+                        symbol=data["InstrumentID"],
+                        exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
+                        direction=DIRECTION_UFT2VT[data["Direction"]],
+                        gateway_name=self.gateway_name
+                    )
+                    self.positions[key] = position
+
+                # 计算昨仓
+                position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
+
+                # 获取合约的乘数信息
+                size: float = contract.size
+
+                # 计算之前已有仓位的持仓总成本
+                cost: float = position.price * position.volume * size
+
+                # 累加更新持仓数量和盈亏
+                position.volume += data["PositionVolume"]
+                position.pnl += data["PositionProfit"]
+
+                # 计算更新后的持仓总成本和均价
+                if position.volume and size:
+                    cost += data["PositionCost"]
+                    position.price = cost / (position.volume * size)
+
+                # 更新仓位冻结数量
+                position.frozen += data["CloseFrozenVolume"]
+
+        if last:
             for position in self.positions.values():
                 self.gateway.on_position(position)
 
             self.positions.clear()
-            return
-
-        # 必须已经收到了合约信息后才能处理
-        symbol: str = data["InstrumentID"]
-        contract: ContractData = symbol_contract_map.get(symbol, None)
-
-        if contract:
-            # 获取之前缓存的持仓数据缓存
-            key: str = f"{data['InstrumentID'], data['Direction']}"
-            position: PositionData = self.positions.get(key, None)
-            if not position:
-                position: PositionData = PositionData(
-                    symbol=data["InstrumentID"],
-                    exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
-                    direction=DIRECTION_UFT2VT[data["Direction"]],
-                    gateway_name=self.gateway_name
-                )
-                self.positions[key] = position
-
-            # 计算昨仓
-            if self.gateway.server == "期货":
-                position.yd_volume = data["PositionVolume"] - data["TodayPositionVolume"]
-
-            # 获取合约的乘数信息
-            size: float = contract.size
-
-            # 计算之前已有仓位的持仓总成本
-            cost: float = position.price * position.volume * size
-
-            # 累加更新持仓数量和盈亏
-            position.volume += data["PositionVolume"]
-            position.pnl += data["PositionProfit"]
-
-            # 计算更新后的持仓总成本和均价
-            if position.volume and size:
-                cost += data["PositionCost"]
-                position.price = cost / (position.volume * size)
-
-            # 更新仓位冻结数量
-            position.frozen += data["CloseFrozenVolume"]
 
     def onRspQryTradingAccount(
         self,
@@ -645,51 +637,51 @@ class UftTdApi(TdApi):
         last: bool
     ) -> None:
         """合约查询回报"""
-        if not data and last:
-            self.gateway.write_log("合约信息查询成功")
-            return
+        if data:
+            product: Product = PRODUCT_UFT2VT.get(data["ProductType"], None)
+            if product:
+                contract: ContractData = ContractData(
+                    symbol=data["InstrumentID"],
+                    exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
+                    name=data["InstrumentName"],
+                    product=product,
+                    size=data["VolumeMultiple"],
+                    pricetick=data["PriceTick"],
+                    gateway_name=self.gateway_name
+                )
 
-        product: Product = PRODUCT_UFT2VT.get(data["ProductType"], None)
-        if product:
-            contract: ContractData = ContractData(
-                symbol=data["InstrumentID"],
-                exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
-                name=data["InstrumentName"],
-                product=product,
-                size=data["VolumeMultiple"],
-                pricetick=data["PriceTick"],
-                gateway_name=self.gateway_name
-            )
+                # 期权相关
+                if contract.product == Product.OPTION:
+                    contract.option_type = OPTIONTYPE_UFT2VT.get(data["OptionsType"], None)
+                    contract.option_strike = data["ExercisePrice"]
+                    contract.option_expiry = datetime.strptime(str(data["ExpireDate"]), "%Y%m%d")
 
-            # 期权相关
-            if contract.product == Product.OPTION:
-                contract.option_type = OPTIONTYPE_UFT2VT.get(data["OptionsType"], None)
-                contract.option_strike = data["ExercisePrice"]
-                contract.option_expiry = datetime.strptime(str(data["ExpireDate"]), "%Y%m%d")
+                    # ETF期权
+                    if contract.exchange in {Exchange.SSE, Exchange.SZSE}:
+                        contract.option_underlying = "-".join([data["UnderlyingInstrID"], str(data["EndExerciseDate"])[:-2]])
+                        contract.option_portfolio = data["UnderlyingInstrID"] + "_O"
 
-                # ETF期权
-                if contract.exchange in {Exchange.SSE, Exchange.SZSE}:
-                    contract.option_underlying = "-".join([data["UnderlyingInstrID"], str(data["EndExerciseDate"])[:-2]])
-                    contract.option_portfolio = data["UnderlyingInstrID"] + "_O"
-
-                    # 需要考虑标的分红导致的行权价调整后的索引
-                    contract.option_index = get_option_index(contract.option_strike, data["InstrumentEngName"])
-                # 期货期权
-                else:
-                    contract.option_underlying = data["UnderlyingInstrID"]
-
-                    # 移除郑商所期权产品名称带有的C/P后缀
-                    if contract.exchange == Exchange.CZCE:
-                        contract.option_portfolio = data["ProductID"][:-1]
+                        # 需要考虑标的分红导致的行权价调整后的索引
+                        contract.option_index = get_option_index(contract.option_strike, data["InstrumentEngName"])
+                    # 期货期权
                     else:
-                        contract.option_portfolio = data["ProductID"]
+                        contract.option_underlying = data["UnderlyingInstrID"]
 
-                    # 直接使用行权价作为索引
-                    contract.option_index = str(contract.option_strike)
+                        # 移除郑商所期权产品名称带有的C/P后缀
+                        if contract.exchange == Exchange.CZCE:
+                            contract.option_portfolio = data["ProductID"][:-1]
+                        else:
+                            contract.option_portfolio = data["ProductID"]
 
-            self.gateway.on_contract(contract)
+                        # 直接使用行权价作为索引
+                        contract.option_index = str(contract.option_strike)
 
-            symbol_contract_map[contract.symbol] = contract
+                self.gateway.on_contract(contract)
+
+                symbol_contract_map[contract.symbol] = contract
+
+        if last:
+            self.gateway.write_log("合约信息查询成功")
 
     def onRtnOrder(self, data: dict) -> None:
         """委托更新推送"""
@@ -787,15 +779,13 @@ class UftTdApi(TdApi):
         userid: str,
         password: str,
         auth_code: str,
-        appid: str,
-        application_type: str
+        appid: str
     ) -> None:
         """连接服务器"""
         self.userid = userid
         self.password = password
         self.auth_code = auth_code
         self.appid = appid
-        self.application_type = application_type
 
         if not self.connect_status:
             path: Path = get_folder_path(self.gateway_name.lower())
@@ -833,7 +823,7 @@ class UftTdApi(TdApi):
         req: dict = {
             "AccountID": self.userid,
             "Password": self.password,
-            "UserApplicationType": self.application_type,
+            "UserApplicationType": "7",
             "UserApplicationInfo": "",
             "MacAddress": "",
             "IPAddress": "",
