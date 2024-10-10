@@ -18,7 +18,7 @@ def get_ext_modules() -> list:
             "-Wno-delete-incomplete",
             "-Wno-sign-compare",
         ]
-        libraries = ["HsFutuSystemInfo", "HSMdApi", "HSTradeApi", "t2sdk", "tcpsdk"]
+        libraries = ["HsFutuSystemInfo", "HSMdApi", "HSTradeApi", "infocertsdk", "ldptcpsdk", "smf_api", "t2sdk"]
         extra_link_args = ["-lstdc++"]
         runtime_library_dirs = ["$ORIGIN"]
 
