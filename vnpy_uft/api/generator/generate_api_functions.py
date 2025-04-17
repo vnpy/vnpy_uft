@@ -1,6 +1,5 @@
 """"""
 import importlib
-from typing import Dict
 
 
 class ApiGenerator:
@@ -13,11 +12,11 @@ class ApiGenerator:
         self.name: str = name
         self.class_name: str = class_name
 
-        self.callbacks: Dict[str, dict] = {}
-        self.functions: Dict[str, dict] = {}
-        self.lines: Dict[str, str] = {}
+        self.callbacks: dict[str, dict] = {}
+        self.functions: dict[str, dict] = {}
+        self.lines: dict[str, str] = {}
 
-        self.structs: Dict[str, dict] = {}
+        self.structs: dict[str, dict] = {}
         self.load_struct()
 
     def load_struct(self) -> None:
@@ -31,7 +30,7 @@ class ApiGenerator:
 
     def run(self) -> None:
         """运行生成"""
-        self.f_cpp = open(self.filename, "r")
+        self.f_cpp = open(self.filename)
 
         for line in self.f_cpp:
             self.process_line(line)
@@ -220,7 +219,7 @@ class ApiGenerator:
 
                 args = []
 
-                for field, type_ in d.items():
+                for _field, type_ in d.items():
                     if type_ == "int":
                         args.append("task->task_id")
                     elif type_ == "bool":
@@ -305,7 +304,7 @@ class ApiGenerator:
 
                 args = []
                 bind_args = ["void", self.class_name, on_name]
-                for field, type_ in d.items():
+                for _field, type_ in d.items():
                     if type_ == "int":
                         args.append("int reqid")
                         bind_args.append("reqid")

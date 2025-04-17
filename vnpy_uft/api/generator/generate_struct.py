@@ -1,6 +1,5 @@
 """"""
 import importlib
-from typing import Dict
 
 
 class StructGenerator:
@@ -10,7 +9,7 @@ class StructGenerator:
         """Constructor"""
         self.filename: str = filename
         self.prefix: str = prefix
-        self.typedefs: Dict[str, str] = {}
+        self.typedefs: dict[str, str] = {}
 
         self.load_constant()
 
@@ -25,7 +24,7 @@ class StructGenerator:
 
     def run(self) -> None:
         """运行生成"""
-        self.f_cpp = open(self.filename, "r")
+        self.f_cpp = open(self.filename)
         self.f_struct = open(f"{self.prefix}_struct.py", "w")
 
         for line in self.f_cpp:

@@ -58,7 +58,6 @@ from ..api import (
     HS_PTYPE_Combination,
     HS_OT_CallOptions,
     HS_OT_PutOptions,
-    HS_TERT_RESUME,
     API_STRUCT_CHECK_VERSION
 )
 
@@ -153,8 +152,8 @@ class UftGateway(BaseGateway):
         """构造函数"""
         super().__init__(event_engine, gateway_name)
 
-        self.td_api: "UftTdApi" = UftTdApi(self)
-        self.md_api: "UftMdApi" = UftMdApi(self)
+        self.td_api: UftTdApi = UftTdApi(self)
+        self.md_api: UftMdApi = UftMdApi(self)
 
         self.trading_day: str = ""
 
@@ -380,7 +379,7 @@ class UftMdApi(MdApi):
             }
 
             self.reqid += 1
-            n = self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
+            self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
 
             self.subscribed.add(symbol)
 

@@ -1,7 +1,6 @@
 """"""
-from typing import Dict
 
-TYPE_CPP2PY: Dict[str, str] = {
+TYPE_CPP2PY: dict[str, str] = {
     "int": "int",
     "int8": "int",
     "int16": "int",
@@ -36,7 +35,7 @@ class DataTypeGenerator:
 
     def run(self) -> None:
         """主函数"""
-        self.f_cpp = open(self.filename, "r", encoding='gbk')
+        self.f_cpp = open(self.filename, encoding='gbk')
         self.f_define = open(f"{self.prefix}_constant.py", "w")
         self.f_typedef = open(f"{self.prefix}_typedef.py", "w")
 
