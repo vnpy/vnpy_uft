@@ -5,7 +5,7 @@ import importlib
 class StructGenerator:
     """Struct生成器"""
 
-    def __init__(self, filename: str, prefix: str):
+    def __init__(self, filename: str, prefix: str) -> None:
         """Constructor"""
         self.filename: str = filename
         self.prefix: str = prefix
@@ -13,7 +13,7 @@ class StructGenerator:
 
         self.load_constant()
 
-    def load_constant(self):
+    def load_constant(self) -> None:
         """"""
         module_name = f"{self.prefix}_typedef"
         module = importlib.import_module(module_name)

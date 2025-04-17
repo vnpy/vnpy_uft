@@ -5,7 +5,7 @@ import importlib
 class ApiGenerator:
     """API生成器"""""
 
-    def __init__(self, filename: str, prefix: str, name: str, class_name: str):
+    def __init__(self, filename: str, prefix: str, name: str, class_name: str) -> None:
         """Constructor"""
         self.filename: str = filename
         self.prefix: str = prefix
@@ -51,7 +51,7 @@ class ApiGenerator:
 
         print("API生成成功")
 
-    def process_line(self, line: str):
+    def process_line(self, line: str) -> None:
         """处理每行"""
         line = line.replace(";", "")
         line = line.replace("\n", "")
@@ -88,7 +88,7 @@ class ApiGenerator:
         d = self.generate_arg_dict(line)
         self.functions[name] = d
 
-    def generate_arg_dict(self, line: str) -> None:
+    def generate_arg_dict(self, line: str) -> dict:
         """生成参数字典"""
         args_str = line[line.index("(") + 1:line.index(")")]
         if not args_str:

@@ -28,7 +28,7 @@ TYPE_CPP2PY: dict[str, str] = {
 class DataTypeGenerator:
     """DataType生成器"""
 
-    def __init__(self, filename: str, prefix: str):
+    def __init__(self, filename: str, prefix: str) -> None:
         """Constructor"""
         self.filename: str = filename
         self.prefix: str = prefix
