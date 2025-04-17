@@ -190,6 +190,7 @@ if host_machine.system() == 'windows'
     'vnpy_uft/api/ldptcpsdk.dll',
     'vnpy_uft/api/smf_api.dll',
     'vnpy_uft/api/t2sdk.dll',
+    'vnpy_uft/api/license.dat',
   ]
   
   install_data(
@@ -205,6 +206,7 @@ else  # Linux
     'vnpy_uft/api/libldptcpsdk.so',
     'vnpy_uft/api/libsmf_api.so',
     'vnpy_uft/api/libt2sdk.so',
+    'vnpy_uft/api/license.dat',
   ]
   
   install_data(
