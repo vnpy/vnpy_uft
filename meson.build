@@ -70,15 +70,6 @@ if host_machine.system() == 'windows'
   HSTradeApi_lib = cpp.find_library('HSTradeApi', 
                                        dirs: [lib_dir, api_dir],
                                        required: true)
-  infocertsdk_lib = cpp.find_library('infocertsdk', 
-                                       dirs: [lib_dir, api_dir],
-                                       required: true)
-  ldptcpsdk_lib = cpp.find_library('ldptcpsdk', 
-                                       dirs: [lib_dir, api_dir],
-                                       required: true)
-  smf_api_lib = cpp.find_library('smf_api', 
-                                       dirs: [lib_dir, api_dir],
-                                       required: true)
   t2sdk_lib = cpp.find_library('t2sdk', 
                                        dirs: [lib_dir, api_dir],
                                        required: true)
