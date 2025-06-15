@@ -1,23 +1,22 @@
 """"""
 import importlib
-from typing import Dict
 
 
 class ApiGenerator:
     """API生成器"""""
 
-    def __init__(self, filename: str, prefix: str, name: str, class_name: str):
+    def __init__(self, filename: str, prefix: str, name: str, class_name: str) -> None:
         """Constructor"""
         self.filename: str = filename
         self.prefix: str = prefix
         self.name: str = name
         self.class_name: str = class_name
 
-        self.callbacks: Dict[str, dict] = {}
-        self.functions: Dict[str, dict] = {}
-        self.lines: Dict[str, str] = {}
+        self.callbacks: dict[str, dict] = {}
+        self.functions: dict[str, dict] = {}
+        self.lines: dict[str, str] = {}
 
-        self.structs: Dict[str, dict] = {}
+        self.structs: dict[str, dict] = {}
         self.load_struct()
 
     def load_struct(self) -> None:
@@ -31,7 +30,7 @@ class ApiGenerator:
 
     def run(self) -> None:
         """运行生成"""
-        self.f_cpp = open(self.filename, "r")
+        self.f_cpp = open(self.filename)
 
         for line in self.f_cpp:
             self.process_line(line)
@@ -52,7 +51,7 @@ class ApiGenerator:
 
         print("API生成成功")
 
-    def process_line(self, line: str):
+    def process_line(self, line: str) -> None:
         """处理每行"""
         line = line.replace(";", "")
         line = line.replace("\n", "")
@@ -89,7 +88,7 @@ class ApiGenerator:
         d = self.generate_arg_dict(line)
         self.functions[name] = d
 
-    def generate_arg_dict(self, line: str) -> None:
+    def generate_arg_dict(self, line: str) -> dict:
         """生成参数字典"""
         args_str = line[line.index("(") + 1:line.index(")")]
         if not args_str:
@@ -220,7 +219,7 @@ class ApiGenerator:
 
                 args = []
 
-                for field, type_ in d.items():
+                for _field, type_ in d.items():
                     if type_ == "int":
                         args.append("task->task_id")
                     elif type_ == "bool":
@@ -305,7 +304,7 @@ class ApiGenerator:
 
                 args = []
                 bind_args = ["void", self.class_name, on_name]
-                for field, type_ in d.items():
+                for _field, type_ in d.items():
                     if type_ == "int":
                         args.append("int reqid")
                         bind_args.append("reqid")

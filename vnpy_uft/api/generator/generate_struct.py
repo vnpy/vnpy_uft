@@ -1,20 +1,19 @@
 """"""
 import importlib
-from typing import Dict
 
 
 class StructGenerator:
     """Struct生成器"""
 
-    def __init__(self, filename: str, prefix: str):
+    def __init__(self, filename: str, prefix: str) -> None:
         """Constructor"""
         self.filename: str = filename
         self.prefix: str = prefix
-        self.typedefs: Dict[str, str] = {}
+        self.typedefs: dict[str, str] = {}
 
         self.load_constant()
 
-    def load_constant(self):
+    def load_constant(self) -> None:
         """"""
         module_name = f"{self.prefix}_typedef"
         module = importlib.import_module(module_name)
@@ -25,7 +24,7 @@ class StructGenerator:
 
     def run(self) -> None:
         """运行生成"""
-        self.f_cpp = open(self.filename, "r")
+        self.f_cpp = open(self.filename)
         self.f_struct = open(f"{self.prefix}_struct.py", "w")
 
         for line in self.f_cpp:

@@ -2,7 +2,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from vnpy.event import EventEngine
+from vnpy.event import EventEngine, Event
 from vnpy.trader.constant import (
     Direction,
     Offset,
@@ -58,7 +58,6 @@ from ..api import (
     HS_PTYPE_Combination,
     HS_OT_CallOptions,
     HS_OT_PutOptions,
-    HS_TERT_RESUME,
     API_STRUCT_CHECK_VERSION
 )
 
@@ -81,11 +80,11 @@ DIRECTION_VT2UFT: dict[Direction, str] = {
 DIRECTION_UFT2VT: dict[str, Direction] = {v: k for k, v in DIRECTION_VT2UFT.items()}
 
 # 委托类型映射
-ORDERTYPE_VT2UFT: dict[OrderType, str] = {
+ORDERTYPE_VT2UFT: dict[OrderType, int] = {
     OrderType.LIMIT: HS_CT_Limit,
     OrderType.MARKET: HS_CT_Market
 }
-ORDERTYPE_UFT2VT: dict[str, OrderType] = {v: k for k, v in ORDERTYPE_VT2UFT.items()}
+ORDERTYPE_UFT2VT: dict[int, OrderType] = {v: k for k, v in ORDERTYPE_VT2UFT.items()}
 
 # 开平方向映射
 OFFSET_VT2UFT: dict[Offset, str] = {
@@ -153,10 +152,11 @@ class UftGateway(BaseGateway):
         """构造函数"""
         super().__init__(event_engine, gateway_name)
 
-        self.td_api: "UftTdApi" = UftTdApi(self)
-        self.md_api: "UftMdApi" = UftMdApi(self)
+        self.td_api: UftTdApi = UftTdApi(self)
+        self.md_api: UftMdApi = UftMdApi(self)
 
         self.trading_day: str = ""
+        self.count: int = 0
 
     def connect(self, setting: dict) -> None:
         """连接交易接口"""
@@ -178,7 +178,7 @@ class UftGateway(BaseGateway):
         if license_path.exists():
             server_license: str = str(license_path)
         else:
-            server_license: str = TEST_LICENSE
+            server_license = TEST_LICENSE
 
         self.td_api.connect(
             td_address,
@@ -224,10 +224,10 @@ class UftGateway(BaseGateway):
         """输出错误信息日志"""
         error_id: int = error["ErrorID"]
         error_msg: str = error["ErrorMsg"]
-        msg: str = f"{msg}，代码：{error_id}，信息：{error_msg}"
+        msg = f"{msg}，代码：{error_id}，信息：{error_msg}"
         self.write_log(msg)
 
-    def process_timer_event(self, event) -> None:
+    def process_timer_event(self, event: Event) -> None:
         """定时事件处理"""
         self.count += 1
         if self.count < 2:
@@ -240,7 +240,6 @@ class UftGateway(BaseGateway):
 
     def init_query(self) -> None:
         """初始化查询任务"""
-        self.count: int = 0
         self.query_functions: list = [self.query_account, self.query_position]
         self.event_engine.register(EVENT_TIMER, self.process_timer_event)
 
@@ -303,7 +302,7 @@ class UftMdApi(MdApi):
         except ValueError:
             return
 
-        dt: datetime = dt.replace(tzinfo=CHINA_TZ)
+        dt = dt.replace(tzinfo=CHINA_TZ)
 
         tick: TickData = TickData(
             symbol=symbol,
@@ -380,7 +379,7 @@ class UftMdApi(MdApi):
             }
 
             self.reqid += 1
-            n = self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
+            self.reqDepthMarketDataSubscribe(uft_req, self.reqid)
 
             self.subscribed.add(symbol)
 
@@ -573,7 +572,7 @@ class UftTdApi(TdApi):
                 key: str = f"{data['InstrumentID'], data['Direction']}"
                 position: PositionData = self.positions.get(key, None)
                 if not position:
-                    position: PositionData = PositionData(
+                    position = PositionData(
                         symbol=data["InstrumentID"],
                         exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
                         direction=DIRECTION_UFT2VT[data["Direction"]],
@@ -699,13 +698,13 @@ class UftTdApi(TdApi):
         if "." in timestamp:
             fmt: str = "%Y%m%d %H:%M:%S.%f"
         else:
-            fmt: str = "%Y%m%d %H:%M:%S"
+            fmt = "%Y%m%d %H:%M:%S"
 
         dt: datetime = datetime.strptime(timestamp, fmt)
-        dt: datetime = dt.replace(tzinfo=CHINA_TZ)
+        dt = dt.replace(tzinfo=CHINA_TZ)
 
         if not order:
-            order: OrderData = OrderData(
+            order = OrderData(
                 symbol=data["InstrumentID"],
                 exchange=EXCHANGE_UFT2VT[data["ExchangeID"]],
                 orderid=orderid,
@@ -755,7 +754,7 @@ class UftTdApi(TdApi):
         trade_time: str = generate_time(data["TradeTime"])
         timestamp: str = f"{data['TradingDay']} {trade_time}"
         dt: datetime = datetime.strptime(timestamp, "%Y%m%d %H:%M:%S")
-        dt: datetime = dt.replace(tzinfo=CHINA_TZ)
+        dt = dt.replace(tzinfo=CHINA_TZ)
 
         trade: TradeData = TradeData(
             symbol=symbol,
@@ -802,7 +801,7 @@ class UftTdApi(TdApi):
         else:
             self.authenticate()
 
-    def authenticate(self):
+    def authenticate(self) -> None:
         """发起授权验证"""
         req: dict = {
             "AccountID": self.userid,
@@ -860,7 +859,7 @@ class UftTdApi(TdApi):
         order: OrderData = req.create_order_data(orderid, self.gateway_name)
         self.gateway.on_order(order)
 
-        return order.vt_orderid
+        return order.vt_orderid     # type: ignore
 
     def cancel_order(self, req: CancelRequest) -> None:
         """委托撤单"""
@@ -919,14 +918,14 @@ def generate_time(data: int) -> str:
 
 def get_option_index(strike_price: float, exchange_instrument_id: str) -> str:
     """获取期权指数"""
-    exchange_instrument_id: str = exchange_instrument_id.replace(" ", "")
+    exchange_instrument_id = exchange_instrument_id.replace(" ", "")
 
     if "M" in exchange_instrument_id:
-        n: int = exchange_instrument_id.index("M")
+        n = exchange_instrument_id.index("M")
     elif "A" in exchange_instrument_id:
-        n: int = exchange_instrument_id.index("A")
+        n = exchange_instrument_id.index("A")
     elif "B" in exchange_instrument_id:
-        n: int = exchange_instrument_id.index("B")
+        n = exchange_instrument_id.index("B")
     else:
         return str(strike_price)
 

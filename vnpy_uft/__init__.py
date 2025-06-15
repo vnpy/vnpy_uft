@@ -26,6 +26,9 @@ import importlib_metadata
 from .gateway import UftGateway
 
 
+__all__ = ["UftGateway"]
+
+
 try:
     __version__ = importlib_metadata.version("vnpy_uft")
 except importlib_metadata.PackageNotFoundError:
